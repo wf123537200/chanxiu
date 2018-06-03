@@ -269,7 +269,6 @@
     color: #ff8400;
   }
   .font09 {
-    font-size: 0.8rem;
     color: #ccc;
   }
 </style>
@@ -306,7 +305,7 @@
     <!-- 入门指南-->
     <view class="wrap pr" style="height: 75px">
       <view class="ml10p" style="padding-top:10px; color: #fff">禅修入门指南</view>
-      <view class="ml10p font09" style="color: #ccc;padding-bottom:10px;">10分钟零基础引导练习教程</view>
+      <view class="ml10p font09" style="color: #ccc;padding-bottom:10px; font-size: 0.8rem;">10分钟零基础引导练习教程</view>
       <view class="arrow pd5">></view>
     </view>
     <!-- 入门指南 end-->
