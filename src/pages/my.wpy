@@ -1,0 +1,212 @@
+<style lang='css'>
+  page {
+    background: #eee;
+  }
+  .inline {
+    display: inline;
+  }
+  .my-header {
+    position: fixed;
+    top: 0;
+    background-color: #B0976E;
+    width: 100%;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .header-wrap {
+    position:relative;
+    height:69px;
+    width:100%;
+    color:#333;
+    font-size:14px;
+    background:#fff;
+    border-bottom:1px solid #ddd;
+
+  }
+  .userinfo-avatar {
+    position: absolute;
+    top: 12px;
+    left: 26px;
+    width:44px;
+    height:44px;
+  }
+  .pr {
+    position:relative;
+  }
+  .nickname {
+    position:absolute;
+    top:7px;
+    left:86px;
+  }
+  .stars {
+    position:absolute;
+    top:23px;
+    left:84px;
+    color:#ccc;
+  }
+  .star {
+    width: 10px;
+    height: 10px;
+    margin-left: 2px;
+  }
+  .desc {
+    position:absolute;
+    top:42px;
+    left:85px;
+    color:#ccc;
+    font-size:0.6rem;
+  }
+
+  .wrap {
+    width: 100%;
+    background-color: #fff;
+    padding: 15px;
+  }
+  .pr {
+    position:relative;
+  }
+  .header-banner-wrap {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width:80%;
+    margin-left: 10%;
+    margin-top:5px;
+    font-size: 0.8rem
+  }
+  .header-cols {
+    border-right:1px solid #ccc;
+    padding-right:28px;
+  }
+  .header-banner {
+    margin-bottom:10px;
+  }
+  .num {
+    font-size: 1.6rem;
+    margin-right: 10rpx;
+    font-weight: bold;
+  }
+  .continue-time {
+    display:flex;
+    justify-content:center;
+    padding-top:16px;
+    font-size:.6rem;
+    color:#ccc;
+  }
+  .ex {
+    color: #B0976E;
+    font-size: 0.8rem;
+  }
+
+  .ml10p {
+    margin-left: 10%;
+  }
+  .m10 {
+    margin: 10px 0;
+  }
+  .arrow {
+    position:absolute;
+    right: 8%;
+    top:50%;
+    transform: translateY(-50%);
+    color: #B0976E;
+  }
+  .about-me {
+    padding:5px 0;
+    font-size:0.9rem;
+  }
+</style>
+
+<template>
+  <view class="container">
+    <!-- user -->
+    <view class="header-wrap">
+      <view class="pr">
+        <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
+        <view class="nickname">{{userInfo.nickName}}</view>
+        <view class="desc">练习{{totalTrainDay}}天，今日{{exTime}}分钟</view>
+      </view>
+    </view>
+
+    <!-- 数据 -->
+    <view class="wrap ex" style="height: 120px">
+      <view class="header-banner-wrap">
+        <view class="header-cols">
+          <view class="header-banner">总天数</view>
+          <view class="inline num">{{totalTrainDay}}</view><view class="inline">天</view>
+        </view>
+        <view class="header-cols">
+          <view class="header-banner">日均时长</view>
+          <view class="inline num">{{averageDayTime}}</view><view class="inline">分钟</view>
+        </view>
+        <view>
+          <view class="header-banner">总次数</view>
+          <view class="inline num">{{totalCount}}</view><view class="inline">次</view>
+        </view>
+      </view>
+
+      <view class="continue-time">已连续练习{{continuousNum}}天</view>
+    </view>
+    <!-- 数据 end -->
+
+    <!-- 操作 -->
+    <view class="wrap" style="height: 80%;font-size: 0.8rem;margin-top: 10px;padding:0;color: #B0976E;">
+      <view class="m10 pr about-me" @tap="onGoAboutMe">
+        <view class="ml10p">关于我们</view>
+        <view class="arrow">></view>
+      </view>
+    </view>
+    <!-- 操作 end -->
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import {ajax} from '../components/ajax.js'
+
+  export default class Tag extends wepy.page {
+    config = {
+      disableScroll: true,
+      navigationBarTitleText: '我'
+    }
+    components = {}
+    data = {
+      userInfo: {},
+      starList: [1,1,1],
+      totalTrainDay: 0,
+      averageDayTime: 0,
+      totalCount: 0,
+      continuousNum: 0,
+      exTime: 0
+    }
+    methods = {
+      onGoAboutMe() {
+        this.$navigate('./aboutme', {hour: this.hour, minute: this.minute});
+      }
+    }
+    onLoad() {
+      this.exTime = this.$parent.globalData.exTime
+      this.$parent.getUserInfo((userInfo) => {
+        console.log(userInfo)
+        if (userInfo) {
+          this.userInfo = userInfo
+        }
+
+        this.$apply()
+      })
+
+      // my info
+      ajax({
+        ins: this,
+        url: '/me/info',
+        params: {},
+        success: (d) => {
+          Object.assign(this, d.trainInfo)
+          this.$apply()
+        }
+      })
+    }
+  }
+</script>

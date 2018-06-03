@@ -1,0 +1,15 @@
+{
+	"description": "禅修小程序",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"appid": "wxe11f1717c391c594",
+	"projectname": "cx",
+	"miniprogramRoot": "./dist",
+	"condition": {}
+}

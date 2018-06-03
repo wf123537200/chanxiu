@@ -1,0 +1,792 @@
+<style lang='css'>
+  page {
+    height: 100%
+  }
+  .ex {
+    color: #ddd;
+  }
+  .inline {
+    display: inline;
+  }
+  .wrap {
+    margin-top: 10px;
+    width: 100%;
+    background-color:rgba(0, 0, 0, 0.3);
+    padding: 15px;
+  }
+  .pr {
+    position:relative;
+  }
+
+  .header-banner-wrap {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width:80%;
+    margin: 0 80rpx;
+    text-align:center;
+    margin-top:75rpx;
+  }
+  .header-banner {
+    position: relative;
+    font-size:22px;
+    color: #ccc;
+  }
+  .num {
+    font-size:36px;
+    color:white;
+    margin-right:10rpx;
+    font-weight:bold;
+  }
+  .continue-time {
+    display: flex;
+    justify-content:center;
+    padding-top: 15px;
+  }
+
+  .ml10p {
+    margin-left: 10%;
+  }
+  .pd5 {
+    padding:5px 0;
+  }
+  .m10 {
+    margin: 10px 0;
+  }
+  .arrow {
+    position:absolute;
+    right: 8%;
+    top:50%;
+    transform: translateY(-50%);
+    color: white
+  }
+
+  .set-x {
+    position: absolute;
+    right: 8%;
+    margin-right: 40rpx;
+    top:50%;
+    transform: translateY(-50%);
+    color: white
+  }
+  .tag {
+    display: inline;
+    margin-left: 5px;
+    background-color: #B0976E;
+    padding: 1px 4px;
+    border-radius:2px;
+  }
+  .btn-image {
+    width:80px;
+    height:80px;
+    margin-left:50%;
+    transform:translateX(-50%);
+    margin-top:30px;
+  }
+
+  .dag-wrap {
+    color: #666;
+    background: #eee;
+    height:500rpx;
+  }
+  .ok-btn {
+    position:absolute;
+    bottom:20px;
+    right:20px;
+    background: #B0976E;
+    border:1px solid #ccc;
+    padding:4px 12px;
+    border-radius:20px;
+    font-size:13px;
+    color:#eee;
+  }
+
+  /* time */
+  .time-set-wrap {
+    display:flex;
+    align-items:center;
+    background:#fff;
+  }
+  .picker-view {
+    height: 100%;
+    width:30%;
+    text-align:center;
+    font-size: 40px;
+    color:#222;
+  }
+  .time-text {
+    margin-left:-6%;
+    margin-top:25px;
+  }
+  .set-time-wrap {
+    display:flex;
+    justify-content:space-between;
+    padding:0 10px;
+    color:#ccc;
+  }
+  .set-time-active {
+    color: #B0976E;
+  }
+
+  /* types */
+  .types-wrap {
+    display: flex;
+    position:absolute;
+    left:30px;
+    margin-left:-20px;
+  }
+  .types {
+    padding:1px 10px;
+    margin-left:10px;
+    border-radius:5px;
+
+  }
+  .actived {
+    background: #B0976E;
+    color: #fff
+  }
+
+  /* music */
+  .music-type-wrap {
+    display: flex;
+    justify-content: space-around;
+    padding:15px;
+    border-bottom:1px solid #ccc;
+  }
+  .music-type {
+    padding:1px 10px;
+    height: 20px;
+    border-radius:5px;
+    font-size:0.8rem;
+    min-width:26px;
+  }
+  .music-select {
+    height:50px;
+    display:flex;
+    width:100%;
+    position: relative;
+  }
+  .music-icon {
+    width:20px;
+    height:20px;
+    padding:15px;
+  }
+  .music-text {
+    padding-top:7px;
+    margin-left:5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width:60%;
+  }
+  .music-time {
+    font-size:12px;
+    color:#bbb;
+  }
+  .music-select-btn {
+    position:absolute;
+    right:15px;
+    background:#fefefe;
+    width:20px;
+    height:20px;
+    top:15px;
+    border-radius:50%;
+  }
+  .music-actived {
+    width:14px;
+    height:14px;
+    background:#B0976E;
+    margin:3px;
+    border-radius:50%;
+  }
+  .dark {
+    background:#ddd;
+  }
+  .music-footer {
+    position:absolute;
+    bottom:0;
+    height:60px;
+    background:#fff;
+    width:100%;
+  }
+  .music-over {
+    position:absolute;
+    bottom:17px;
+    left:20px;
+    font-size:0.8rem;
+    border:1px solid #B0976E;
+    padding:2px 7px;
+    border-radius:20px;
+  }
+  .music-over-active {
+    background: #B0976E;
+    color: #fff
+  }
+
+  /* 授权 */
+  .auth-btn {
+    position:fixed;
+    top:50%;
+    z-index:2000;
+    background:#B0976E;
+    color:#fff;
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    line-height:4.5;
+    text-align:center;
+  }
+
+  .mask {
+    position:fixed;
+    background:rgba(0,0,0,0.8);
+    height:100%;
+    width:100%;
+    z-index:1000;
+    user-select:none;
+  }
+  .hrx {
+    width:100%;
+    height:1px;
+    display:block;
+    background:#666;
+  }
+  .hry {
+    display:block;
+    width:44px;
+    height:1px;
+    background:#444;
+    transform:rotate(90deg);
+    position:absolute;
+    left:90%;
+    top:40px;
+  }
+  .red {
+    color: #ff2a2a;
+  }
+  .orange {
+    color: #ff8400;
+  }
+</style>
+
+<template>
+  <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" @tap="onCheckUserInfo">
+    <button class="auth-btn {{isShowUserInfo ? '' : 'hide'}}" open-type="getUserInfo" @getuserinfo="getUserInfo">授 权</button>
+    <view class="mask {{isShowUserInfo ? '' : 'hide'}}"></view>
+    <!-- 展示栏 -->
+    <view class="wrap" style="height: 320rpx;color: #bbb;margin-top:0; padding-top: 0;">
+      <view class="header-banner-wrap">
+        <view class="header-banner">
+          <view>总天数</view>
+          <view class="inline num">{{totalTrainDay}}</view><view class="inline">天</view>
+          <hr class="hry" style="left:115rpx;"/>
+        </view>
+        <view class="header-banner">
+          <view>日均时长</view>
+          <view class="inline num">{{averageDayTime}}</view><view class="inline">分钟</view>
+          <hr class="hry" style="left:170rpx;"/>
+        </view>
+        <view class="header-banner">
+          <view>总次数</view>
+          <view class="inline num">{{totalCount}}</view><view class="inline">次</view>
+        </view>
+      </view>
+
+      <view class="continue-time {{ct === 1 ? 'orange' : 'hide'}}">连续练习{{continuousNum}}天</view>
+      <view class="continue-time {{ct === 0 ? '' : 'hide'}}">连续练习{{continuousNum}}天,今天{{todayDuration}}分钟</view>
+      <view class="continue-time {{ct > 1 ? 'red' : 'hide'}}">已中断{{ct}}天</view>
+    </view>
+    <!-- 展示栏 end -->
+
+    <!-- 入门指南-->
+    <view class="wrap pr" style="height: 70px">
+      <view class="ml10p pd5">禅修入门指南</view>
+      <view class="ml10p pd5" style="color: #bbb;font-size: 0.8rem">10分钟零基础引导练习教程</view>
+      <view class="arrow pd5">></view>
+    </view>
+    <!-- 入门指南 end-->
+
+    <!-- 设置-->
+    <view class="wrap" style="height: 80%;padding:0;">
+      <view class="m10 pr" @tap="onShowSetTime">
+        <view class="ml10p pd5">时间设置</view>
+        <view class="ml10p pd5 set-x {{hour === '00' && minute === '00' ? 'hide' : ''}}">{{hour === '00' ? '' : showHour + '小时'}}{{showMinute}}分钟</view>
+        <view class="ml10p pd5 set-x {{hour === '00' && minute === '00' ? '' : 'hide'}}">不限时</view>
+        <view class="arrow pd5" >></view>
+      </view>
+      <hr class="hrx"/>
+      <view class="m10 pr" @tap="onShowSetExType">
+        <view class="ml10p pd5">练习方法</view>
+        <view class="ml10p pd5 set-x">
+          <repeat for="{{exList}}" key="index" index="index" item="item">
+            <view class="tag {{item ? '' : 'hide'}}">{{item}}</view>
+          </repeat>
+        </view>
+        <view class="arrow pd5">></view>
+      </view>
+      <hr class="hrx"/>
+      <view class="m10 pr" @tap="onShowSetMusic">
+        <view class="ml10p pd5">引导音乐</view>
+        <view class="ml10p pd5 set-x">{{music}}</view>
+        <view class="arrow pd5">></view>
+      </view>
+      <hr class="hrx"/>
+
+      <view>
+        <image class="btn-image" src="/images/ex-btn.png" @tap="onJump2Ex"></image>
+      </view>
+    </view>
+    <!-- 设置 end-->
+
+    <setTime style="width: 100%" class="pr">
+      <view class="set-time-wrap">
+        <repeat for="{{setTimes}}" key="index" index="index" item="item">
+          <view @tap="onChangeTimesets({{index}})" style="line-height: 50px; padding: 0 5px;" class="{{item.isChecked ? 'set-time-active' : ''}}">{{item.label}}</view>
+        </repeat>
+      </view>
+      <view class="time-set-wrap dag-wrap" style="margin-top:-100rpx;">
+        <picker-view indicator-style="height: 50px;"
+                     style="margin-left:15%;height: 80px"
+                     class="picker-view"
+                     value="{{hourIndex}}"
+                     bindchange="onHourSelected">
+          <picker-view-column>
+            <repeat for="{{hours}}" key="index" index="index" item="item">
+              <view style="line-height: 50px">{{item}}</view>
+            </repeat>
+          </picker-view-column>
+        </picker-view>
+        <view  class="time-text">时</view>
+        <picker-view indicator-style="height: 50px;"
+                     style="margin-left:3%;height: 80px"
+                     class="picker-view"
+                     value="{{minuteIndex}}"
+                     bindchange="onMinuteSelected">
+          <picker-view-column>
+            <repeat for="{{minutes}}" key="index" index="index" item="item">
+              <view style="line-height: 50px">{{item}}</view>
+            </repeat>
+          </picker-view-column>
+        </picker-view>
+        <view class="time-text">分</view>
+      </view>
+      <view class="ok-btn" @tap="onSetTime">确定</view>
+    </setTime>
+
+    <setExType style="width: 100%" class="pr">
+      <view class="dag-wrap">
+        <view class="types-wrap" style="top:30px;">
+          <repeat for="{{typeList1}}" key="index" index="index" item="item">
+            <view @tap="onTypeClick(1, {{index}})" class="types {{type1 === index ? 'actived' : ''}}" >{{item}}</view>
+          </repeat>
+        </view>
+        <view class="types-wrap" style="top:70px;">
+          <repeat for="{{typeList2}}" key="index" index="index" item="item">
+            <view @tap="onTypeClick(2, {{index}})" class="types {{type2 === index ? 'actived' : ''}}" >{{item}}</view>
+          </repeat>
+        </view>
+      </view>
+      <view class="ok-btn" @tap="onSetExType">确定</view>
+    </setExType>
+
+    <setMusic style="width: 100%" class="pr">
+      <view class="dag-wrap" style="height:700rpx">
+        <view class="music-type-wrap">
+          <repeat for="{{musicTypeList}}" key="index" index="index" item="item">
+            <view @tap="onMusicTypeClick({{index}})" class="music-type {{musicType === index ? 'actived' : ''}}" >{{item}}</view>
+          </repeat>
+        </view>
+        <scroll-view scroll-y style="height: 200px;">
+          <view class="music-select dark {{musicType === 0 ? '' : 'hide'}}" @tap="onMusicClick(0)">
+            <image style="width:25px; height:30px; margin:10px 10px 10px 15px;" src="/images/music.png"></image>
+            <view class="music-text" style="padding-top:15px;">无需引导音频</view>
+            <view class="music-select-btn">
+              <view class="music-actived {{musicSelectIndex != 0 ? 'hide' : ''}}"></view>
+            </view>
+          </view>
+          <repeat for="{{musicList[musicType]}}" key="index" index="index" item="item">
+            <view class="music-select {{index % 2 !== 0 ? 'dark' : ''}}" @tap="onMusicClick({{index + 1}}, {{item.url}}, {{item.musicName}})">
+              <image class="music-icon {{musicSelectIndex === index + 1 ? 'hide' : ''}}" src="/images/earphone.png"></image>
+              <image class="music-icon {{musicSelectIndex !== index + 1 ? 'hide' : ''}}" src="/images/earphone-actived.png"></image>
+              <view class="music-text">
+                <view>{{item.musicName}}</view>
+                <view class="music-time">{{item.album}}   {{item.duration}}</view>
+              </view>
+              <view class="music-select-btn">
+                <view :class="{'hide': musicSelectIndex !== index + 1, 'music-actived': true}"></view>
+              </view>
+            </view>
+          </repeat>
+        </scroll-view>
+      </view>
+      <view class="music-footer">
+        <view class="music-over {{isMusicStopOnOver ? 'music-over-active' : ''}}" @tap="onMusicOver">播完后结束练习</view>
+        <view class="ok-btn" style="bottom:16px;" @tap="onSetMusic">确定</view>
+      </view>
+    </setMusic>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import zanPop from '../components/zan-popup'
+  import {ajax} from '../components/ajax.js'
+
+  const createTime = function(range) {
+    const res = [];
+    for(let i = 0; i <= range; i++) {
+      if(i < 10) res.push('0' + i)
+      else res.push('' + i)
+    }
+
+    return res
+  }
+
+  const getListByName = function(arr, name) {
+    const res = []
+    arr.forEach(t => {
+      if(t[name]) res.push(t[name])
+    })
+
+    return res
+  }
+
+  const initAjax = function () {
+    if(this.$parent.accessToken) {
+      wx.showLoading({title: '加载中..'})
+      // 初始化数据
+      ajax({
+        ins: this,
+        url: '/train/summary',
+        params: {},
+        success: (d) => {
+          Object.assign(this, d.trainInfo)
+          getCt.call(this)
+          this.$parent.globalData.trainInfo = d.trainInfo
+          this.$apply()
+        }
+      })
+
+      // 设置方法
+      ajax({
+        ins: this,
+        url: '/train/methods',
+        params: {},
+        success: (d) => {
+          this.typeListAll = d;
+          this.typeList1 = getListByName(d, 'name')
+          this.typeList2 = this.type1 ? getListByName(d[+this.type1].sencondLevelList, 'name') : getListByName(d[0].sencondLevelList, 'name')
+          this.exList = [this.typeList1[this.type1], this.typeList2[this.type2]]
+          this.$apply()
+        }
+      })
+
+      // 音乐类型
+      ajax({
+        ins: this,
+        url: '/music/list',
+        params: {},
+        success: (d) => {
+          this.musicTypeList = getListByName(d, 'typeName')
+          d.forEach(t => {
+            t.musicList.forEach(it => {
+              const minute = it.duration > 60 ? Math.floor(it.duration / 60) : 0
+              const second = it.duration - minute * 60
+              it.duration = (minute < 10 ? '0' + minute : minute) + ':' +  (second < 10 ? '0' + second : second)
+            })
+            this.musicList.push(t.musicList)
+          })
+          wx.hideLoading()
+        }
+      })
+    } else {
+      setTimeout(() => {
+        initAjax.call(this)
+      }, 200)
+    }
+  }
+
+  const getCt = function() {
+    const d = new Date()
+    const dx = new Date([d.getFullYear(), d.getMonth() + 1, d.getDate()].join('/') + ' 00:00:00').getTime()
+    const dt = new Date(this.strLastTime).getTime()
+
+    if(!dt) {
+      return this.ct = 1
+    } else if(dt - dx < 86400000 && dt - dx > 0){
+      this.ct = 0
+    } else if(dt - dx < 0 && dt - dx > -86400000) {
+      this.ct = 1
+    } else {
+      this.ct = Math.round((dx - dt) / 86400000)
+    }
+  }
+
+  export default class Tag extends wepy.page {
+    config = {
+      disableScroll: true,
+      navigationBarTitleText: '练习'
+    }
+    components = {
+      setTime: zanPop,
+      setExType: zanPop,
+      setMusic: zanPop,
+    }
+    data = {
+      totalTrainDay: 0,
+      averageDayTime: 0,
+      totalCount: 0,
+      continuousNum: 0,
+      todayTrainCount: 0,
+      todayDuration: 0,
+      ct: 1,
+      // time
+      hours: createTime(12),
+      hour: '00',
+      showHour: 0,
+      hourIndex: [0],
+      minutes: createTime(60),
+      minute: '05',
+      showMinute: 5,
+      minuteIndex: [0],
+      setTimes: [{
+        value: {hour: '00', minute: '15'},
+        label: '15min',
+        isChecked: false
+      }, {
+        value: {hour: '00', minute: '30'},
+        label: '30min',
+        isChecked: false
+      }, {
+        value: {hour: '00', minute: '45'},
+        label: '45min',
+        isChecked: false
+      }, {
+        value: {hour: '01', minute: '00'},
+        label: '1h',
+        isChecked: false
+      }, {
+        value: {hour: '02', minute: '00'},
+        label: '2h',
+        isChecked: false
+      }, {
+        value: {hour: '00', minute: '00'},
+        label: '不限时',
+        isChecked: false
+      }],
+      isFinite: false,
+      hasBeenSetted: false,
+      // type
+      exList: [],
+      typeList1: [],
+      typeList2: [],
+      type1: 0,
+      type2: 0,
+      // music
+      music: '无',
+      musicTypeList: [],
+      musicType: 0,
+      musicList: [],
+      musicSelectIndex: 0,
+      musicCheckbox: [{name: true, value: '', checked: 'true'}],
+      isMusicStopOnOver: false,
+      // 全局
+      backgroundImage: '',
+      userInfo: {},
+      isShowUserInfo: false
+    }
+    onLoad() {
+      // 缓存
+      const setTimeL = wx.getStorageSync('setTime');
+      const exTypeL = wx.getStorageSync('exType');
+      if(setTimeL) {
+        this.hour = this.oHour = setTimeL.hour
+        this.minute = this.oMinute = setTimeL.minute
+      }
+      if(exTypeL) {
+        this.type1 = exTypeL.type1
+        this.type2 = exTypeL.type2
+      }
+
+      this.backgroundImage = this.$parent.globalData.backgroundImage;
+      this.resPirfix = this.$parent.globalData.resPerfix;
+
+      setTimeout(t => {
+        this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
+        this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+        this.$parent.getUserInfo((userInfo) => {
+          this.userInfo = userInfo
+          this.$apply()
+        })
+      }, 1000)
+
+      initAjax.call(this)
+    }
+    watch =  {
+      minute(val) {
+        this.showMinute = parseInt(val, 10)
+      },
+      hour(val) {
+        this.showHour = parseInt(val, 10)
+      }
+    }
+    methods = {
+      onShowSetTime() {
+        this.$invoke('setTime', 'togglePopup')
+      },
+      // 选择时间相关
+      onHourSelected(e) {
+        const val = e.detail.value
+        this.hour = this.hours[val[0]]
+        this.methods.onChangeTimesetByHB.call(this, {hour: this.hour, minute: this.minute})
+      },
+      onMinuteSelected(e) {
+        const val = e.detail.value
+        this.minute = this.minutes[val[0]]
+        this.methods.onChangeTimesetByHB.call(this, {hour: this.hour, minute: this.minute})
+      },
+      onSetTime() {
+        this.isFinite = this.hour === '00' && this.minute === '00'
+        this.$invoke('setTime', 'togglePopup')
+      },
+      onChangeTimesets(index) {
+        this.setTimes.forEach((t, ins) => {
+          t.isChecked = index === ins
+        })
+        this.hour = this.setTimes[index].value.hour
+        this.minute = this.setTimes[index].value.minute
+        this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
+        this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+      },
+      onChangeTimesetByHB({hour, minute}) {
+        this.setTimes.forEach((t, ins) => {
+          if(t.value.hour === hour && t.value.minute === minute) {
+            this.methods.onChangeTimesets.call(this, ins)
+          } else{
+            t.isChecked = false
+          }
+        })
+      },
+
+      // 设置方法相关
+      onShowSetExType() {
+        this.$invoke('setExType', 'togglePopup')
+      },
+      onSetExType() {
+        this.exList = [this.typeList1[this.type1], this.typeList2[this.type2]]
+        this.$invoke('setExType', 'togglePopup')
+      },
+      onTypeClick(type, index) {
+        if(type === '1') {
+          this.type2 = 0;
+          this.typeList2 = getListByName(this.typeListAll[index].sencondLevelList, 'name')
+        }
+
+        this['type' + type] = index
+      },
+
+      //设置音乐相关
+      onShowSetMusic() {
+        this.$invoke('setMusic', 'togglePopup')
+      },
+      onMusicTypeClick(index) {
+        this.musicType = index
+      },
+      onMusicClick(index, src, title) {
+        this.musicSelectIndex = index;
+        // 播放
+        if(index) {
+          const am = wx.getBackgroundAudioManager()
+          am.title = this.$parent.globalData.musicTitle = title
+          am.src = this.$parent.globalData.musicUrl = this.resPirfix + src
+        }
+
+        // 调用停止播放
+        if(+index) this.methods.onMusicOver.apply(this, ['', true])
+        else this.methods.onMusicOver.apply(this, ['', false])
+      },
+      onMusicOver(e, isOver) {
+        this.isMusicStopOnOver = this.$parent.globalData.isMusicStopOnOver = (isOver == undefined ? !this.isMusicStopOnOver : isOver)
+        if(!this.isMusicStopOnOver) {
+          wx.stopBackgroundAudio()
+        }
+      },
+      onSetMusic() {
+        const {musicType, musicSelectIndex, isMusicStopOnOver} = this
+
+        // music带入
+        if(+musicSelectIndex) {
+          const musicObj = this.musicList[musicType][this.musicSelectIndex - 1]
+          this.music = musicObj.musicName
+          this.musicId = musicObj.id
+
+          if(isMusicStopOnOver) {
+            const d = musicObj.duration.split(':')
+            this.oHour = this.hour
+            this.oMinute = this.minute
+            this.hour = '00'
+
+            this.minute = (d[1] !== '00' ? parseInt(d[0], 10) + 1 : parseInt(d[0], 10))
+            if(this.minute < 10) this.minute = '0' + this.minute;
+            else this.minute += ''
+
+            this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
+            this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+          } else {
+            this.hour = this.oHour || '00'
+            this.minute = this.oMinute || '00'
+            this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
+            this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+          }
+        }
+
+        wx.pauseBackgroundAudio()
+        this.$invoke('setMusic', 'togglePopup')
+      },
+
+      onJump2Ex() {
+        try {
+          Object.assign(this.$parent.globalData, {
+            setExType: this.typeList1 ? this.typeList1[this.type1] : '',
+            trainMethodIds: this.typeList2.length ? this.typeListAll[this.type1].id + ',' + this.typeListAll[this.type1].sencondLevelList[this.type2].id : this.typeListAll[this.type1].id,
+            musicId: this.musicId || 0
+          })
+        } catch(e) {
+          console.error('数据组装错误')
+        }
+
+        this.$redirect('./ex', {hour: this.hour, minute: this.minute, isFinite: this.isFinite});
+
+        wx.setStorage({
+          key: 'setTime',
+          data: {hour: this.hour, minute: this.minute, isFinite: this.isFinite},
+          success: function(res){
+            console.log('本地存储setTime成功')
+          }
+        })
+        wx.setStorage({
+          key: 'exType',
+          data: {
+            type1: this.type1,
+            type2: this.type2
+          },
+          success: function(res){
+            console.log('本地存储exType成功')
+          }
+        })
+      },
+      onCheckUserInfo() {
+        // 检测授权
+        if(this.userInfo && !this.userInfo.nickName) {
+          this.isShowUserInfo = true;
+        }
+      },
+      getUserInfo(e) {
+        if(e.detail.userInfo) {
+          this.userInfo = e.detail.userInfo
+          wx.reLaunch({url: '/pages/setex'})
+        }
+      }
+    }
+  }
+</script>

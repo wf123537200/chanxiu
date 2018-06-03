@@ -1,0 +1,108 @@
+<style lang='css'>
+  page {
+    height: 100%;
+    background: #eee;
+  }
+
+  .header-wrap {
+    position:relative;
+    padding: 10px;
+    width:100%;
+    color: #fff;
+    font-size:14px;
+  }
+  .bi-wrap {
+    width: 100%;
+    height: 22px;
+  }
+  .pr {
+    position:relative;
+  }
+
+  .logo {
+    color:#666;
+    text-align:center;
+    font-size:0.7rem;
+  }
+  .logo-image {
+    width:70px;
+    height:87.5px;
+  }
+  .logo-text {
+    margin-top: 5px;
+    font-size:0.9rem;
+  }
+
+  .qr-code {
+    background:#fff;
+    width:100%;
+    padding:30px;
+    position:relative;
+    text-align:center;
+    padding-bottom:10px;
+    font-size:0.6rem;
+    margin-bottom:200rpx;
+  }
+  .qr-code-image {
+    width: 185px;
+    height: 185px;
+  }
+
+  .copyright {
+    position:fixed;
+    bottom:10px;
+    color:#ccc;
+    font-size:0.5rem;
+    width:100%;
+    text-align:center;
+  }
+</style>
+
+<template>
+  <view class="container ex">
+    <view class="header-wrap">
+      <view class="bi-wrap">
+      </view>
+    </view>
+
+    <!-- 图标 -->
+    <view class="pr logo">
+      <image class="logo-image" src="/images/aboutme-logo.png"></image>
+      <view class="logo-text">持壹</view>
+      <view class="logo-text">{{version}}</view>
+    </view>
+
+    <!-- 二维码 -->
+    <view class="qr-code">
+      <image class="qr-code-image" src="/images/qrcode.png"></image>
+      <view>期待您的反馈</view>
+    </view>
+
+    <!-- 版本声明 -->
+    <view class="copyright">Copyright © 2018 duding.xin All Rights Reserved</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class End extends wepy.page {
+    config = {
+      disableScroll: true,
+      navigationBarTitleText: '关于我们'
+    }
+    components = {
+    }
+    data = {
+      version: ''
+    }
+    onLoad() {
+      this.version = this.$parent.globalData.version
+    }
+    methods = {
+      onBackHome() {
+        this.$switch('./my')
+      },
+    }
+  }
+</script>
