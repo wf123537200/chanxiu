@@ -53,10 +53,9 @@
   }
   .desc {
     position:absolute;
-    top:42px;
+    top:40px;
     left:85px;
     color:#ccc;
-    font-size:0.6rem;
   }
 
   .wrap {
@@ -92,7 +91,6 @@
     display:flex;
     justify-content:center;
     padding-top:16px;
-    font-size:.6rem;
     color:#ccc;
   }
   .ex {

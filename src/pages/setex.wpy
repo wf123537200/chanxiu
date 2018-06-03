@@ -11,8 +11,7 @@
   .wrap {
     margin-top: 10px;
     width: 100%;
-    background-color:rgba(0, 0, 0, 0.3);
-    padding: 15px;
+    background-color:rgba(42, 33, 10, 0.4);
   }
   .pr {
     position:relative;
@@ -25,11 +24,11 @@
     width:80%;
     margin: 0 80rpx;
     text-align:center;
-    margin-top:75rpx;
+    margin-top:45rpx;
   }
   .header-banner {
     position: relative;
-    font-size:22px;
+    font-size:18px;
     color: #ccc;
   }
   .num {
@@ -41,7 +40,8 @@
   .continue-time {
     display: flex;
     justify-content:center;
-    padding-top: 15px;
+    padding-top: 10px;
+    font-size: 18px;
   }
 
   .ml10p {
@@ -73,7 +73,7 @@
     display: inline;
     margin-left: 5px;
     background-color: #B0976E;
-    padding: 1px 4px;
+    padding: 1px 8px;
     border-radius:2px;
   }
   .btn-image {
@@ -181,7 +181,7 @@
   }
   .music-time {
     font-size:12px;
-    color:#bbb;
+    color:#ccc;
   }
   .music-select-btn {
     position:absolute;
@@ -214,11 +214,12 @@
     bottom:17px;
     left:20px;
     font-size:0.8rem;
-    border:1px solid #B0976E;
+    border:1px solid #ccc;
     padding:2px 7px;
     border-radius:20px;
   }
   .music-over-active {
+    border:1px solid #B0976E;
     background: #B0976E;
     color: #fff
   }
@@ -267,6 +268,10 @@
   .orange {
     color: #ff8400;
   }
+  .font09 {
+    font-size: 0.8rem;
+    color: #ccc;
+  }
 </style>
 
 <template>
@@ -274,7 +279,7 @@
     <button class="auth-btn {{isShowUserInfo ? '' : 'hide'}}" open-type="getUserInfo" @getuserinfo="getUserInfo">授 权</button>
     <view class="mask {{isShowUserInfo ? '' : 'hide'}}"></view>
     <!-- 展示栏 -->
-    <view class="wrap" style="height: 320rpx;color: #bbb;margin-top:0; padding-top: 0;">
+    <view class="wrap" style="height: 300rpx;color: #bbb;margin-top:0; padding-top: 0;padding-bottom:15px;">
       <view class="header-banner-wrap">
         <view class="header-banner">
           <view>总天数</view>
@@ -299,9 +304,9 @@
     <!-- 展示栏 end -->
 
     <!-- 入门指南-->
-    <view class="wrap pr" style="height: 70px">
-      <view class="ml10p pd5">禅修入门指南</view>
-      <view class="ml10p pd5" style="color: #bbb;font-size: 0.8rem">10分钟零基础引导练习教程</view>
+    <view class="wrap pr" style="height: 75px">
+      <view class="ml10p" style="padding-top:10px; color: #fff">禅修入门指南</view>
+      <view class="ml10p font09" style="color: #ccc;padding-bottom:10px;">10分钟零基础引导练习教程</view>
       <view class="arrow pd5">></view>
     </view>
     <!-- 入门指南 end-->
@@ -309,14 +314,14 @@
     <!-- 设置-->
     <view class="wrap" style="height: 80%;padding:0;">
       <view class="m10 pr" @tap="onShowSetTime">
-        <view class="ml10p pd5">时间设置</view>
+        <view class="ml10p pd5 font09">时间设置</view>
         <view class="ml10p pd5 set-x {{hour === '00' && minute === '00' ? 'hide' : ''}}">{{hour === '00' ? '' : showHour + '小时'}}{{showMinute}}分钟</view>
         <view class="ml10p pd5 set-x {{hour === '00' && minute === '00' ? '' : 'hide'}}">不限时</view>
         <view class="arrow pd5" >></view>
       </view>
       <hr class="hrx"/>
       <view class="m10 pr" @tap="onShowSetExType">
-        <view class="ml10p pd5">练习方法</view>
+        <view class="ml10p pd5 font09">练习方法</view>
         <view class="ml10p pd5 set-x">
           <repeat for="{{exList}}" key="index" index="index" item="item">
             <view class="tag {{item ? '' : 'hide'}}">{{item}}</view>
@@ -326,7 +331,7 @@
       </view>
       <hr class="hrx"/>
       <view class="m10 pr" @tap="onShowSetMusic">
-        <view class="ml10p pd5">引导音乐</view>
+        <view class="ml10p pd5 font09">引导音乐</view>
         <view class="ml10p pd5 set-x">{{music}}</view>
         <view class="arrow pd5">></view>
       </view>

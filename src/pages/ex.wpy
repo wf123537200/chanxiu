@@ -3,13 +3,13 @@
     height: 100%
   }
   .timer {
-    font-size:70px;
+    font-size:80px;
     color:#fff;
     margin-top:30%;
   }
   .btn {
-    width:60px;
-    height:60px;
+    width:70px;
+    height:70px;
     background-repeat:no-repeat;
     background-color: #B0976E;
     background-position:50% 50%;
@@ -20,8 +20,8 @@
     margin-top:30px;
   }
   .shadow {
-    width:70px;
-    height:70px;
+    width:80px;
+    height:80px;
     opacity:0.6;
     margin-top:25px;
   }
@@ -37,10 +37,10 @@
     margin-left:100px;
   }
   .btn-image {
-    width:18px;
-    height:24px;
-    margin-top:5px;
-    margin-left:6px;
+    width:22px;
+    height:30px;
+    margin-top:3px;
+    margin-left:9px;
   }
   .image {
     height:30px;
@@ -51,10 +51,10 @@
     background-size: cover;
   }
   .text {
-    font-size:11px;
+    font-size:16px;
     text-align:center;
     color:#fff;
-    margin-top:3px;
+    margin-top:5px;
   }
 </style>
 
@@ -75,7 +75,7 @@
         <view class="btn shadow right-btn"></view>
         <view class="btn right-btn" @tap.stop="onEnd">
           <view class="image">
-            <image class="btn-image" src="/images/stop-btn.png"></image>
+            <image class="btn-image" style="margin-left: 11px;" src="/images/stop-btn.png"></image>
           </view>
           <view class="text">结束</view>
         </view>
