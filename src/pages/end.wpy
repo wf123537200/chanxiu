@@ -7,7 +7,7 @@
     position:relative;
     height:80px;
     width:100%;
-    background:rgba(0,0,0,0.3);
+    background-color:rgba(42, 33, 10, 0.4);
     color: #fff;
     font-size:14px;
 
@@ -39,7 +39,7 @@
     height:230px;
   }
   .tips-wrap-active {
-    background:rgba(0,0,0,0.3);
+    background-color:rgba(42, 33, 10, 0.4);
   }
   .tips-icon {
     position:absolute;
