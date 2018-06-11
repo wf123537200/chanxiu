@@ -1,0 +1,25 @@
+<style lang='css'>
+</style>
+
+<template>
+  <web-view src="{{promotionArticleUrl}}"></web-view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Tag extends wepy.page {
+    config = {
+      disableScroll: true,
+      navigationBarTitleText: '展示'
+    }
+    components = {}
+    data = {
+      promotionArticleUrl: ''
+    }
+    onLoad(params) {
+      this.promotionArticleUrl = params.promotionArticleUrl
+      console.log('即将跳转到: ' + this.promotionArticleUrl)
+    }
+  }
+</script>

@@ -28,11 +28,11 @@
   }
   .header-banner {
     position: relative;
-    font-size:18px;
+    font-size:16px;
     color: #ccc;
   }
   .num {
-    font-size:36px;
+    font-size:30px;
     color:white;
     margin-right:10rpx;
     font-weight:bold;
@@ -41,7 +41,7 @@
     display: flex;
     justify-content:center;
     padding-top: 10px;
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .ml10p {
@@ -55,10 +55,11 @@
   }
   .arrow {
     position:absolute;
-    right: 8%;
+    right:4%;
     top:50%;
-    transform: translateY(-50%);
-    color: white
+    transform:translateY(-50%);
+    width:18px;
+    height:18px;
   }
 
   .set-x {
@@ -195,9 +196,9 @@
   .music-actived {
     width:14px;
     height:14px;
-    background:#B0976E;
     margin:3px;
     border-radius:50%;
+    background-color: #B0976E;
   }
   .dark {
     background:#ddd;
@@ -214,14 +215,13 @@
     bottom:17px;
     left:20px;
     font-size:0.8rem;
-    border:1px solid #ccc;
+    border:2px solid #ccc;
+    color: #444;
     padding:2px 7px;
     border-radius:20px;
   }
   .music-over-active {
-    border:1px solid #B0976E;
-    background: #B0976E;
-    color: #fff
+    border:2px solid #B0976E;
   }
 
   /* 授权 */
@@ -288,7 +288,7 @@
         <view class="header-banner">
           <view>日均时长</view>
           <view class="inline num">{{averageDayTime}}</view><view class="inline">分钟</view>
-          <hr class="hry" style="left:170rpx;"/>
+          <hr class="hry" style="left:150rpx;"/>
         </view>
         <view class="header-banner">
           <view>总次数</view>
@@ -304,9 +304,11 @@
 
     <!-- 入门指南-->
     <view class="wrap pr" style="height: 75px">
-      <view class="ml10p" style="padding-top:10px; color: #fff">禅修入门指南</view>
-      <view class="ml10p font09" style="color: #ccc;padding-bottom:10px; font-size: 0.8rem;">10分钟零基础引导练习教程</view>
-      <view class="arrow pd5">></view>
+      <view class="ml10p" style="padding-top:10px; color: #fff">{{promotionArticleName}}</view>
+      <view class="ml10p font09" style="color: #ccc;padding-bottom:10px; font-size: 0.8rem;">{{promotionArticleBrief}}</view>
+      <view>
+        <image @tap="onJumpX" class="arrow pd5" src="/images/more.png"></image>
+      </view>
     </view>
     <!-- 入门指南 end-->
 
@@ -316,7 +318,9 @@
         <view class="ml10p pd5 font09">时间设置</view>
         <view class="ml10p pd5 set-x {{hour === '00' && minute === '00' ? 'hide' : ''}}">{{hour === '00' ? '' : showHour + '小时'}}{{showMinute}}分钟</view>
         <view class="ml10p pd5 set-x {{hour === '00' && minute === '00' ? '' : 'hide'}}">不限时</view>
-        <view class="arrow pd5" >></view>
+        <view>
+          <image class="arrow pd5" src="/images/more.png"></image>
+        </view>
       </view>
       <hr class="hrx"/>
       <view class="m10 pr" @tap="onShowSetExType">
@@ -326,13 +330,17 @@
             <view class="tag {{item ? '' : 'hide'}}">{{item}}</view>
           </repeat>
         </view>
-        <view class="arrow pd5">></view>
+        <view>
+          <image class="arrow pd5" src="/images/more.png"></image>
+        </view>
       </view>
       <hr class="hrx"/>
       <view class="m10 pr" @tap="onShowSetMusic">
         <view class="ml10p pd5 font09">引导音乐</view>
         <view class="ml10p pd5 set-x">{{music}}</view>
-        <view class="arrow pd5">></view>
+        <view>
+          <image class="arrow pd5" src="/images/more.png"></image>
+        </view>
       </view>
       <hr class="hrx"/>
 
@@ -464,7 +472,11 @@
         url: '/train/summary',
         params: {},
         success: (d) => {
-          Object.assign(this, d.trainInfo)
+          Object.assign(this, d.trainInfo, {
+            promotionArticleName: d.promotionArticle.name,
+            promotionArticleUrl: d.promotionArticle.url,
+            promotionArticleBrief: d.promotionArticle.brief,
+          })
           getCt.call(this)
           this.$parent.globalData.trainInfo = d.trainInfo
           this.$apply()
@@ -543,6 +555,9 @@
       continuousNum: 0,
       todayTrainCount: 0,
       todayDuration: 0,
+      promotionArticleName: '',
+      promotionArticleBrief: '',
+      promotionArticleUrl: '',
       ct: 1,
       // time
       hours: createTime(12),
@@ -697,9 +712,9 @@
         this.musicType = index
       },
       onMusicClick(index, src, title) {
-        this.musicSelectIndex = index;
+        this.musicSelectIndex = (+index);
         // 播放
-        if(index) {
+        if(+index) {
           const am = wx.getBackgroundAudioManager()
           am.title = this.$parent.globalData.musicTitle = title
           am.src = this.$parent.globalData.musicUrl = this.resPirfix + src
@@ -790,6 +805,10 @@
           this.userInfo = e.detail.userInfo
           wx.reLaunch({url: '/pages/setex'})
         }
+      },
+      // 跳转相关
+      onJumpX() {
+        this.$navigate('./out', {promotionArticleUrl: this.promotionArticleUrl});
       }
     }
   }

@@ -2,6 +2,14 @@
   page {
     height: 100%
   }
+  .mask {
+    position:fixed;
+    background:rgba(0,0,0,0.9);
+    height:100%;
+    width:100%;
+    z-index:9999;
+    user-select:none;
+  }
 
   .header-wrap {
     position:relative;
@@ -10,7 +18,7 @@
     background-color:rgba(42, 33, 10, 0.4);
     color: #fff;
     font-size:14px;
-
+    padding-top:10px;
   }
   .userinfo-avatar {
     position: absolute;
@@ -29,44 +37,50 @@
   }
   .desc {
     position:absolute;
-    top:40px;
+    top:38px;
     left:86px;
   }
 
   .tips-wrap {
     position: relative;
     width: 100%;
-    height:230px;
+    height:190px;
   }
   .tips-wrap-active {
     background-color:rgba(42, 33, 10, 0.4);
   }
   .tips-icon {
     position:absolute;
-    bottom:15px;
-    left:50%;
-    width:30px;
-    height:30px;
-    margin-left:-15px;
+    bottom:35px;
+    width:20px;
+    height:20px;
+    z-index: 500;
+  }
+  .editor-active {
+    right: 35%;
+  }
+  .back-active {
+    left: 35%;
   }
   .tips-text {
-    height:140px;
+    height:80px;
     display:block;
-    background:rgba(0,0,0,0.5);
+    background:rgba(0,0,0,0.3);
     margin:0 4%;
     width:90%;
     position:absolute;
-    bottom:60px;
+    bottom:85px;
     font-size:14px;
     color:#fff;
     padding: 1%;
+    z-index: 500;
   }
   .bg-hide {
     background:transparent!important;
   }
   .tips-btn {
     position:absolute;
-    bottom:19px;
+    bottom:22px;
     right:15px;
     width:35px;
     height:20px;
@@ -134,34 +148,45 @@
     border: 0;
   }
 
-
-  @keyframes slideInUp {
-    from {
-      transform: translate3d(0, 100%, 0);
-      visibility: visible;
-    }
-
-    to {
-      transform: translate3d(0, 0, 0);
-    }
-  }
-
-  .slideInUp {
-    animation: slideInUp 1s infinite;
-  }
-
-  .music {
+  .imagex {
     position: fixed;
-    width:350px;
-    height:622px;
-    top:0;
+    width:80%;
+    top:100rpx;
     z-index: 10000;
+    min-height:75%;
+  }
+  .close {
+    position:fixed;
+    bottom:80rpx;
+    left:35%;
+    z-index: 10000;
+  }
+  .download {
+    position:fixed;
+    bottom:80rpx;
+    right:35%;
+    z-index: 10000;
+  }
+  .imagex-i {
+    width: 32px;
+    height: 32px;
+  }
+  .zIndex10 {
+    z-index: 10;
   }
 </style>
 
 <template>
   <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" @tap="onTapStop">
-    <image class="music {{isShowImage ? '': 'hide'}}" src="{{ picUrl }}" background-size="contain" @tap="onHideImage"/>
+    <image class="imagex {{isShowImage ? '': 'hide'}}" @tap.stop="onStop" mode="aspectFit" src="{{ picUrl }}"/>
+    <view class="mask {{isShowImage ? '' : 'hide'}}" @tap.stop="onStop"></view>
+    <view class="close" @tap.stop="onHideImage">
+      <image class="{{isShowImage ? 'imagex-i' : 'hide'}}" src="/images/close.png"></image>
+    </view>
+    <view class="download" @tap.stop="onSave">
+      <image class="{{isShowImage ? 'imagex-i' : 'hide'}}" src="/images/download.png"></image>
+    </view>
+
     <view class="header-wrap">
       <view class="pr">
         <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
@@ -175,11 +200,13 @@
     </view>
 
     <!-- 小标签 -->
-    <view class="pr tips-wrap {{isShowTips || tips ? 'tips-wrap-active' : ''}}" @touchstart="onTouchStart" @touchend="onTouchEnd">
-      <image class="tips-icon slideInUp {{isShowTips ? 'hide' : ''}}" src="/images/up.png"></image>
-      <view class="tips-wrap">
+    <view class="pr tips-wrap {{isShowTips || tips ? 'tips-wrap-active' : ''}}">
+      <image class="tips-icon {{(tips && !isShowTips) || !isShowTips ? 'editor-active' : 'hide'}}" src="/images/editor.png" @tap.stop="onShowEditor"></image>
+      <image class="tips-icon {{isShowTips || (!isShowTips && tips) ? 'hide' : 'editor-active'}}" src="/images/editor-default.png" @tap.stop="onShowEditor"></image>
+      <image class="tips-icon {{isShowTips ? 'back-active hide' : 'back-active back'}}" src="/images/back.png" @tap="onBackHome"></image>
+      <view class="tips-wrap {{isShowImage ? 'hide' : ''}}">
         <textarea class="tips-text {{isShowTips || tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}" @blur="onEndText" @tap.stop="onStop" value="{{tips}}" placeholder="记录练习状态和疑问，以便得到别人的指导，及回顾总结"></textarea>
-        <view class="tips-text {{!isShowTips && tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}" style="z-index: 10"></view>
+        <view class="tips-text {{!isShowTips && tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}" style="z-index: 510"></view>
         <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 15px;" @tap="onSetOk">提交</view>
         <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 70px;" @tap="onCancel">取消</view>
       </view>
@@ -218,20 +245,17 @@
       userInfo: {},
       isShowTips: false,
       isShowShare: false,
-      touchDot: {
-        x: 0,
-        y: 0
-      },
       tips: '',
       backgroundImage: '',
       extype: '',
       exTime: 0,
       continuousNum: 0,
       isShowImage: false,
-      picUrl: ''
+      picUrl: '',
+      isCover: false
     }
     onLoad() {
-      this.backgroundImage = this.$parent.globalData.backgroundImage;
+      this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
       this.extype = this.$parent.globalData['setExType']
       this.exTime = Math.abs(this.$parent.globalData['exTime'])
@@ -247,16 +271,6 @@
       } else {
         this.continuousNum = 0
       }
-
-      // 获取分享地址
-      ajax({
-        ins: this,
-        url: '/train/punch/image',
-        params: {},
-        success: (d) => {
-          this.shareUrl = d
-        }
-      })
     }
     methods = {
       onTapStop() {
@@ -266,23 +280,21 @@
         this.isShowTips = false
         this.isShowShare = false
       },
-      onTouchStart(e) {
-        this.touchDot = {
-          y: e.touches[0].pageY
-        }
+      onShowEditor(e) {
+        this.isShowTips = true
       },
-      onTouchEnd(e) {
-        const startY = this.touchDot.y
-        const endY = e.changedTouches[0].pageY
-
-        if(endY - startY < -30) {
-          this.isShowTips = true
-        }
+      onHideEditor(e) {
+        this.isShowTips = false
+      },
+      onBackHome() {
+        this.$switch('./setex')
       },
       onEndText(e) {
         this.tips = e.detail.value
       },
       onSetOk() {
+        if(!this.tips) return;
+
         setTimeout(() => {
           ajax({
             ins: this,
@@ -299,29 +311,38 @@
         }, 500)
       },
       onCancel() {
-        this.tips = ''
-        ajax({
-          ins: this,
-          url: '/train/experience',
-          params: {
-            trainId: this.$parent.globalData.curDataId,
-            content: this.tips,
-          },
-          method: 'POST',
-          success: (d) => {
-            console.log('于' + d + '提交')
-          }
-        })
+      },
+      onChangeEditor() {
+        this.isCover = false
       },
       onStop() {},
       onShowShare() {
-        this.isShowShare = true
+        // 获取分享地址
+        ajax({
+          ins: this,
+          url: '/train/punch/image',
+          params: {},
+          success: (d) => {
+            this.shareUrl = d
+            this.isShowShare = true
+            this.$apply()
+          },
+          fail: () => {
+            wx.showToast({
+              title: '获取分享图片失败',
+              icon: 'error',
+              duration: 2000,
+              mask:true
+            })
+          }
+        })
       },
       onShareAppMessage (res) {
+        console.log('分享图片路径为： ' + this.resPerfix + this.shareUrl)
         return {
           title: this.userInfo.nickName + ' ' + this.extype + ' ' + this.exTime + '分钟，第' + this.continuousNum + '天',
           path: '/pages/setex',
-          imageUrl: this.resPerfix + this.shareUrl,
+          imageUrl: this.resPerfix + this.shareUrl + '?' + Date.now(),
           complete: (e) => {
             console.log(e)
           }
@@ -339,36 +360,54 @@
             this.picUrl = this.$parent.globalData.resPerfix + d
             this.isShowImage = true
             this.$apply()
-            //文件下载
-            wx.downloadFile({
-              url: this.picUrl,
-              success: function (res) {
-                wx.saveImageToPhotosAlbum({
-                  filePath: res.tempFilePath,
-                  success:function (data) {
-                    console.log(data);
-                  },
-                  fail:function (err) {
-                    console.log(err);
-                    if (err.errMsg === "saveImageToPhotosAlbum:fail auth deny") {
-                      wx.openSetting({
-                        success(settingdata) {
-                          console.log(settingdata)
-                          if (settingdata.authSetting['scope.writePhotosAlbum']) {
-                            console.log('获取权限成功，给出再次点击图片保存到相册的提示。')
-                          }else {
-                            console.log('获取权限失败，给出不给权限就无法正常使用的提示')
-                          }
-                        }
-                      })
-                    }
-                  }
+          }
+        })
+      },
+      onSave() {
+        //文件下载
+        wx.downloadFile({
+          url: this.picUrl,
+          success: (res) => {
+            wx.saveImageToPhotosAlbum({
+              filePath: res.tempFilePath,
+              success: (data) => {
+                wx.showToast({
+                  title: '保存成功',
+                  duration: 2000,
+                  mask:true
                 })
+                this.isShowImage = false
+                this.$apply()
+                console.log(data);
+              },
+              fail: (err) => {
+                wx.showToast({
+                  title: err,
+                  icon: 'error',
+                  duration: 2000,
+                  mask:true
+                })
+                this.isShowImage = false
+                this.$apply()
+
+                console.log(err);
+                if (err.errMsg === "saveImageToPhotosAlbum:fail auth deny") {
+                  wx.openSetting({
+                    success(settingdata) {
+                      console.log(settingdata)
+                      if (settingdata.authSetting['scope.writePhotosAlbum']) {
+                        console.log('获取权限成功，给出再次点击图片保存到相册的提示。')
+                      }else {
+                        console.log('获取权限失败，给出不给权限就无法正常使用的提示')
+                      }
+                    }
+                  })
+                }
               }
             })
           }
         })
-      }
+      },
     }
   }
 </script>

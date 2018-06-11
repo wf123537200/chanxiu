@@ -159,9 +159,6 @@
       method: 'POST',
       success: (d) => {
         playAudio(this.$parent.globalData.resPerfix + 'res/music/end.mp3', 'end')
-        setTimeout(() => {
-          wx.stopBackgroundAudio()
-        }, 3000)
 
         // 跳转
         this.$parent.globalData.curDataId = d
@@ -172,9 +169,6 @@
       },
       fail: () => {
         playAudio(this.$parent.globalData.resPerfix + 'res/music/end.mp3', 'end')
-        setTimeout(() => {
-          wx.stopBackgroundAudio()
-        }, 3000)
         this.$parent.globalData.isInex = false
         this.$parent.globalData.musicUrl = ''
         this.$parent.globalData.musicTitle = ''
@@ -183,17 +177,19 @@
     })
   }
 
-  function playAudio(src, title) {
+  function playAudio(src, title, onEnded) {
     console.log(src + '' + title)
     const am = wx.getBackgroundAudioManager()
+    am.onError((e) => {
+      console.error(e)
+    })
+    am.onPlay(() => {
+    })
+    am.onEnded(() => {
+      onEnded && onEnded()
+    })
     am.title = title || src
     am.src = src
-    am.onError = (e) => {
-      console.error(e)
-    }
-    am.onPlay = () => {
-      console.log(arguments)
-    }
   }
 
   const d = new Date()
@@ -214,9 +210,17 @@
       }
     }
     onLoad(params) {
+      wx.setKeepScreenOn({
+        keepScreenOn: true,
+      })
+
       this.$parent.globalData.isInex = true
       wx.hideShareMenu()
-      playAudio(this.$parent.globalData.resPerfix + 'res/music/begin.mp3', 'begin')
+      playAudio(this.$parent.globalData.resPerfix + 'res/music/begin.mp3', 'begin', () => {
+        if(this.$parent.globalData.musicUrl) {
+          playAudio(this.$parent.globalData.musicUrl, this.$parent.globalData.musicTitle)
+        }
+      })
       this.params = params;
       this._d = null;
       const hour = parseInt(this.params.hour, 10)
@@ -237,12 +241,6 @@
         this.showTime = setTime(Object.assign(minusTime, {isFinite: this.isFinite}))
         this.$apply()
       }, TIME)
-
-      if(this.$parent.globalData.musicUrl) {
-        setTimeout(() => {
-          playAudio(this.$parent.globalData.musicUrl, this.$parent.globalData.musicTitle)
-        }, 2000)
-      }
     }
     methods = {
       onTapStop() {
