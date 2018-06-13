@@ -226,9 +226,6 @@
 
   /* 授权 */
   .auth-btn {
-    position:fixed;
-    top:50%;
-    z-index:2000;
     background:#B0976E;
     color:#fff;
     width:80px;
@@ -274,9 +271,7 @@
 </style>
 
 <template>
-  <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" @tap="onCheckUserInfo">
-    <button class="auth-btn {{isShowUserInfo ? '' : 'hide'}}" open-type="getUserInfo" @getuserinfo="getUserInfo">授 权</button>
-    <view class="mask {{isShowUserInfo ? '' : 'hide'}}"></view>
+  <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" >
     <!-- 展示栏 -->
     <view class="wrap" style="height: 300rpx;color: #bbb;margin-top:0; padding-top: 0;padding-bottom:15px;">
       <view class="header-banner-wrap">
@@ -345,7 +340,8 @@
       <hr class="hrx"/>
 
       <view>
-        <image class="btn-image" src="/images/ex-btn.png" @tap="onJump2Ex"></image>
+        <image class="btn-image {{isShowUserInfo ? 'hide' : ''}}" src="/images/ex-btn.png" @tap="onJump2Ex"></image>
+        <button class="btn-image auth-btn {{isShowUserInfo ? '' : 'hide'}}" open-type="getUserInfo" @getuserinfo="getUserInfo">授 权</button>
       </view>
     </view>
     <!-- 设置 end-->
@@ -764,6 +760,9 @@
       },
 
       onJump2Ex() {
+        this.methods.onCheckUserInfo.call(this)
+        if(this.isShowUserInfo) return
+
         try {
           Object.assign(this.$parent.globalData, {
             setExType: this.typeList1 ? this.typeList1[this.type1] : '',

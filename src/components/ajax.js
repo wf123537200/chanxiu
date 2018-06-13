@@ -40,7 +40,7 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
           } else {
             fail && fail()
             wx.showToast({
-              title: data.data.msg || '调用接口失败',
+              title: data.data.code === 500211 ? '未授权' : (data.data.msg || '调用接口失败'),
               icon: 'error',
               duration: 2000,
               mask:true
