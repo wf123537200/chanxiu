@@ -187,23 +187,21 @@
     onLoad() {
       this.exTime = this.$parent.globalData.exTime
       this.$parent.getUserInfo((userInfo) => {
-        console.log(userInfo)
         if (userInfo) {
           this.userInfo = userInfo
+          // my info
+          ajax({
+            ins: this,
+            url: '/me/info',
+            params: {},
+            success: (d) => {
+              Object.assign(this, d.trainInfo)
+              this.$apply()
+            }
+          })
         }
 
         this.$apply()
-      })
-
-      // my info
-      ajax({
-        ins: this,
-        url: '/me/info',
-        params: {},
-        success: (d) => {
-          Object.assign(this, d.trainInfo)
-          this.$apply()
-        }
       })
     }
   }
