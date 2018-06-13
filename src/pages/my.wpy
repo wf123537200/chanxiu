@@ -122,8 +122,8 @@
     <!-- user -->
     <view class="header-wrap">
       <view class="pr">
-        <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
-        <view class="nickname">{{userInfo.nickName || '未授权登录'}}</view>
+        <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
+        <view class="nickname">{{userInfo.nickName || '未授权'}}</view>
         <view class="desc">练习{{totalTrainDay}}天，今日{{exTime}}分钟</view>
       </view>
     </view>
