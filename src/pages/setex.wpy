@@ -473,14 +473,11 @@
         url: '/train/summary',
         params: {},
         success: (d) => {
-          Object.assign(this, d.trainInfo, {
-            promotionArticleName: d.promotionArticle.name,
-            promotionArticleUrl: d.promotionArticle.url,
-            promotionArticleBrief: d.promotionArticle.brief,
-          })
+          Object.assign(this, d.trainInfo)
           getCt.call(this)
           this.$parent.globalData.trainInfo = d.trainInfo
           this.$apply()
+          wx.hideLoading()
         }
       })
     } else {
@@ -638,7 +635,6 @@
             })
             this.musicList.push(t.musicList)
           })
-          wx.hideLoading()
         }
       })
 
