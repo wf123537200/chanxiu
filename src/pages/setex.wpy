@@ -226,6 +226,15 @@
     padding:2px 7px;
     border-radius:20px;
   }
+  .time-notice {
+    position:absolute;
+    bottom:21px;
+    left:20px;
+    font-size:0.6rem;
+    color: #B0976E;
+    padding:2px 7px;
+    border-radius:20px;
+  }
   .music-over-active {
     border:2px solid #B0976E;
   }
@@ -383,6 +392,7 @@
         </picker-view>
         <view class="time-text">分</view>
       </view>
+      <view class="time-notice">练习时请勿关闭屏幕或者退出小程序</view>
       <view class="ok-btn" @tap="onSetTime">确定</view>
     </setTime>
 
@@ -586,6 +596,7 @@
       if(setTimeL) {
         this.hour = this.oHour = setTimeL.hour
         this.minute = this.oMinute = setTimeL.minute
+        this.isFinite = this.hour === '00' && this.minute === '00'
       }
       if(exTypeL) {
         this.type1 = exTypeL.type1
@@ -729,6 +740,9 @@
           const am = wx.getBackgroundAudioManager()
           am.title = this.$parent.globalData.musicTitle = title
           am.src = this.$parent.globalData.musicUrl = this.resPirfix + src
+        } else {
+          this.$parent.globalData.musicTitle = ''
+          this.$parent.globalData.musicUrl = ''
         }
 
         // 调用停止播放
@@ -813,7 +827,11 @@
 
         if(e.detail.userInfo) {
           this.userInfo = e.detail.userInfo
-          wx.reLaunch({url: '/pages/setex'})
+           setTimeout(() => {
+            if(!this.$parent.accessToken) {
+              wx.reLaunch({url: '/pages/setex'})
+            }
+           }, 1000)
         }
       },
       // 跳转相关

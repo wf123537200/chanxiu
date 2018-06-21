@@ -185,7 +185,6 @@
       }
     }
     onLoad() {
-      this.exTime = this.$parent.globalData.exTime
       this.$parent.getUserInfo((userInfo) => {
         if (userInfo) {
           this.userInfo = userInfo
@@ -196,6 +195,7 @@
             params: {},
             success: (d) => {
               Object.assign(this, d.trainInfo)
+              this.exTime = d.trainInfo.todayDuration
               this.$apply()
             }
           })

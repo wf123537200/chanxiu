@@ -39,12 +39,23 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
             success && success(data.data.data)
           } else {
             fail && fail()
-            wx.showToast({
-              title: data.data.code === 500211 ? '未授权' : (data.data.msg || '调用接口失败'),
-              icon: 'error',
-              duration: 2000,
-              mask:true
-            })
+            if(data.data.code === 500211) {
+              wx.setStorage({
+                key: 'token',
+                data: {},
+                success: function(res){
+                  console.log('清除 token 成功')
+                  wx.reLaunch({url: '/pages/setex'})
+                }
+              })
+            } else {
+              wx.showToast({
+                title:  data.data.msg || '调用接口失败',
+                icon: 'error',
+                duration: 2000,
+                mask:true
+              })
+            }
 
             throw new Error(data.data.msg + ':' + url)
           }

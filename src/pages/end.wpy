@@ -266,11 +266,16 @@
 
         this.$apply()
       })
-      if(this.$parent.globalData.trainInfo) {
-        this.continuousNum = this.$parent.globalData.trainInfo.continuousNum
-      } else {
-        this.continuousNum = 0
-      }
+      ajax({
+        ins: this,
+        url: '/train/summary',
+        params: {},
+        success: (d) => {
+          this.continuousNum = d.trainInfo.continuousNum || 0
+          this.exTimeX = d.trainInfo.todayDuration
+          this.$apply()
+        }
+      })
     }
     methods = {
       onTapStop() {
@@ -340,7 +345,7 @@
       onShareAppMessage (res) {
         console.log('分享图片路径为： ' + this.resPerfix + this.shareUrl)
         return {
-          title: this.userInfo.nickName + ' ' + this.extype + ' ' + this.exTime + '分钟，第' + this.continuousNum + '天',
+          title: this.userInfo.nickName + this.extype + this.exTimeX + '分钟，连续第' + this.continuousNum + '天',
           path: '/pages/setex',
           imageUrl: this.resPerfix + this.shareUrl + '?' + Date.now(),
           complete: (e) => {

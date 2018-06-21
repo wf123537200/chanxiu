@@ -60,6 +60,10 @@ export default class extends wepy.app {
   }
 
   onShow = () => {
+    wx.setKeepScreenOn({
+      keepScreenOn: true,
+    })
+
     if(this.globalData.musicUrl && this.globalData.musicTitle && this.globalData.isInex) {
       wx.playBackgroundAudio()
     }
@@ -95,7 +99,8 @@ export default class extends wepy.app {
 
   getUserInfo(cb) {
     const that = this
-    if (this.globalData.userInfo) {
+    const d = wx.getStorageSync('token')
+    if (this.globalData.userInfo && d && d.accessToken) {
       cb && cb(this.globalData.userInfo)
       return this.globalData.userInfo
     }
@@ -105,14 +110,12 @@ export default class extends wepy.app {
         console.log('登录成功, %o', data)
         wx.getUserInfo({
           success (userinfo) {
-            that.globalData.authInfo = userinfo
-            that.globalData.userInfo = userinfo.userInfo
-            cb && cb(userinfo.userInfo);
-            console.log('授权成功 %o', userinfo.userInfo)
-
-            const d = wx.getStorageSync('token')
-            if(d) {
+            if(d && d.accessToken) {
               Object.assign(that, d)
+              that.globalData.authInfo = userinfo
+              that.globalData.userInfo = userinfo.userInfo
+              cb && cb(userinfo.userInfo);
+              console.log('正在使用token： ' + d.accessToken)
             } else {
               ajax({
                 ins: that,
@@ -125,6 +128,10 @@ export default class extends wepy.app {
                 method: 'POST',
                 success: (d) => {
                   Object.assign(that, d)
+                  that.globalData.authInfo = userinfo
+                  that.globalData.userInfo = userinfo.userInfo
+                  cb && cb(userinfo.userInfo);
+                  console.log('授权成功 %o, token ok', userinfo.userInfo)
                   wx.setStorage({
                     key: 'token',
                     data: d,
@@ -145,6 +152,10 @@ export default class extends wepy.app {
                     method: 'POST',
                     success: (d) => {
                       Object.assign(that, d)
+                      that.globalData.authInfo = userinfo
+                      that.globalData.userInfo = userinfo.userInfo
+                      cb && cb(userinfo.userInfo);
+                      console.log('授权成功 %o, token ok', userinfo.userInfo)
                     },
                     fail: () => {
                       console.log('多次授权失败')
