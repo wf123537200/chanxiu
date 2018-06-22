@@ -195,7 +195,7 @@
             params: {},
             success: (d) => {
               Object.assign(this, d.trainInfo)
-              this.exTime = d.trainInfo.todayDuration
+              this.exTime = d.trainInfo.todayDuration || 0
               this.$apply()
             }
           })
