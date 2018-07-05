@@ -171,6 +171,36 @@ export default class extends wepy.app {
         });
       }
     });
+
+    wx.getNetworkType({
+      success: (res) => {
+        const d = wx.getStorageSync('exTimeOffline')
+        if(!d || (d && d.timeSet)) return
+
+        const networkType = res.networkType
+        if(networkType !== 'none' && networkType !== 'unkonwn') {
+          ajax({
+            ins: this,
+            url: '/train/submit',
+            params: d,
+            method: 'POST',
+            success: () => {
+              console.log('补充提交练习时间成功')
+              wx.setStorage({
+                key: 'exTimeOffline',
+                data: {},
+                success: function(){
+                  console.log('清除 补充提交练习')
+                }
+              })
+            },
+            fail: () => {
+              console.log('提交练习时间失败')
+            }
+          })
+        }
+      }
+    })
   }
 }
 </script>

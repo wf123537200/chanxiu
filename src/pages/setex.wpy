@@ -161,11 +161,12 @@
     border-bottom:1px solid #ccc;
   }
   .music-type {
-    padding:1px 10px;
-    height: 20px;
+    padding:1px 0;
+    height:20px;
     border-radius:5px;
     font-size:0.8rem;
-    min-width:26px;
+    min-width:40px;
+    text-align:center;
   }
   .music-select {
     height:50px;
@@ -419,7 +420,7 @@
             <view @tap="onMusicTypeClick({{index}})" class="music-type {{musicType === index ? 'actived' : ''}}" >{{item}}</view>
           </repeat>
         </view>
-        <scroll-view scroll-y style="height: 200px;">
+        <scroll-view scroll-y style="height: 235px;">
           <view class="music-select dark {{musicType === 0 ? '' : 'hide'}}" @tap="onMusicClick(0)">
             <image style="width:25px; height:30px; margin:10px 10px 10px 15px;" src="/images/music.png"></image>
             <view class="music-text" style="padding-top:15px;">无需引导音频</view>
@@ -428,15 +429,15 @@
             </view>
           </view>
           <repeat for="{{musicList[musicType]}}" key="index" index="index" item="item">
-            <view class="music-select {{index % 2 !== 0 ? 'dark' : ''}}" @tap="onMusicClick({{index + 1}}, {{item.url}}, {{item.musicName}})">
-              <image class="music-icon {{musicSelectIndex === index + 1 ? 'hide' : ''}}" src="/images/earphone.png"></image>
-              <image class="music-icon {{musicSelectIndex !== index + 1 ? 'hide' : ''}}" src="/images/earphone-actived.png"></image>
+            <view class="music-select {{index % 2 !== 0 ? 'dark' : ''}}" @tap="onMusicClick({{item.id}}, {{item.url}}, {{item.musicName}})">
+              <image class="music-icon {{musicSelectIndex === item.id ? 'hide' : ''}}" src="/images/earphone.png"></image>
+              <image class="music-icon {{musicSelectIndex !== item.id ? 'hide' : ''}}" src="/images/earphone-actived.png"></image>
               <view class="music-text">
                 <view>{{item.musicName}}</view>
                 <view class="music-time">{{item.album}}   {{item.duration}}</view>
               </view>
               <view class="music-select-btn">
-                <view :class="{'hide': musicSelectIndex !== index + 1, 'music-actived': true}"></view>
+                <view :class="{'hide': musicSelectIndex !== item.id, 'music-actived': true}"></view>
               </view>
             </view>
           </repeat>
@@ -760,28 +761,40 @@
 
         // music带入
         if(+musicSelectIndex) {
-          const musicObj = this.musicList[musicType][this.musicSelectIndex - 1]
-          this.music = musicObj.musicName
-          this.musicId = musicObj.id
-
-          if(isMusicStopOnOver) {
-            const d = musicObj.duration.split(':')
-            this.oHour = this.hour
-            this.oMinute = this.minute
-            this.hour = '00'
-
-            this.minute = (d[1] !== '00' ? parseInt(d[0], 10) + 1 : parseInt(d[0], 10))
-            if(this.minute < 10) this.minute = '0' + this.minute;
-            else this.minute += ''
-
-            this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
-            this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+          let musicObj = '';
+          this.musicList.forEach(it => {
+            let x = it.find(t => t.id === musicSelectIndex)
+            if(x) musicObj = x
+          })
+          if(!musicObj) {
+            this.music = '无'
+            this.musicId = ''
           } else {
-            this.hour = this.oHour || '00'
-            this.minute = this.oMinute || '00'
-            this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
-            this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+            this.music = musicObj.musicName
+            this.musicId = musicObj.id
+
+            if(isMusicStopOnOver) {
+              const d = musicObj.duration.split(':')
+              this.oHour = this.hour
+              this.oMinute = this.minute
+              this.hour = '00'
+
+              this.minute = (d[1] !== '00' ? parseInt(d[0], 10) + 1 : parseInt(d[0], 10))
+              if(this.minute < 10) this.minute = '0' + this.minute;
+              else this.minute += ''
+
+              this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
+              this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+            } else {
+              this.hour = this.oHour || '00'
+              this.minute = this.oMinute || '00'
+              this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
+              this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+            }
           }
+        } else {
+          this.music = '无'
+          this.musicId = ''
         }
 
         wx.pauseBackgroundAudio()

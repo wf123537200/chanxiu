@@ -266,6 +266,27 @@
 
         this.$apply()
       })
+
+      ajax({
+        ins: this,
+        url: '/train/submit',
+        params:this.$parent.globalData.submitData,
+        method: 'POST',
+        success: (d) => {
+          this.$parent.globalData.curDataId = d
+          wx.setStorage({
+            key: 'exTimeOffline',
+            data: {},
+            success: function(){
+              console.log('清除 补充提交练习')
+            }
+          })
+        },
+        fail: () => {
+          console.log('提交失败~~')
+        }
+      })
+
       ajax({
         ins: this,
         url: '/train/summary',
@@ -345,7 +366,7 @@
       onShareAppMessage (res) {
         console.log('分享图片路径为： ' + this.resPerfix + this.shareUrl)
         return {
-          title: this.userInfo.nickName + this.extype + this.exTimeX + '分钟，连续第' + this.continuousNum + '天',
+          title: this.userInfo.nickName + this.extype + this.exTime + '分钟，连续第' + this.continuousNum + '天',
           path: '/pages/setex',
           imageUrl: this.resPerfix + this.shareUrl + '?' + Date.now(),
           complete: (e) => {

@@ -138,7 +138,7 @@
 
     const second = this._d.getSeconds()
 
-    return res >= 1 && second !== 0 ? res - 1 : res
+    return res >= 1 && second !== 0 ? isFinite ? res : res - 1 : res
   }
 
   function onEnd() {
@@ -147,34 +147,34 @@
     const exTime = this.$parent.globalData.exTime = getExTime.call(this, {params: this.params, hour: this.curTime.hour, minute: this.curTime.minute})
     wx.stopBackgroundAudio()
 
-    ajax({
-      ins: this,
-      url: '/train/submit',
-      params: {
-        timeSet: exTime * 60,
-        trainMethodIds: this.$parent.globalData.trainMethodIds,
-        musicId: this.$parent.globalData.musicId,
-        addDuration: 0
-      },
-      method: 'POST',
-      success: (d) => {
-        playAudio(this.$parent.globalData.resPerfix + 'res/music/end.mp3', 'end')
+    const submitData = this.$parent.globalData.submitData = {
+      timeSet: exTime * 60,
+      trainMethodIds: this.$parent.globalData.trainMethodIds,
+      musicId: this.$parent.globalData.musicId,
+      addDuration: 0
+    }
 
-        // 跳转
-        this.$parent.globalData.curDataId = d
-        this.$parent.globalData.musicUrl = ''
-        this.$parent.globalData.musicTitle = ''
-        this.$redirect('./end')
-
-      },
-      fail: () => {
-        playAudio(this.$parent.globalData.resPerfix + 'res/music/end.mp3', 'end')
-        this.$parent.globalData.isInex = false
-        this.$parent.globalData.musicUrl = ''
-        this.$parent.globalData.musicTitle = ''
-        this.$redirect('./end')
+    wx.getNetworkType({
+      success: (res) => {
+        const networkType = res.networkType
+        if(networkType === 'none' || networkType === 'unkonwn') {
+          wx.setStorage({
+            key: 'exTimeOffline',
+            data: submitData,
+            success: function(res){
+              console.log('本地存储 exTimeOffline 成功')
+            }
+          })
+        }
       }
     })
+
+    playAudio(this.$parent.globalData.resPerfix + 'res/music/end.mp3', 'end')
+
+    // 跳转
+    this.$parent.globalData.musicUrl = ''
+    this.$parent.globalData.musicTitle = ''
+    this.$redirect('./end')
   }
 
   function playAudio(src, title, onEnded) {
