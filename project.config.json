@@ -11,5 +11,37 @@
 	"appid": "wxe11f1717c391c594",
 	"projectname": "cx",
 	"miniprogramRoot": "./dist",
-	"condition": {}
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"miniprogram": {
+			"current": 1,
+			"list": [
+				{
+					"id": -1,
+					"name": "文字信息打卡",
+					"pathName": "pages/ex-text-mark",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "mark",
+					"pathName": "pages/ex-text-mark"
+				}
+			]
+		}
+	}
 }

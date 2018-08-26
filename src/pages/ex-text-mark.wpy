@@ -1,0 +1,142 @@
+<style lang='scss'>
+  @import '../zanui/common';
+
+  page {
+    position: relative;
+    background: #eee;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .userinfo-avatar {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+  }
+  .user-mark {
+    position: absolute;
+    top: 15px;
+    right: 60px;
+    width: 190px;
+    height: auto;
+    line-height: 1.5;
+    padding: 10px;
+    background-color: #fff;
+    box-sizing: border-box;
+    font-size: 12px;
+    color: $gray-darker;
+  }
+  .user-mark:after {
+    content: " ";
+    position: absolute;
+    right: -5px;
+    top: 10px;
+    width: 10px;
+    height: 10px;
+    background-color: #fff;
+    z-index: 2;
+    transform: rotate(45deg);
+  }
+
+  .cancel-btn {
+    color: #fff;
+    border-radius: 20px;
+    width: 120px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    font-size: 13px;
+    background-color: $gray-dark;
+  }
+  .confirm-btn {
+    background-color: $light-orange;
+  }
+  .copy-btn {
+    position: absolute;
+    left: 50%;
+    bottom: 25px;
+    margin-left: -60px;
+  }
+  .user-mark-pannel {
+    position: absolute;
+    left: 0;
+    bottom: 84px;
+    width: 100%;
+    min-height: 100px;
+    border-top: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
+    padding: 10px 10px 15px 10px;
+    box-sizing: border-box;
+    text-align: left;
+    line-height: 1.5;
+    font-size: 12px;
+    color: $text-color;
+    background-color: #fff;
+  }
+</style>
+
+<template>
+  <view class="container">
+    <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
+    <view class="user-mark">
+      【静坐-内观30分钟连续25天】
+       感觉被舒服的身体包围
+    </view>
+
+    <view class="user-mark-pannel">
+      <view>【静坐-内观30分钟连续25天】</view>
+      <view>感觉被舒服的身体包围</view>
+    </view>
+
+    <view class="copy-btn cancel-btn confirm-btn" @tap="copy">
+      复制打卡信息
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import {ajax} from '../components/ajax.js'
+
+  export default class Tag extends wepy.page {
+    config = {
+      disableScroll: false,
+      navigationBarTitleText: '持一学院-精修1班'
+    }
+    components = {
+    }
+    data = {
+      userInfo: {},
+      text: '【静坐-内观30分钟连续25天】\n感觉被舒服的身体包围'
+    }
+    onGotUserInfo(e) {
+    }
+    methods = {
+      copy() {
+        wx.setClipboardData({
+          data: this.text,
+          success: function(res) {
+            wx.showToast({
+              title: '拷贝成功',
+              icon: 'error',
+              duration: 2000,
+              mask:true
+            })
+          }
+        })
+      }
+    }
+    onLoad() {
+      this.$parent.getUserInfo((userInfo) => {
+        if (userInfo) {
+          this.userInfo = userInfo
+        }
+
+        this.$apply()
+      })
+    }
+  }
+</script>

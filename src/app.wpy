@@ -14,6 +14,14 @@
 .hide {
   display: none!important;
 }
+.button::after {
+  border: 0;
+}
+.button {
+  padding: 0;
+  border: 0;
+  display: block;
+}
 </style>
 
 <script>
@@ -26,11 +34,16 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/setex',
+      'pages/class',
       'pages/end',
       'pages/out',
       'pages/ex',
       'pages/aboutme',
       'pages/my',
+      'pages/ex-briefing',
+      'pages/ex-diary',
+      'pages/ex-diary-add',
+      'pages/ex-text-mark'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -90,85 +103,93 @@ export default class extends wepy.app {
     this.use('requestfix')
     this.use('promisify');
   }
-
   onLaunch() {
-    this.getUserInfo((userinfo) => {
-      this.globalData.userInfo = userinfo
-    })
-  }
 
-  getUserInfo(cb) {
+  }
+  getUserInfo(cb, userInfo) {
     const that = this
     const d = wx.getStorageSync('token')
-    if (this.globalData.userInfo && d && d.accessToken) {
+
+    if (userInfo) {
+      this.globalData.authInfo = userInfo || {}
+      this.globalData.userInfo = userInfo.userInfo || {}
+      userInfo = userInfo.userInfo
+    } else {
+      Object.assign(that, d)
       cb && cb(this.globalData.userInfo)
-      return this.globalData.userInfo
+      return
+    }
+
+    if (userInfo && d && d.accessToken) {
+      Object.assign(that, d)
+      cb && cb(userInfo)
+      return userInfo
+    } else if (cb && !userInfo && !this.globalData.userInfo){
+      wx.showToast({
+        title: '请登陆',
+        icon: 'error',
+        duration: 2000,
+        mask:true
+      })
+      return
     }
 
     wx.login({
       success (data) {
         console.log('登录成功, %o', data)
-        wx.getUserInfo({
-          success (userinfo) {
-            if(d && d.accessToken) {
+
+        if(d && d.accessToken) {
+          Object.assign(that, d)
+          // that.globalData.authInfo = userinfo
+          // that.globalData.userInfo = userinfo.userInfo
+          // cb && cb(userinfo.userInfo);
+          console.log('正在使用token： ' + d.accessToken)
+        } else {
+          ajax({
+            ins: that,
+            url: '/weixin/token',
+            params: {
+              authCode: data.code,
+              nickName: userInfo.nickName,
+              avatarUrl: userInfo.avatarUrl,
+            },
+            method: 'POST',
+            success: (d) => {
               Object.assign(that, d)
-              that.globalData.authInfo = userinfo
-              that.globalData.userInfo = userinfo.userInfo
-              cb && cb(userinfo.userInfo);
-              console.log('正在使用token： ' + d.accessToken)
-            } else {
+              // that.globalData.authInfo = userinfo
+              // that.globalData.userInfo = userinfo.userInfo
+              cb && cb(userInfo);
+              console.log('授权成功 %o, token ok', userInfo)
+              wx.setStorage({
+                key: 'token',
+                data: d,
+                success: function(res){
+                  console.log('本地存储 token 成功')
+                }
+              })
+            },
+            fail: () => {
               ajax({
                 ins: that,
-                url: '/weixin/token',
+                url: '/weixin/token/refresh',
                 params: {
                   authCode: data.code,
-                  nickName: userinfo.userInfo.nickName,
-                  avatarUrl: userinfo.userInfo.avatarUrl,
+                  nickName: userInfo.nickName,
+                  avatarUrl: userInfo.avatarUrl,
                 },
                 method: 'POST',
                 success: (d) => {
                   Object.assign(that, d)
-                  that.globalData.authInfo = userinfo
-                  that.globalData.userInfo = userinfo.userInfo
-                  cb && cb(userinfo.userInfo);
-                  console.log('授权成功 %o, token ok', userinfo.userInfo)
-                  wx.setStorage({
-                    key: 'token',
-                    data: d,
-                    success: function(res){
-                      console.log('本地存储 token 成功')
-                    }
-                  })
+                  cb && cb(userInfo);
+                  console.log('授权成功 %o, token ok', userInfo)
                 },
                 fail: () => {
-                  ajax({
-                    ins: that,
-                    url: '/weixin/token/refresh',
-                    params: {
-                      authCode: data.code,
-                      nickName: userinfo.userInfo.nickName,
-                      avatarUrl: userinfo.userInfo.avatarUrl,
-                    },
-                    method: 'POST',
-                    success: (d) => {
-                      Object.assign(that, d)
-                      that.globalData.authInfo = userinfo
-                      that.globalData.userInfo = userinfo.userInfo
-                      cb && cb(userinfo.userInfo);
-                      console.log('授权成功 %o, token ok', userinfo.userInfo)
-                    },
-                    fail: () => {
-                      console.log('多次授权失败')
-                    }
-                  })
+                  console.log('多次授权失败')
                 }
               })
             }
-          },
-          fail: function() {
-            console.log(arguments)
-          }
-        });
+          })
+        }
       }
     });
 

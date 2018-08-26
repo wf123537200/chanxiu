@@ -102,7 +102,7 @@
     methods = {
       onBackHome() {
         this.$switch('./my')
-      },
+      }
     }
   }
 </script>

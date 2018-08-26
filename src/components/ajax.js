@@ -4,7 +4,7 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
   if(!ins) console.error('没有传入实体！');
 
   const {ajaxPerfix, resPerfix} = ins.globalData || ins.$parent.globalData;
-  const token = url !== '/weixin/token' ? ins.accessToken || ins.$parent.accessToken : ''
+  const token = url !== '/weixin/token' ? ins.accessToken || (ins.$parent ? ins.$parent.accessToken || '' : '') : ''
 
   wx.getNetworkType({
     success: (res) => {

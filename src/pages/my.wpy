@@ -23,7 +23,6 @@
     font-size:14px;
     background:#fff;
     border-bottom:1px solid #ddd;
-
   }
   .userinfo-avatar {
     position: absolute;
@@ -39,6 +38,11 @@
     position:absolute;
     top:7px;
     left:86px;
+    color:#333;
+    font-size:14px;
+    background:#fff;
+    display: inline-block;
+    outline: 0;
   }
   .stars {
     position:absolute;
@@ -123,7 +127,9 @@
     <view class="header-wrap">
       <view class="pr">
         <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
-        <view class="nickname">{{userInfo.nickName || '未授权'}}</view>
+        <button class="nickname button" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
+          {{userInfo.nickName || '未授权'}}
+        </button>
         <view class="desc">练习{{totalTrainDay}}天，今日{{exTime}}分钟</view>
       </view>
     </view>
@@ -140,7 +146,7 @@
           <view class="inline num">{{averageDayTime}}</view><view class="inline">分钟</view>
         </view>
         <view>
-          <view class="header-banner">总次数</view>
+          <view class="header-banner">单次最多</view>
           <view class="inline num">{{totalCount}}</view><view class="inline">次</view>
         </view>
       </view>
@@ -153,6 +159,13 @@
     <view class="wrap" style="height: 80%;font-size: 0.8rem;margin-top: 10px;padding:0;color: #B0976E;">
       <view class="m10 pr about-me" @tap="onGoAboutMe">
         <view class="ml10p">关于我们</view>
+        <view class="arrow">></view>
+      </view>
+    </view>
+
+    <view class="wrap" style="height: 80%;font-size: 0.8rem;margin-top: 10px;padding:0;color: #B0976E;">
+      <view class="m10 pr about-me" @tap="suggest">
+        <view class="ml10p">反馈我的建议</view>
         <view class="arrow">></view>
       </view>
     </view>
@@ -179,15 +192,11 @@
       continuousNum: 0,
       exTime: 0
     }
-    methods = {
-      onGoAboutMe() {
-        this.$navigate('./aboutme', {hour: this.hour, minute: this.minute});
-      }
-    }
-    onLoad() {
+    onGotUserInfo(e) {
       this.$parent.getUserInfo((userInfo) => {
         if (userInfo) {
           this.userInfo = userInfo
+
           // my info
           ajax({
             ins: this,
@@ -202,7 +211,15 @@
         }
 
         this.$apply()
-      })
+      }, e.detail)
+    }
+    methods = {
+      onGoAboutMe() {
+        this.$navigate('./aboutme', {hour: this.hour, minute: this.minute});
+      },
+      suggest() {
+        this.$navigate('./ex-text-mark');
+      }
     }
   }
 </script>

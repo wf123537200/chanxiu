@@ -1,0 +1,521 @@
+<style lang='scss'>
+  @import '../zanui/common';
+
+  page {
+    background: #eee;
+  }
+
+  .header-wrap {
+    position:relative;
+    height:69px;
+    width:100%;
+    color:#333;
+    font-size:14px;
+    background:#fff;
+    border-bottom:1px solid #ddd;
+  }
+  .pr {
+    position:relative;
+  }
+  .userinfo-avatar {
+    position: absolute;
+    top: 12px;
+    left: 20px;
+    width:44px;
+    height:44px;
+  }
+  .nickname {
+    position:absolute;
+    top:7px;
+    left:86px;
+  }
+  .desc {
+    position: absolute;
+    top: 40px;
+    left: 85px;
+    color: $gray-dark;
+  }
+
+  .header-pannel {
+    position: relative;
+    width: 100%;
+    align-self: start;
+    font-size: 13px;
+    height: 25px;
+    line-height: 25px;
+    color: #ccc;
+    box-sizing: border-box;
+  }
+  .add-flag {
+    position: absolute;
+    right: 10px;
+    top: 4px;
+    font-size: 14px;
+    color: #fff;
+    background-color: $text-color;
+    border-radius: 20px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+  }
+  .ex-data-pannel {
+    display: flex;
+    background-color: #fff;
+    width: 100%;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.5;
+  }
+  .ex-data {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+  .cur-times {
+    color: $light-orange;
+  }
+  .ex-desc {
+    color: $gray-dark;
+  }
+  .gray-button {
+    border: 1px solid $light-orange;
+    color: $light-orange;
+    border-radius: 50rem;
+    padding: 0 15px;
+    font-size: 14px;
+    height:25px;
+    line-height:25px;
+    box-sizing: border-box;
+  }
+  .mr-20 {
+    margin-right: 20px;
+  }
+  .pl-20 {
+    padding-left: 20px;
+  }
+
+  .wrap {
+    width: 100%;
+    background-color: #fff;
+    padding: 15px 0 5px 0;
+  }
+  .pr {
+    position:relative;
+  }
+  .header-banner-wrap {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width:80%;
+    margin-left: 10%;
+    margin-top:5px;
+    margin-bottom: 10px;
+    font-size: 0.8rem
+  }
+  .header-cols {
+    width: 33%;
+    border-right: 1px solid #ccc;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+  .header-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom:10px;
+    color: $text-color;
+    text-align: center;
+  }
+  .num {
+    font-size: 18px;
+    margin-right: 10rpx;
+    font-weight: bold;
+  }
+  .unit {
+    font-size: 14px;
+    color: $light-orange;
+  }
+  .flex-r-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ex {
+    color: #B0976E;
+    font-size: 0.8rem;
+  }
+  .condition-pannel {
+    display: flex;
+    align-items: start;
+    margin-bottom: 20px;
+  }
+  .condition-btn {
+    background-color: $light-orange;
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 5px;
+    margin-right: 10px;
+    border-radius: 3px;
+  }
+  .default-btn {
+    background-color: #fff;
+    color: $border-color;
+    font-size: 12px;
+    padding: 2px 5px;
+    margin-right: 10px;
+    border-radius: 3px;
+    border: 1px solid $border-color;
+  }
+
+  .ex-list-pannel {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    background-color: #fff;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .ex-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0 20px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    font-size: 12px;
+    color: $gray-dark;
+  }
+  .flex-r {
+    display: flex;
+    width: 100%;
+  }
+  .ex-title {
+    flex: 1;
+    color: $gray-darker;
+  }
+  .ex-date {
+    color: $gray-dark;
+  }
+  .line-2 {
+    line-height: 2;
+  }
+
+  .ex-process-pannel {
+    display: flex;
+    width: 100%;
+    margin-top: 5px;
+  }
+  .read-all {
+    flex: 1;
+    font-size: 12px;
+    color: $light-orange;
+  }
+  .process-btns {
+
+  }
+  .process-btn {
+    width: 15px;
+    height: 15px;
+    margin-left: 20px;
+  }
+
+  .popup-headerr {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: $gray-darker;
+  }
+  .flex-1 {
+    flex: 1;
+  }
+  .close-icon {
+    width: 15px;
+    height: 15px;
+  }
+  .popup-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+  }
+  .mr-20 {
+    margin-right: 20px;
+  }
+  .cancel-btn {
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    background-color: $gray-dark;
+  }
+  .confirm-btn {
+    background-color: $light-orange;
+  }
+  .edit-content {
+    height: 180px;
+    background-color: #fff;
+    border: 1px solid $border-color;
+    margin: 0 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    width: auto;
+    line-height: 1.5;
+    font-size: 12px;
+  }
+  .delete-ex-desc {
+    margin: 10px 15px;
+    color: $text-color;
+    font-size: 16px;
+  }
+
+  .fixed-pannel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .7);
+    z-index: 2;
+  }
+  .features-list {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+  }
+  .features-item {
+    line-height: 50px;
+    height: 50px;
+    width: 100%;
+    text-align: center;
+  }
+  .b-border {
+    border-bottom: 1px solid $border-color;
+  }
+</style>
+
+<template>
+  <view class="container">
+    <!-- user -->
+    <view class="header-wrap">
+      <view class="pr">
+        <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
+        <view class="nickname">{{userInfo.nickName || '未授权'}}</view>
+        <view class="desc">练习{{totalTrainDay}}天，今日{{exTime}}分钟</view>
+      </view>
+    </view>
+
+    <view class="header-pannel pl-20">
+      练习数据
+    </view>
+    <view class="pl-20 ex-data-pannel">
+      <view class="ex-data">
+        <view class="cur-times">今天练习2次60分钟</view>
+        <view class="">连续练习2天，最大练习55天</view>
+      </view>
+      <view class="gray-button mr-20">去打卡</view>
+    </view>
+
+    <!-- 数据 -->
+    <view class="wrap ex">
+      <view class="condition-pannel pl-20">
+        <view class="condition-btn">本周</view>
+        <view class="default-btn">本月</view>
+        <view class="default-btn">全部</view>
+      </view>
+      <view class="header-banner-wrap">
+        <view class="header-cols">
+          <view class="header-banner">总天数</view>
+          <view class="flex-r-center">
+            <view class="inline num">{{totalTrainDay}}</view><view class="inline unit">天</view>
+          </view>
+        </view>
+        <view class="header-cols">
+          <view class="header-banner">日均时长</view>
+          <view class="flex-r-center">
+            <view class="inline num">{{averageDayTime}}</view><view class="inline unit">分钟</view>
+          </view>
+        </view>
+        <view class="header-cols">
+          <view class="header-banner">总次数</view>
+          <view class="flex-r-center">
+            <view class="inline num">{{totalCount}}</view><view class="inline unit">次</view>
+          </view>
+        </view>
+        <view class="header-cols">
+          <view class="header-banner">平均每次</view>
+          <view class="flex-r-center">
+            <view class="inline num">{{totalCount}}</view><view class="inline unit">分钟</view>
+          </view>
+        </view>
+        <view class="header-cols">
+          <view class="header-banner">单次最多</view>
+          <view class="flex-r-center">
+            <view class="inline num">{{totalCount}}</view><view class="inline unit">分钟</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <!-- 数据 end -->
+
+    <view class="header-pannel pl-20">
+      练习记录
+      <view class="add-flag">+</view>
+    </view>
+    <view class="ex-list-pannel">
+      <view class="condition-pannel pl-20">
+        <view class="condition-btn">所有</view>
+        <view class="default-btn">状态记录</view>
+        <view class="default-btn">练习日记</view>
+      </view>
+
+      <view class="ex-content">
+        <view class="flex-r">
+          <view class="ex-title">静坐观呼吸30分钟</view>
+          <view class="ex-date">5分钟前</view>
+        </view>
+        <view class="flex-r line-2">
+          我今天静坐了30分钟
+        </view>
+        <view class="ex-process-pannel">
+          <view class="read-all" @tap="seeExDiary">查看全文</view>
+          <view class="process-btns">
+            <image class="process-btn" @tap="edit" src="/images/earphone-actived.png"/>
+            <image class="process-btn" @tap="deleteEx" src="/images/earphone-actived.png"/>
+            <image class="process-btn" @tap="processShow" src="/images/earphone-actived.png"/>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <editEx style="width: 100%" class="pr">
+      <view class="popup-headerr">
+        <view class="flex-1">
+          记录练习状态
+        </view>
+        <image class="close-icon" src="/images/close-icon.png" @tap="editExCancel"/>
+      </view>
+      <textarea class="edit-content" auto-focus placeholder="请输入练习简报" />
+      <view class="popup-footer">
+        <view class="cancel-btn mr-20" @tap="editExCancel">取消</view>
+        <view class="cancel-btn confirm-btn" @tap="editInfoSave">保存</view>
+      </view>
+    </editEx>
+    <deleteEx>
+      <view class="popup-headerr">
+        <view class="flex-1">
+          删除练习状态确认
+        </view>
+        <image class="close-icon" src="/images/close-icon.png" @tap="deleteExCancel"/>
+      </view>
+      <view class="delete-ex-desc">确定删除这条练习状态吗？</view>
+      <view class="popup-footer">
+        <view class="cancel-btn mr-20" @tap="deleteExCancel">取消</view>
+        <view class="cancel-btn confirm-btn" @tap="deleteComfirm">删除</view>
+      </view>
+    </deleteEx>
+
+    <view class="fixed-pannel" wx:if="{{showFeaturesList}}" @tap.stop="processHide">
+      <view class="features-list">
+        <view class="features-item b-border" @tap.stop="toExDiary">日记</view>
+        <view class="features-item" @tap.stop="toExDiaryAdd">补录</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import {ajax} from '../components/ajax.js'
+  import zanPop from '../components/zan-popup'
+
+  export default class Tag extends wepy.page {
+    config = {
+      disableScroll: false,
+      navigationBarTitleText: '练习简报'
+    }
+    components = {
+      deleteEx: zanPop,
+      editEx: zanPop
+    }
+    data = {
+      totalTrainDay: 1,
+      averageDayTime: 60,
+      totalCount: 22,
+      continuousNum: 3,
+      showFeaturesList: false,
+      userInfo: {}
+    }
+    onGotUserInfo(e) {
+    }
+    methods = {
+      onShareAppMessage (res) {
+        return {
+          title: '持壹',
+          path: 'pages/setex',
+          // imageUrl: this.$parent.globalData.resPerfix + this.shareUrl + '?' + Date.now(),
+          complete: (e) => {
+            console.log(e)
+          }
+        }
+      },
+      edit() {
+        this.$invoke('editEx', 'togglePopup')
+      },
+      editExCancel() {
+        this.$invoke('editEx', 'togglePopup')
+      },
+      editInfoSave() {
+        this.editExCancel()
+      },
+      deleteEx() {
+        this.$invoke('deleteEx', 'togglePopup')
+      },
+      deleteExCancel() {
+        this.$invoke('deleteEx', 'togglePopup')
+      },
+      deleteComfirm() {
+        this.deleteExCancel()
+      },
+      processShow() {
+        this.showFeaturesList = true
+      },
+      processHide() {
+        this.showFeaturesList = false
+      },
+      toExDiary() {
+        this.$navigate('./ex-diary')
+        this.showFeaturesList = false
+      },
+      toExDiaryAdd() {
+        this.$navigate('./ex-diary-add')
+        this.showFeaturesList = false
+      },
+      seeExDiary() {
+        this.$navigate('./ex-diary');
+      }
+    }
+    onLoad() {
+      this.$parent.getUserInfo((userInfo) => {
+        if (userInfo) {
+          this.userInfo = userInfo
+        }
+
+        this.$apply()
+      })
+    }
+  }
+</script>
