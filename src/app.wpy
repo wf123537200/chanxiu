@@ -114,6 +114,14 @@ export default class extends wepy.app {
       this.globalData.authInfo = userInfo || {}
       this.globalData.userInfo = userInfo.userInfo || {}
       userInfo = userInfo.userInfo
+
+      wx.setStorage({
+        key: 'cxUserInfo',
+        data: userInfo,
+        success: function(res){
+          console.log('保存userInfo成功')
+        }
+      })
     } else {
       Object.assign(that, d)
       cb && cb(this.globalData.userInfo)
