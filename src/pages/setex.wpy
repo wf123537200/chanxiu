@@ -1,4 +1,6 @@
-<style lang='css'>
+<style lang='scss'>
+  @import '../zanui/common';
+
   page {
     height: 100%
   }
@@ -138,15 +140,30 @@
   /* types */
   .types-wrap {
     display: flex;
-    position:absolute;
-    left:30px;
+    flex-wrap: wrap;
     margin-left:-20px;
+    padding: 20px 25px;
+    box-sizing: border-box;
+    font-size: 13px;
   }
   .types {
     padding:1px 10px;
     margin-left:10px;
     border-radius:5px;
+    margin-bottom: 5px;
 
+  }
+  .customize {
+    height: 20px;
+    width: 70px;
+    line-height: 20px;
+    padding-left: 5px;
+    box-sizing: border-box;
+    font-size: 13px;
+    border-radius: 2px;
+  }
+  .customize.focus {
+    border: 1px solid $border-color;
   }
   .actived {
     background: #B0976E;
@@ -284,6 +301,10 @@
   .font09 {
     color: #ccc;
   }
+  .flex-c {
+    display: flex;
+    flex-direction: column;
+  }
 </style>
 
 <template>
@@ -398,7 +419,7 @@
     </setTime>
 
     <setExType style="width: 100%" class="pr">
-      <view class="dag-wrap">
+      <view class="dag-wrap flex-c">
         <view class="types-wrap" style="top:30px;">
           <repeat for="{{typeList1}}" key="index" index="index" item="item">
             <view @tap="onTypeClick(1, {{index}})" class="types {{type1 === index ? 'actived' : ''}}" >{{item}}</view>
@@ -408,6 +429,7 @@
           <repeat for="{{typeList2}}" key="index" index="index" item="item">
             <view @tap="onTypeClick(2, {{index}})" class="types {{type2 === index ? 'actived' : ''}}" >{{item}}</view>
           </repeat>
+          <input class="types customize {{customizeFocus ? 'focus' : ''}}" placeholder="自定义" bindfocus="customizeFocus" value="{{customizeValue}}" bindblur="customizeBlur('typeList2')" />
         </view>
       </view>
       <view class="ok-btn" @tap="onSetExType">确定</view>
@@ -588,7 +610,9 @@
       // 全局
       backgroundImage: '',
       userInfo: {},
-      isShowUserInfo: false
+      isShowUserInfo: false,
+      customizeFocus: false,
+      customizeValue: ''
     }
     onLoad() {
       // 缓存
@@ -858,6 +882,19 @@
       },
       toExBriefing() {
         this.$navigate('./ex-briefing');
+      },
+      customizeFocus() {
+        this.customizeFocus = true
+        console.log('customizeFocus')
+      },
+      customizeBlur(typeListKey, e) {
+        const value = e.detail.value
+        if (!value) return
+
+        this[typeListKey].push(value)
+        this.setData({'customizeValue': ''})
+        this.customizeFocus = false
+        // console.log('customizeBlur')
       }
     }
   }
