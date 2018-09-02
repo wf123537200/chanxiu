@@ -227,7 +227,7 @@
         <view>微信</view>
       </button>
       <button class="share-btn" style="right:25%;" bindtap="textMark">
-        <image class="share-image" src="/images/weixin.png"></image>
+        <image class="share-image" src="/images/text.png"></image>
         <view>文字信息打卡</view>
       </button>
     </view>

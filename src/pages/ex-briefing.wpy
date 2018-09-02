@@ -197,6 +197,10 @@
     display: flex;
     width: 100%;
   }
+  .diary-wait-edit {
+    width: 15px;
+    height: 15px;
+  }
   .ex-title {
     flex: 1;
     color: $gray-darker;
@@ -384,6 +388,7 @@
 
       <view class="ex-content">
         <view class="flex-r">
+          <image src="../images/record.png" class="diary-wait-edit" />
           <view class="ex-title">静坐观呼吸30分钟</view>
           <view class="ex-date">5分钟前</view>
         </view>
@@ -393,9 +398,9 @@
         <view class="ex-process-pannel">
           <view class="read-all" @tap="seeExDiary">查看全文</view>
           <view class="process-btns">
-            <image class="process-btn" @tap="edit" src="/images/earphone-actived.png"/>
-            <image class="process-btn" @tap="deleteEx" src="/images/earphone-actived.png"/>
-            <image class="process-btn" @tap="processShow" src="/images/earphone-actived.png"/>
+            <image class="process-btn" @tap="edit" src="/images/edit.png"/>
+            <image class="process-btn" @tap="deleteEx" src="/images/delete.png"/>
+            <image class="process-btn" @tap="processShow" src="/images/send.png"/>
           </view>
         </view>
       </view>
