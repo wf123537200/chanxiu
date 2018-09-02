@@ -166,20 +166,33 @@
     border: 1px solid $border-color;
   }
   .actived {
+    display: inline-block;
     background: #B0976E;
     color: #fff
+  }
+  .music-right-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    margin-top: -5px;
+    width: 5px;
+    height: 5px;
+    border-width: 5px 0 5px 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent #B0976E;
+    box-sizing: border-box;
   }
 
   /* music */
   .music-type-wrap {
-    display: flex;
-    justify-content: space-around;
-    padding:15px;
+    position: relative;
+    padding: 15px 20px 15px 15px;
     border-bottom:1px solid #ccc;
   }
   .music-type {
+    display: inline-block;
     padding:1px 0;
-    height:20px;
+    height: 20px;
     border-radius:5px;
     font-size:0.8rem;
     min-width:40px;
@@ -304,6 +317,12 @@
   .flex-c {
     display: flex;
     flex-direction: column;
+  }
+
+  .ip_tab_comtainer {
+    width: 100%;
+    padding: 0;
+    white-space: nowrap;
   }
 </style>
 
@@ -438,9 +457,15 @@
     <setMusic style="width: 100%" class="pr">
       <view class="dag-wrap" style="height:700rpx">
         <view class="music-type-wrap">
-          <repeat for="{{musicTypeList}}" key="index" index="index" item="item">
-            <view @tap="onMusicTypeClick({{index}})" class="music-type {{musicType === index ? 'actived' : ''}}" >{{item}}</view>
-          </repeat>
+          <view class="music-right-arrow"></view>
+
+          <scroll-view scroll-x="true" class="ip_tab_comtainer">
+            <repeat for="{{musicTypeList}}" item="item" key="index">
+              <view class="{{musicType === index ? 'actived' : ''}} music-type" @tap="onMusicTypeClick({{index}})" key="index" data-item="{{index}}">
+                {{item}}
+              </view>
+            </repeat>
+          </scroll-view>
         </view>
         <scroll-view scroll-y style="height: 235px;">
           <view class="music-select dark {{musicType === 0 ? '' : 'hide'}}" @tap="onMusicClick(0)">
