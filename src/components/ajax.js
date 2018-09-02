@@ -2,14 +2,17 @@ import wepy from 'wepy'
 
 export const ajax = function ({ins, url, params = {}, method = 'GET', success, fail}) {
   if(!ins) console.error('没有传入实体！');
+  let globalData = ins.globalData || ins.$parent.globalData;
+  const {ajaxPerfix, resPerfix} = globalData;
 
-  const {ajaxPerfix, resPerfix} = ins.globalData || ins.$parent.globalData;
-  const token = url !== '/weixin/token' ? ins.accessToken || (ins.$parent ? ins.$parent.accessToken || '' : '') : ''
+  const d = wx.getStorageSync('token')
+  const token = url !== '/weixin/token' ? ins.accessToken || (ins.$parent ? ins.$parent.accessToken || d.accessToken || '' : '') : ''
 
   wx.getNetworkType({
     success: (res) => {
       const networkType = res.networkType
       if(networkType === 'none' || networkType === 'unkonwn' && method === 'GET') {
+        globalData.hasNetwork = false;
         // 拿本地存储
         const d = wx.getStorageSync(ajaxPerfix + url);
         if(d) {

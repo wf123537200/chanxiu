@@ -324,7 +324,7 @@
         </view>
         <view class="header-banner">
           <view>单次最多</view>
-          <view class="inline num">{{totalCount}}</view><view class="inline">次</view>
+          <view class="inline num">{{singleMostDuration}}</view><view class="inline">分钟</view>
         </view>
       </view>
 
@@ -536,6 +536,51 @@
     }
   }
 
+
+  /**
+   * 添加自定义练习方法
+   * @param parentId
+   * @param name
+   */
+  const addCustomize = function (parentId, name) {
+    const that = this
+
+    ajax({
+      ins: that,
+      url: '/train/custom/add',
+      params: {
+        parentTrainMethodId: parentId,
+        name
+      },
+      method: 'POST',
+      success: (d) => {
+        console.log('success')
+      },
+      fail: () => {
+        console.log('fail')
+      }
+    })
+  }
+
+  const delCustomize = function (id) {
+    const that = this
+
+    ajax({
+      ins: that,
+      url: '/train/custom/del',
+      params: {
+        id
+      },
+      method: 'POST',
+      success: (d) => {
+        console.log('success')
+      },
+      fail: () => {
+        console.log('fail')
+      }
+    })
+  }
+
   export default class Tag extends wepy.page {
     config = {
       disableScroll: true,
@@ -550,6 +595,7 @@
       totalTrainDay: 0,
       averageDayTime: 0,
       totalCount: 0,
+      singleMostDuration: 0,
       continuousNum: 0,
       todayTrainCount: 0,
       todayDuration: 0,
@@ -644,11 +690,14 @@
         url: '/train/methods',
         params: {},
         success: (d) => {
+          console.log(d)
+          /*
           this.typeListAll = d;
           this.typeList1 = getListByName(d, 'name')
           this.typeList2 = this.type1 ? getListByName(d[+this.type1].sencondLevelList, 'name') : getListByName(d[0].sencondLevelList, 'name')
           this.exList = [this.typeList1[this.type1], this.typeList2[this.type2]]
           this.$apply()
+          */
         }
       })
 
