@@ -1,0 +1,80 @@
+<template>
+    <block wx:if="{{ready}}">
+        <nav :id.sync="classID" nav=""></nav>
+
+        <info class="classInfo" :id.sync="classID" :detail.sync="detail"></info>
+
+        <view class="intro">
+            <intro :detail.sync="detail"></intro>
+        </view>
+
+        <view class="btn-box fixed to-bottom join-class" wx:if="{{isNotMyClass}}">
+            <button class="btn-primary" @tap="joinClass">加入班级</button>
+        </view>
+    </block>
+
+    <applyPopup :id.sync="classID"></applyPopup>
+</template>
+
+<style lang="less">
+    @import (reference) "../../static/less/utility";
+
+    page {
+        .full-height;
+        .flex-v;
+        background-color: #eee;
+    }
+
+    .classInfo {
+        margin-top: 20rpx;
+    }
+
+    .intro {
+        .flex-1;
+        margin-top: 20rpx;
+    }
+
+    .join-class {
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import {ajax} from './../../components/ajax';
+    import getUserInfo from "../../mixins/getUserInfo";
+    import ready from "../../mixins/ready";
+    import classInfo from "../../mixins/classInfo";
+    import applyPopup from "./detail/apply-popup";
+
+    import nav from "./detail/navigator";
+    import info from "./detail/info";
+    import intro from "./detail/intro";
+
+    export default class extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "班级"
+        };
+
+        components = {
+            nav,
+            info,
+            intro,
+            applyPopup
+        };
+
+        data = {
+            userInfo: {}
+        };
+
+        mixins = [ready, getUserInfo, classInfo];
+
+        async onLoad() {
+            this.addReadyCallback(this.getClassDetail());
+            await this.runReadyCallbacks();
+            wx.setNavigationBarTitle({
+                title: this.detail.name
+            });
+        }
+    }
+</script>

@@ -1,0 +1,48 @@
+<template>
+    <view class="intro-box">
+        <text class="header">详细介绍</text>
+
+        <scroll-view class="content" scroll-y="true">{{detail.detail}}</scroll-view>
+    </view>
+</template>
+
+<style lang="less">
+    .intro-box {
+        position: relative;
+        height: 100%;
+        padding: 20rpx 40rpx 0;
+        box-sizing: border-box;
+        background-color: #fff;
+
+        .header {
+            display: block;
+            font-size: 26rpx;
+            line-height: 2;
+        }
+
+        .content {
+            position: absolute;
+            width: auto;
+            top: 20rpx + 26rpx * 2 + 10rpx;
+            left: 40rpx;
+            right: 40rpx;
+            bottom: 30rpx;
+            font-size: 24rpx;
+            line-height: 40rpx;
+            color: #aaa;
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+
+    export default class extends wepy.component {
+        props = {
+            detail: {
+                type: Object,
+                default: {}
+            }
+        };
+    }
+</script>

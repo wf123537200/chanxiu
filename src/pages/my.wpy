@@ -194,6 +194,7 @@
             url: '/me/info',
             params: {},
             success: (d) => {
+              console.log(d);
               Object.assign(this, d.trainInfo)
               this.exTime = d.trainInfo.todayDuration || 0
               this.$apply()

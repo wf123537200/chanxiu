@@ -1,3 +1,7 @@
 node_modules
 dist
 .DS_Store
+.idea
+*.wpy___jb_tmp___
+*.*___jb_tmp___
+package-lock.json

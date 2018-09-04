@@ -1,0 +1,96 @@
+<template>
+  <repeat for="{{classes}}" item="item">
+    <navigator url="/pages/class/detail?id={{item.id}}" class="class" style="background-image: url({{bgImg}})">
+      <text class="student-num">{{item.studentNum}}人</text>
+
+      <view class="header text-nowrap text-ellipsis">
+        <image src="{{item.logo}}" class="logo" mode="aspectFill" wx:if="{{item.logo}}"></image><text class="name">{{item.name}}</text>
+      </view>
+
+      <text class="desc">{{item.brief}}</text>
+
+      <text class="train-info" wx:if="{{item.todayTrainInfo}}">{{item.todayTrainInfo}}</text>
+    </navigator>
+  </repeat>
+</template>
+
+<style lang="less" scoped="">
+  .class {
+    position: relative;
+    height: 290rpx;
+    margin: 35rpx 30rpx 0;
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    &:last-of-type {
+      margin-bottom: 35rpx;
+    }
+
+    .student-num {
+      position: absolute;
+      right: 25rpx;
+      top: 20rpx;
+      color: #fff;
+      font-size: 24rpx;
+    }
+
+    .header {
+      margin: 0 90rpx;
+      padding-top: 35rpx;
+      line-height: 70rpx;
+      text-align: center;
+      font-size: 34rpx;
+      color: #fff;
+
+      .logo {
+        width: 70rpx;
+        height: 70rpx;
+        margin-right: 20rpx;
+        border-radius: 50%;
+        vertical-align: middle;
+      }
+
+      .name {
+        vertical-align: middle;
+      }
+    }
+
+    .desc {
+      display: block;
+      height: 80rpx;
+      margin: 15rpx 90rpx 0;
+      color: #aaa;
+      font-size: 24rpx;
+      line-height: 40rpx;
+      overflow: hidden;
+    }
+
+    .train-info {
+      display: block;
+      margin-top: 15rpx;
+      text-align: center;
+      color: #fff;
+      font-size: 24rpx;
+    }
+  }
+</style>
+
+<script>
+  import wepy from "wepy";
+  //import bgImg from "../../../image-base64/class-item-bg";
+
+  export default class extends wepy.component {
+    props = {
+      classes: {
+        type: Object,
+        default: {}
+      }
+    };
+
+    // todo
+    data = {
+      bgImg: ""
+    };
+  }
+</script>

@@ -1,0 +1,301 @@
+<template>
+    <form @submit="submit">
+        <view class="section">
+            <view class="section-title">基本信息</view>
+
+            <view class="section-body">
+                <view class="row">
+                    <view class="label required">班级名称</view>
+                    <view class="content">
+                        <input type="text" name="name" class="input" maxlength="15" placeholder="最多15字，必填。" />
+                    </view>
+                </view>
+
+                <view class="row">
+                    <view class="label">介绍班级</view>
+                    <view class="content">
+                        <textarea name="brief" class="textarea" maxlength="30" placeholder="一句话介绍班级。最多30字，选填。" />
+                    </view>
+                </view>
+
+                <view class="row">
+                    <view class="label">班级头像</view>
+                    <view class="content flex-h flex-vertical-bottom">
+                        <view class="upload-image" @tap="uploadImage('icon')">
+                            <image src="{{iconImagePath}}" wx:if="{{iconImagePath}}"></image>
+                        </view>
+                        <text class="tip flex-1">
+                            <text>可选。</text>
+                            <text>您可以选择一个班级LOGO，最佳尺寸为116*116，不超过1M</text>
+                        </text>
+                        <input hidden name="icon" class="input" maxlength="-1" />
+                    </view>
+                </view>
+            </view>
+        </view>
+
+        <view class="section">
+            <view class="section-title">加入方式</view>
+
+            <view class="section-body">
+                <view class="row radio-group-row">
+                    <view class="label required">加入条件</view>
+                    <view class="content">
+                        <radio-group @change="onAddTypeChanged">
+                            <label class="radio {{addType == 1 ? 'checked' : ''}}">
+                                <radio hidden name="addTypeName" value="1" checked="true" />
+                                <text>直接加入，无需确认</text>
+                            </label>
+                            <label class="radio {{addType != 1 ? 'checked' : ''}}">
+                                <radio hidden name="addTypeName" value="2" />
+                                <text>邀请确认</text>
+                            </label>
+                        </radio-group>
+                    </view>
+                </view>
+
+                <view class="row radio-group-row">
+                    <view class="label">限额人数</view>
+                    <view class="content">
+                        <radio-group @change="onCountChanged">
+                            <label class="radio {{students == item ? 'checked' : ''}}" wx:for="{{studentSupported}}" wx:key="index">
+                                <radio hidden name="students" value="{{item}}" checked="{{index === defaultCheckedStudent}}" />
+                                <text>{{item}}人</text>
+                            </label>
+                        </radio-group>
+                    </view>
+                </view>
+
+                <view class="row">
+                    <view class="label">支持加群</view>
+                    <view class="content">
+                        <switch checked="{{isSupportAdd}}" color="#b0976e" @change="onSupportAddChanged"></switch>
+
+                        <block wx:if="{{isSupportAdd}}">
+                            <input type="text" name="admin-name" class="input v-space" maxlength="-1" placeholder="请输入班干部微信号" />
+
+                            <view class="flex-h flex-vertical-bottom v-space">
+                                <view class="upload-image" @tap="uploadImage('qr')">
+                                    <image src="{{qrImagePath}}" wx:if="{{qrImagePath}}"></image>
+                                </view>
+                                <text class="tip flex-1">
+                                    <text>可选。</text>
+                                    <text>请上传群二维码。为防止7天过期失效，建议您每周更新</text>
+                                </text>
+                                <input hidden name="qr" class="input" maxlength="-1" />
+                            </view>
+                        </block>
+                    </view>
+                </view>
+            </view>
+        </view>
+
+        <view class="btn-box">
+            <button class="btn-primary" form-type="submit">完  成</button>
+        </view>
+    </form>
+</template>
+
+<style lang="less">
+    page {
+        background-color: #fff;
+    }
+
+    .section {
+        font-size: 28rpx;
+        color: #333;
+    }
+
+    .section-title {
+        padding: 0 40rpx;
+        line-height: 64rpx;
+        background-color: #eee;
+        color: #aaa;
+    }
+
+    .section-body {
+        padding: 34rpx 40rpx;
+
+        .row {
+            overflow: hidden;
+
+            & + .row {
+                margin-top: 15rpx;
+
+                &.radio-group-row {
+                    margin-top: 0;
+                }
+            }
+
+            &:not(.radio-group-row) + .row {
+                margin-top: 30rpx;
+
+                &.radio-group-row {
+                    margin-top: 15rpx;
+                }
+            }
+        }
+
+        .label {
+            float: left;
+            width: 150rpx;
+            margin-right: 20rpx;
+            line-height: 80rpx;
+            text-align: right;
+            color: #333;
+            
+            &.required::before {
+                content: "*";
+                margin-right: 10rpx;
+                color: #b0976e;
+            }
+        }
+
+        .content {
+            overflow: hidden;
+        }
+
+        .upload-image {
+            position: relative;
+            width: 150rpx;
+            height: 150rpx;
+            box-sizing: border-box;
+            border: 2rpx solid #aaa;
+            background-color: #f9f9f9;
+            vertical-align: bottom;
+
+            &::before,
+            &::after {
+                content: "";
+                position: absolute;
+                width: 60rpx;
+                height: 4rpx;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #aaa;
+                z-index: 1;
+            }
+
+            &::after {
+                width: 4rpx;
+                height: 60rpx;
+            }
+
+            image {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                z-index: 2;
+            }
+        }
+
+        .tip {
+            margin-left: 20rpx;
+            font-size: 24rpx;
+            line-height: 1.5;
+            color: #aaa;
+        }
+
+        radio-group {
+            padding: 10rpx 0;
+            margin-right: -25rpx;
+        }
+
+        .radio {
+            display: inline-block;
+            margin: 10rpx 25rpx 10rpx 0;
+            vertical-align: middle;
+            white-space: nowrap;
+
+            text {
+                display: inline-block;
+                padding: 0 25rpx;
+                border: 2rpx solid #aaa;
+                font-size: 28rpx;
+                line-height: 40rpx;
+                border-radius: 10rpx;
+                color: #aaa;
+            }
+
+            &.checked text {
+                border-color: #b0976e;
+                color: #b0976e;
+            }
+        }
+
+        .v-space {
+            margin-top: 20rpx;
+        }
+    }
+
+    .btn-box {
+        margin-top: 20rpx;
+        padding-bottom: 50rpx;
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import {ajax} from "./../../components/ajax";
+    import getUserInfo from "../../mixins/getUserInfo";
+    import ready from "../../mixins/ready";
+
+    const STUDENTS = [150];
+    const defaultCheckedStudent = 0;
+
+    export default class extends wepy.page {
+        config = {
+            //disableScroll: true,
+            navigationBarTitleText: "创建班级"
+        };
+
+        mixins = [getUserInfo, ready];
+
+        data = {
+            addType: 1,
+            studentSupported: STUDENTS,
+            defaultCheckedStudent,
+            students: STUDENTS[defaultCheckedStudent],
+            isSupportAdd: true,
+            iconImagePath: "",
+            qrImagePath: ""
+        };
+
+        methods = {
+            onAddTypeChanged (e) {
+                this.addType = e.detail.value;
+            },
+            onCountChanged (e) {
+                this.students = e.detail.value;
+            },
+            onSupportAddChanged (e) {
+                this.isSupportAdd = e.detail.value;
+            },
+            uploadImage (type) {
+                wx.chooseImage({
+                    count: 1,
+                    sizeType: ["compressed"],
+                    success: (res) => {
+                        const file = res.tempFilePaths[0];
+
+                        this[`${type}ImagePath`] = file;
+                        // todo 写入input.value
+                        this.$apply();
+                        //wx.uploadFile();
+                    }
+                });
+            },
+            submit (e) {
+                //const data = e.detai.value;
+                wx.navigateTo({
+                    url: "/pages/class/detail"
+                });
+            }
+        };
+
+        async onLoad() {
+            await this.runReadyCallbacks();
+        }
+    }
+</script>

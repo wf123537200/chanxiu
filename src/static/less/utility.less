@@ -1,0 +1,162 @@
+.full-height {
+    height: 100%;
+}
+
+.text-nowrap {
+    white-space: nowrap;
+}
+
+.text-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.flex-v {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-h {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.flex-vertical-bottom {
+    align-items: flex-end;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.scroll-y {
+    overflow-y: auto;
+}
+
+.fixed {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 10;
+
+    &.to-top {
+        top: 0;
+    }
+
+    &.to-bottom {
+        bottom: 60rpx;
+    }
+}
+
+.btn-box {
+    text-align: center;
+}
+
+.btn-primary,
+.btn-secondary {
+    display: inline-block;
+    vertical-align: middle;
+    width: 358rpx;
+    height: 70rpx;
+    line-height: 70rpx;
+    box-sizing: border-box;
+    background-color: #b0976e;
+    color: #fff;
+    font-size: 27rpx;
+    border-radius: 100rpx;
+
+    &.auto-width {
+        width: auto;
+        padding-left: 30rpx;
+        padding-right: 30rpx;
+    }
+
+    &.w-1-2 {
+        width: 235rpx;
+
+        & + .btn-primary,
+        & + .btn-secondary {
+            margin-left: 40rpx;
+        }
+    }
+
+    &.small {
+        height: 56rpx;
+        line-height: 56rpx;
+        font-size: 24rpx;
+    }
+
+    &.mini {
+        height: 44rpx;
+        padding-left: 20rpx;
+        padding-right: 20rpx;
+        line-height: 44rpx;
+        font-size: 22rpx;
+    }
+
+    &.btn-plain {
+        border: 1px solid #b0976e;
+        background-color: transparent;
+        color: #b0976e;
+    }
+}
+
+.btn-secondary {
+    border: 1px solid #b0976e;
+    background-color: #fff;
+    color: #b0976e;
+}
+
+// tab
+.tab {
+    .flex-h;
+    background-color: #fff;
+
+    .tab-item {
+        .flex-1;
+        line-height: 100rpx;
+        border-bottom: 2rpx solid #eee;
+        text-align: center;
+        font-size: 28rpx;
+        color: #aaa;
+
+        &.on {
+            color: #333;
+            border-bottom-color: #000;
+        }
+    }
+
+    &.sub {
+        .tab-item {
+            line-height: 70rpx;
+            border-bottom-color: #eee;
+
+            &.on {
+                border-bottom-color: #ccc;
+            }
+        }
+    }
+}
+
+// input
+.input,
+.textarea {
+    width: 100%;
+    height: 80rpx;
+    padding: 15rpx 20rpx;
+    line-height: 50rpx;
+    border: 2rpx solid #aaa;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    border-radius: 0;
+
+    &.input-placeholder,
+    &.textarea-placeholder {
+        color: #aaa;
+    }
+}
+
+.textarea {
+    height: 160rpx;
+}
