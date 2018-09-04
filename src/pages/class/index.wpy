@@ -1,0 +1,93 @@
+<template>
+    <view class="classes">
+        <openedClasses :classes.sync="openedClasses" />
+
+        <myClasses :classes.sync="myClasses" />
+    </view>
+
+    <view class="btn-create-class-box" wx:if="{{ready}}">
+        <button class="btn" plain="true" open-type="getUserInfo" @getuserinfo="create">创　　建</button>
+    </view>
+</template>
+
+<style lang="less">
+    @import (reference) "../../static/less/utility";
+
+    page {
+        .full-height;
+        background-color: #eee;
+    }
+
+    .classes {
+        /*height: ~"calc(100% - 110rpx)";*/
+        /*padding-bottom: 35rpx;*/
+        box-sizing: border-box;
+    }
+
+    .btn-create-class-box {
+        width: 100%;
+        padding-bottom: 30rpx;
+        border-top: 2rpx solid #ddd;
+        background-color: #fff;
+        background-clip: content-box;
+        font-size: 34rpx;
+        border-radius: 0;
+
+        .btn {
+            width: 100%;
+            border: none;
+            line-height: 110rpx;
+            height: 110rpx;
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import {ajax} from './../../components/ajax';
+    import getUserInfo from "../../mixins/getUserInfo";
+    import ready from "../../mixins/ready";
+    import {getOpenClasses, getMyClasses} from "../../modules/Classes";
+
+    import Classes from "./index/classes";
+
+    export default class extends wepy.page {
+        config = {
+            navigationBarTitleText: "班级"
+        };
+
+        components = {
+            openedClasses: Classes,
+            myClasses: Classes
+        };
+
+        data = {
+            openedClasses: [],
+            myClasses: [],
+            userInfo: {}
+        };
+
+        mixins = [getUserInfo, ready];
+
+        events = {};
+
+        computed = {};
+
+        async create() {
+            await this.getUserInfo();
+            wx.navigateTo({
+                url: "/pages/class/create"
+            });
+        }
+
+        getOpenClasses = getOpenClasses;
+
+        getMyClasses = getMyClasses;
+
+        async onLoad() {
+            this.addReadyCallback(this.getOpenClasses());
+            this.addReadyCallback(this.getMyClasses());
+            await this.runReadyCallbacks();
+        }
+    }
+</script>

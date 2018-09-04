@@ -1,0 +1,153 @@
+<template>
+    <view wx:if="{{ready}}">
+        <view class="content-box">
+            <view class="base">
+                <image class="icon" src="{{detail.icon}}" mode="aspectFill"/>
+                <text class="name text-nowrap text-ellipsis">{{detail.name}}</text>
+                <text class="desc">{{detail.brief}}</text>
+            </view>
+
+            <image class="qr" src="{{detail.qrCodeUrl}}" mode="aspectFit"></image>
+
+            <text class="remain">{{remainingQuota}}</text>
+        </view>
+
+        <view class="btn-box btn-save-image">
+            <button class="btn-primary" @tap="saveImage">保持图片</button>
+        </view>
+    </view>
+</template>
+
+<style lang="less">
+    page {
+        background-color: #eee;
+    }
+
+    .content-box {
+        margin: 60rpx 40rpx;
+        padding: 40rpx;
+        background-color: #fff;
+
+        .base {
+            margin-bottom: 60rpx;
+            overflow: hidden;
+
+            .icon {
+                float: left;
+                width: 120rpx;
+                height: 120rpx;
+                margin-right: 30rpx;
+                border: 1px solid #666;
+            }
+
+            .name {
+                display: block;
+                margin-right: 120rpx;
+                line-height: 46rpx;
+                font-size: 26rpx;
+                font-weight: bold;
+                color: #333;
+                overflow: hidden;
+            }
+
+            .desc {
+                display: block;
+                margin-top: 10rpx;
+                margin-right: 120rpx;
+                font-size: 24rpx;
+                line-height: 34rpx;
+                color: #aaa;
+                overflow: hidden;
+            }
+
+            .btn-invite {
+                display: inline-block;
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: auto;
+                padding: 0 20rpx;
+                border: 1px solid #b0976e;
+                background-color: #fff;
+                border-radius: 100rpx;
+                line-height: 44rpx;
+                font-size: 22rpx;
+                color: #b0976e;
+            }
+        }
+
+        .qr {
+            display: block;
+            width: 400rpx;
+            height: 400rpx;
+            margin: 0 auto;
+        }
+
+        .remain {
+            display: block;
+            margin-top: 20rpx;
+            text-align: center;
+            font-size: 24rpx;
+            color: #aaa;
+        }
+
+        .btn-save-image {
+            margin-top: 60rpx;
+            padding-bottom: 60rpx;
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import {ajax} from "./../../components/ajax";
+    import ready from "../../mixins/ready";
+    import classInfo from "../../mixins/classInfo";
+
+    export default class extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: ""
+        };
+
+        data = {};
+
+        mixins = [ready, classInfo];
+
+        computed = {
+            remainingQuota () {
+                if (this.detail.remainingQuota > 0) {
+                    return `剩余${this.detail.remainingQuota}个名额`;
+                }
+                else {
+                    return "成员已满";
+                }
+            }
+        };
+
+        saveImage () {
+            if (this.detail.qrCodeUrl) {
+                wx.saveImageToPhotosAlbum({
+                    filePath: this.detail.qrCodeUrl,
+                    success () {
+                        wx.showToast({
+                            title: "保存成功",
+                            icon: "success"
+                        });
+                    },
+                    fail () {
+                        wx.showToast({
+                            title: "保存失败",
+                            icon: "fail"
+                        });
+                    }
+                });
+            }
+        }
+
+        async onLoad() {
+            this.addReadyCallback(this.getClassDetail());
+            this.runReadyCallbacks();
+        }
+    }
+</script>

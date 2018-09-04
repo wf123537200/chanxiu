@@ -1,0 +1,173 @@
+<template>
+    <view class="welcome">
+        <image class="avatar" src="/temp/a.png"></image>
+        <view class="nickname">
+            <view class="box">
+                <text>Drencky</text>
+                <text class="role">班长</text>
+            </view>
+        </view>
+        <view class="wording">
+            <view class="box">
+                慧默你好，欢迎你加入“持壹学院-精修1班”，成为我们班家庭中的一员！\n
+                希望这个集体能为您的学修带来力量，同时您的每次练习也是对其他同学的一次激励和加持。\n
+                让我们携手同行，共同成长！
+            </view>
+        </view>
+    </view>
+
+    <view class="wechat {{!admin ? 'no-admin' : ''}}" wx:if="{{!noWechat}}">
+        <block wx:if="{{qrCodeUrl}}">
+            <text>你可以长按识别二维码加群</text>
+            <image class="qrcode" src="{{qrCodeUrl}}"></image>
+        </block>
+        <block wx:if="{{admin}}">
+            <text wx:if="{{qrCodeUrl}}">你也可添加班委微信号：{{admin}}，请求加群</text>
+            <text wx:else>你可添加班委微信号：{{admin}}，请求加群</text>
+        </block>
+    </view>
+
+    <view class="btn-box">
+        <navigator class="w-1-2 btn-primary">返回首页</navigator>
+        <navigator class="w-1-2 btn-secondary">查看班级信息</navigator>
+    </view>
+</template>
+
+<style lang="less">
+    @import (reference) "../../static/less/utility";
+
+    page {
+        background-color: #eee;
+    }
+
+    .welcome {
+        padding: 40rpx;
+        overflow: hidden;
+
+        .avatar {
+            float: left;
+            width: 90rpx;
+            height: 90rpx;
+            margin-right: 10rpx;
+            border: 2rpx solid #b0976e;
+        }
+
+        .nickname {
+            padding-top: 20rpx;
+            padding-left: 10rpx;
+            margin-top: -20rpx;
+            margin-bottom: 15rpx;
+            overflow: hidden;
+
+            .box {
+                position: relative;
+                display: inline-block;
+                vertical-align: top;
+                font-size: 30rpx;
+                color: #666;
+            }
+
+            .role {
+                position: absolute;
+                transform: translate3d(0, -50%, 0);
+                top: 0;
+                left: 100%;
+                padding: 0 10rpx;
+                border: 2rpx solid #b0976e;
+                font-size: 18rpx;
+                color: #b0976e;
+                line-height: 1.5;
+                border-radius: 100rpx;
+                white-space: nowrap;
+            }
+        }
+
+        .wording {
+            position: relative;
+            padding-left: 10rpx;
+            overflow: hidden;
+            font-size: 26rpx;
+            line-height: 40rpx;
+            color: #666;
+
+            &::after {
+                content: "";
+                display: block;
+                position: absolute;
+                top: 20rpx;
+                left: -8rpx;
+                border: 10rpx solid transparent;
+                border-right-color: #fff;
+                z-index: 2;
+            }
+
+            .box {
+                margin-right: 30rpx;
+                padding: 50rpx 30rpx;
+                background-color: #fff;
+                border-radius: 8rpx;
+            }
+        }
+
+        & + .btn-box {
+            margin-top: 80rpx;
+        }
+    }
+
+    .wechat {
+        line-height: 100rpx;
+        text-align: center;
+        font-size: 28rpx;
+        color: #aaa;
+
+        & > text {
+            display: block;
+        }
+
+        .qrcode {
+            display: block;
+            width: 290rpx;
+            height: 290rpx;
+            margin: 0 auto;
+        }
+
+        & + .btn-box {
+            margin-top: 60rpx;
+        }
+
+        &.no-admin + .btn-box {
+            margin-top: 80rpx;
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import {ajax} from "./../../components/ajax";
+    import getUserInfo from "../../mixins/getUserInfo";
+    import ready from "../../mixins/ready";
+
+    export default class extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "欢迎加入班级"
+        };
+
+        data = {
+            qrCodeUrl: "/images/qrcode.png",
+            admin: "Admin"
+        };
+
+        mixins = [getUserInfo, ready];
+
+        computed = {
+            noWechat () {
+                return !this.qrCodeUrl && !this.admin;
+            }
+        };
+
+        async onLoad() {
+            await this.runReadyCallbacks();
+        }
+    }
+</script>

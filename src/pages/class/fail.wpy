@@ -1,0 +1,86 @@
+<template>
+    <block wx:if="{{ready}}">
+        <view class="header">你的申请未通过！</view>
+        <view class="feedback">你发送的加入“{{detail.name}}”的申请未通过。</view>
+        <view class="feedback">反馈信息：无</view>
+        <view class="encourage">请不要气馁，保持精进修习，可以让你找到合适的班级！</view>
+
+        <view class="btn-box">
+            <navigator class="btn-primary w-1-2">返回首页</navigator>
+            <button class="btn-secondary w-1-2" @tap="joinClass">重新申请</button>
+        </view>
+
+        <applyPopup :id.sync="id"></applyPopup>
+    </block>
+</template>
+
+<style lang="less">
+    page {
+        background-color: #eee;
+    }
+
+    .header {
+        padding-top: 80rpx;
+        padding-bottom: 66rpx;
+        line-height: 60rpx;
+        text-align: center;
+        font-size: 34rpx;
+        color: #333;
+    }
+
+    .feedback {
+        padding: 0 90rpx;
+        font-size: 28rpx;
+        line-height: 1.5;
+        color: #666;
+
+        & + .feedback {
+            margin-top: 20rpx;
+        }
+    }
+
+    .encourage {
+        padding: 0 90rpx;
+        margin-top: 50rpx;
+        font-size: 22rpx;
+        color: #666;
+    }
+
+    .btn-box {
+        margin-top: 180rpx;
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import {ajax} from "./../../components/ajax";
+    import getUserInfo from "../../mixins/getUserInfo";
+    import classInfo from "../../mixins/classInfo";
+    import ready from "../../mixins/ready";
+
+    import applyPopup from "./detail/apply-popup";
+
+    export default class extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "加入班级申请失败"
+        };
+
+        components = {
+            applyPopup
+        };
+
+        mixins = [ready, getUserInfo, classInfo];
+
+        methods = {
+            showApplyPopup () {
+                this.$invoke("applyPopup", "show");
+            }
+        };
+
+        async onLoad () {
+            this.addReadyCallback(this.getClassDetail());
+            await this.runReadyCallbacks();
+        }
+    }
+</script>

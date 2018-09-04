@@ -1,0 +1,448 @@
+<template>
+    <view class="full-height flex-v" @tap="hideTrainTimeTypeDrop" wx:if="{{ready}}">
+        <nav :id.sync="id" nav="news"></nav>
+
+        <view class="tab">
+            <view data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
+                <text>{{item.text}}</text>
+            </view>
+        </view>
+
+        <view class="tab-body flex-v flex-1 {{currentTab}}">
+            <block wx:if="{{currentTab === 'brief'}}">
+                <view class="train-info">
+                    <view class="time-type">
+                        <view @tap.stop="toggleTrainTimeTypeDrop">
+                            <text class="text">{{trainTimeTypeText}}</text>
+                            <image class="arr" src="/images/arr-down-dark.png"></image>
+                        </view>
+
+                        <view class="drop" wx:if="{{trainTimeTypeDropVisible}}">
+                            <view data-type="1" @tap.stop="setTrainTimeType">今日</view>
+                            <view data-type="2" @tap.stop="setTrainTimeType">本周</view>
+                            <view data-type="3" @tap.stop="setTrainTimeType">本月</view>
+                        </view>
+                    </view>
+                    <text class="total">共{{briefTrainInfo.trainNum}}人参与，人均{{briefTrainInfo.averageTime}}分钟</text>
+                </view>
+
+                <view class="tab sub">
+                    <view data-tab="{{item.id}}" class="tab-item {{currentRankTab === item.id ? 'on' : ''}}" @tap="switchRankTab" wx:key="index" wx:for="{{rankTab}}">
+                        <text>{{item.text}}</text>
+                    </view>
+                </view>
+
+                <scroll-view class="data-list flex-1" scroll-y wx:if="{{currentRankTab === 'train'}}">
+                    <view class="data-item" wx:key="index" wx:for="{{briefTrainList}}">
+                        <image class="avatar" src="{{item.avatarUrl}}"></image>
+                        <view class="total">
+                            <view class="time">{{item.trainInfo}}</view>
+                            <view class="nick-name">{{item.nickName}}</view>
+                        </view>
+                        <view class="detail">
+                            <view class="time">{{item.strCreateTime}}</view>
+                            <view class="every">{{item.everyTrainDuration}}</view>
+                        </view>
+                    </view>
+                </scroll-view>
+
+                <scroll-view class="data-list flex-1" scroll-y wx:elif="{{currentRankTab === 'rank'}}">
+                    <view class="data-item" wx:key="index" wx:for="{{briefTrainList}}">
+                        <image class="avatar" src="{{item.avatarUrl}}"></image>
+                        <view class="total">
+                            <view class="time">{{item.trainInfo}}</view>
+                            <view class="nick-name">{{item.nickName}}</view>
+                        </view>
+                        <view class="detail">
+                            <view class="time">{{item.strCreateTime}}</view>
+                            <view class="every">{{item.everyTrainDuration}}</view>
+                        </view>
+                    </view>
+                </scroll-view>
+            </block>
+
+            <block wx:if="{{currentTab === 'record'}}">
+                <scroll-view class="data-list record flex-1" scroll-y>
+                    <block wx:key="index" wx:for="{{trainRecords}}">
+                        <view class="date">
+                            <text>{{item.date}}</text>
+                        </view>
+
+                        <view class="data-item" wx:key="detailIndex" wx:for="{{item.detail}}" wx:for-index="detailIndex" wx:for-item="detailItem">
+                            <image class="avatar" src="{{detailItem.avatarUrl}}"></image>
+                            <view class="total">
+                                <view class="nick-name">
+                                    <text>{{detailItem.nickName}}</text>
+                                    <text wx:if="detailItem.diary">提交了练习日记</text>
+                                    <text wx:else>静坐-观呼吸15分钟</text>
+                                </view>
+                            </view>
+                            <view class="detail">
+                                <view class="time">{{formatTrainRecordTime(detailItem.strCreateTime)}}</view>
+                                <view class="every">{{detailItem.trainInfo}}</view>
+                            </view>
+                            <view class="diary" wx:if="{{detailItem.diary}}">
+                                <text>{{detailItem.diary}}</text>
+                                <navigator>查看全文</navigator>
+                            </view>
+                        </view>
+                    </block>
+                </scroll-view>
+            </block>
+        </view>
+
+        <view class="btn-box fixed to-bottom join-class" wx:if="{{isNotMyClass}}">
+            <button class="btn-primary" @tap="joinClass">加入班级</button>
+        </view>
+
+        <applyPopup :id.sync="id"></applyPopup>
+    </view>
+</template>
+
+<style lang="less">
+    @import (reference) "../../static/less/utility";
+
+    page {
+        .full-height;
+        background-color: #eee;
+    }
+
+    .tab {
+        margin-top: 18rpx;
+    }
+
+    .tab-body {
+        position: relative;
+
+        .train-info {
+            padding-left: 30rpx;
+            background-color: #fff;
+            line-height: 74rpx;
+            font-size: 28rpx;
+
+            .time-type,
+            .text,
+            .arr,
+            .total {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .time-type {
+                position: relative;
+                color: #333;
+                z-index: 2;
+
+                .arr {
+                    width: 18rpx;
+                    height: 18rpx;
+                    margin-left: 6rpx;
+                }
+
+                .drop {
+                    position: absolute;
+                    left: -15rpx;
+                    top: auto;
+                    width: 100rpx;
+                    padding: 5rpx;
+                    margin-top: -10rpx;
+                    border: 2rpx solid #ccc;
+                    background-color: #fff;
+
+                    view {
+                        padding: 0 10rpx;
+                        line-height: 50rpx;
+
+                        &:active {
+                            background-color: #eee;
+                        }
+                    }
+                }
+            }
+
+            .total {
+                margin-left: 35rpx;
+                color: #aaa;
+            }
+        }
+
+        .data-list {
+            position: absolute;
+            top: 74rpx + 18rpx + 70rpx + 4rpx;
+            bottom: 0;
+            padding-top: 20rpx;
+            padding-bottom: 20rpx;
+            background-color: #fff;
+
+            &.record {
+                top: 0;
+
+                .diary {
+                    margin-left: 110rpx;
+                    margin-top: 20rpx;
+                    line-height: 30rpx;
+                    font-size: 24rpx;
+                    color: #aaa;
+
+                    text {
+                        display: block;
+                    }
+
+                    navigator {
+                        display: inline-block;
+                        margin-top: 10rpx;
+                        font-size: 22rpx;
+                        color: #b0976e;
+                    }
+                }
+
+                .date {
+                    margin: 45rpx auto;
+                    text-align: center;
+
+                    text {
+                        display: inline-block;
+                        min-width: 90rpx;
+                        padding: 0 30rpx;
+                        text-align: center;
+                        background-color: #aaa;
+                        line-height: 30rpx;
+                        font-size: 22rpx;
+                        color: #fff;
+                    }
+                }
+            }
+
+            .data-item {
+                position: relative;
+                padding: 20rpx 40rpx;
+                overflow: hidden;
+            }
+
+            .avatar {
+                float: left;
+                width: 90rpx;
+                height: 90rpx;
+                margin-right: 20rpx;
+                border: 2rpx solid #b0976e;
+            }
+
+            .total {
+                font-size: 28rpx;
+                color: #000;
+                overflow: hidden;
+            }
+
+            .detail {
+                margin-top: 10rpx;
+                font-size: 24rpx;
+                color: #aaa;
+                overflow: hidden;
+            }
+
+            .time {
+                float: right;
+                margin-left: 20rpx;
+                min-width: 80rpx;
+                text-align: right;
+                white-space: nowrap;
+            }
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import moment from "moment";
+    import {ajax} from './../../components/ajax';
+    import classInfo from "../../mixins/classInfo";
+    import applyClass from "../../mixins/applyClass";
+    import getUserInfo from "../../mixins/getUserInfo";
+    import ready from "../../mixins/ready";
+
+    import nav from "./detail/navigator";
+    import applyPopup from "./detail/apply-popup";
+
+    export default class extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "班级"
+        };
+
+        components = {
+            nav,
+            applyPopup
+        };
+
+        data = {
+            currentTab: "brief",
+            tab: [
+                {
+                    id: "brief",
+                    text: "简报"
+                },
+                {
+                    id: "record",
+                    text: "记录"
+                }
+            ],
+            brief: {
+                timeType: 1,
+                trainInfo: {},
+                trainList: []
+            },
+            trainRecords: [],
+            currentRankTab: "train",
+            rankTab: [
+                {
+                    id: "train",
+                    text: "练习名单"
+                },
+                {
+                    id: "rank",
+                    text: "排行榜"
+                },
+                {
+                    id: "break",
+                    text: "中断榜"
+                }
+            ],
+            trainTimeTypeDropVisible: false,
+            userInfo: {}
+        };
+
+        mixins = [ready, getUserInfo, classInfo, classInfo, applyClass];
+
+        computed = {
+            trainTimeTypeText () {
+                if (this.brief.timeType === 1) {
+                    return "今日";
+                }
+                else if (this.brief.timeType === 2) {
+                    return "本周";
+                } else {
+                    return "本月";
+                }
+            },
+            briefTrainInfo () {
+                return this.brief.trainInfo;
+            },
+            briefTrainList () {
+                return this.brief.trainList;
+            }
+        };
+
+        watch = {
+            async brief (value, oldValue) {
+                if (parseInt(value.timeType) !== parseInt(oldValue.timeType)) {
+                    wx.showLoading();
+                    await this.getTrainList(value);
+                    wx.hideLoading();
+                }
+            }
+        };
+
+        methods = {
+            switchTab (e) {
+                this.currentTab = e.currentTarget.dataset.tab;
+            },
+            switchRankTab (e) {
+                this.currentRankTab = e.currentTarget.dataset.tab;
+            },
+            toggleTrainTimeTypeDrop () {
+                this.trainTimeTypeDropVisible = !this.trainTimeTypeDropVisible;
+            },
+            hideTrainTimeTypeDrop () {
+                this.hideTrainTimeTypeDrop();
+            },
+            setTrainTimeType (e) {
+                this.brief.timeType = parseInt(e.currentTarget.dataset.type);
+                this.hideTrainTimeTypeDrop();
+            }
+        };
+
+        hideTrainTimeTypeDrop () {
+            this.trainTimeTypeDropVisible = false;
+        }
+
+        async getTrainList (type) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    this.brief.trainInfo = {
+                        trainNum: Math.floor(Math.random() * 150),
+                        averageTime: Math.floor(Math.random() * 100)
+                    };
+
+                    this.brief.trainList = [];
+                    let id = 0;
+                    const mock = () => {
+                        this.brief.trainList.push({
+                            id: id++,
+                            nickName: "Drencky",
+                            avatarUrl: "/temp/a.png",
+                            trainInfo: "8次，150分钟",
+                            everyTrainDuration: "60分钟，60分钟，30分钟，45分钟，60分钟，60分钟，30分钟，45分钟",
+                            strCreateTime: "18:00"
+                        });
+                    };
+
+                    for (let i = 0; i < 10; i++) {
+                        mock();
+                    }
+
+                    this.$apply();
+                    resolve();
+                }, 1000);
+            });
+        }
+
+        async getTrainRecords () {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    this.trainRecords = [
+                        {
+                            date: "20180819",
+                            detail: [
+                                {
+                                    id: 1,
+                                    nickName: "Drencky",
+                                    action: "提交了练习日记",
+                                    actionType: 1,
+                                    avatarUrl: "/temp/a.png",
+                                    trainInfo: "第30天，连续练习2天",
+                                    diary: "今t天是第30天，奇怪哦，冥想中头没有出汗，脖子以下开始，汗珠一颗一颗的滚下来。",
+                                    time: "142300"
+                                }
+                            ]
+                        },
+                        {
+                            date: "20180818",
+                            detail: [
+                                {
+                                    id: 2,
+                                    nickName: "Drencky",
+                                    action: "提交了练习日记",
+                                    actionType: 2,
+                                    avatarUrl: "/temp/a.png",
+                                    trainInfo: "第30天，连续练习2天",
+                                    time: "14:00"
+                                }
+                            ]
+                        }
+                    ];
+
+                    this.$apply();
+                    resolve();
+                }, 1000);
+            });
+        }
+
+        async onLoad() {
+            //this.nav = options.nav;
+            this.addReadyCallback(this.getClassDetail());
+            this.addReadyCallback(this.getTrainList());
+            this.addReadyCallback(this.getTrainRecords());
+            this.runReadyCallbacks();
+        }
+    }
+</script>

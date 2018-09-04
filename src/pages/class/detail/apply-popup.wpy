@@ -1,0 +1,73 @@
+<template>
+    <popup title="请求加入班级" :btns.sync="btns" @onHide.user="clearFormData">
+        <textarea class="textarea" value="{{reason}}" name="reason" placeholder="你可以介绍下自己。选填。" @input="updateReason"></textarea>
+    </popup>
+</template>
+
+<style lang="less">
+</style>
+
+<script>
+    import wepy from "wepy";
+
+    import popup from "../../../components/zan-popup-a";
+
+    export default class extends wepy.component {
+        components = {
+            popup
+        };
+
+        props = {
+            id: Number
+        };
+
+        data = {
+            reason: "",
+            btns: [
+                {
+                    text: "取消",
+                    className: "btn-secondary",
+                    fn: () => {
+                        this.hide();
+                    }
+                },
+                {
+                    text: "提交",
+                    className: "btn-primary",
+                    fn: () => {
+                        this.submit();
+                    }
+                }
+            ],
+        };
+
+        methods = {
+            updateReason (e) {
+                this.reason = e.detail.value;
+            },
+            clearFormData () {
+                this.reason = "";
+            },
+            show () {
+                this.show();
+            },
+            hide () {
+                this.hide();
+            }
+        };
+
+        show () {
+            this.$invoke("popup", "show");
+        }
+
+        hide () {
+            this.$invoke("popup", "hide");
+        }
+
+        submit () {
+            console.log(this.id);
+            this.$emit("onSubmit");
+            this.hide();
+        }
+    }
+</script>
