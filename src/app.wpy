@@ -160,7 +160,7 @@
                 }
             });
 
-            if (getToken._state === "fail") {
+            if (getToken.isFail) {
                 await ajax2promise({
                     ins: that,
                     url: '/weixin/token/refresh',
@@ -201,7 +201,6 @@
                             wx.getUserInfo({
                                 success (userinfo) {
                                     if (d && d.accessToken) {
-                                        console.log(4);
                                         Object.assign(that, d)
                                         that.globalData.authInfo = userinfo
                                         that.globalData.userInfo = userinfo.userInfo

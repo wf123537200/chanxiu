@@ -43,3 +43,45 @@ export async function getClassDetail() {
 
     this.$apply();
 }
+
+export async function joinClass() {
+    const result = await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/add",
+        params: {
+            id: this.classID
+        }
+    });
+
+    this.$apply();
+    return result;
+}
+
+export async function applyClass() {
+    await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/add/apply",
+        params: {
+            id: this.classID
+        }
+    });
+
+    this.$apply();
+}
+
+export async function exitClass() {
+    const result = await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/exit",
+        params: {
+            id: this.classID
+        }
+    });
+
+    this.$apply();
+    return result;
+}
+

@@ -91,7 +91,7 @@
             </block>
         </view>
 
-        <view class="btn-box fixed to-bottom join-class" wx:if="{{isNotMyClass}}">
+        <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
             <button class="btn-primary" @tap="joinClass">加入班级</button>
         </view>
 
@@ -256,7 +256,7 @@
     import moment from "moment";
     import {ajax} from './../../components/ajax';
     import classInfo from "../../mixins/classInfo";
-    import applyClass from "../../mixins/applyClass";
+    //import applyClass from "../../mixins/applyClass";
     import getUserInfo from "../../mixins/getUserInfo";
     import ready from "../../mixins/ready";
 
@@ -311,7 +311,7 @@
             userInfo: {}
         };
 
-        mixins = [ready, getUserInfo, classInfo, classInfo, applyClass];
+        mixins = [ready, getUserInfo, classInfo];
 
         computed = {
             trainTimeTypeText () {
