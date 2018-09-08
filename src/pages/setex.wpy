@@ -96,7 +96,7 @@
   .dag-wrap {
     color: #666;
     background: #eee;
-    height:500rpx;
+    min-height: 650rpx;
   }
   .ok-btn {
     position:absolute;
@@ -138,24 +138,74 @@
   }
 
   /* types */
-  .types-wrap {
+  .types-wrap,.types-wrap2 {
     display: flex;
     flex-wrap: wrap;
-    margin-left:-20px;
-    padding: 20px 25px;
+    padding: 15px 10px;
     box-sizing: border-box;
     font-size: 13px;
+    border-bottom: 1px solid #ccc;
+  }
+  .types-wrap2:last-child {
+    border-width: 0;
+  }
+  .customize-types {
+    position: relative;
+    height: 20px;
+    width: 80px;
+    line-height: 20px;
+    box-sizing: border-box;
+    font-size: 13px;
+    margin-left:10px;
+  }
+  .customize-types-pannel {
+    position: absolute;
+    top: 23px;
+    left: 0;
+    width: 80px;
+    border: 1px solid $border-color;
+    z-index: 200;
+    box-sizing: border-box;
+    background-color: $white;
+  }
+  .customize-type {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    line-height: 20px;
+    padding-left: 5px;
+    box-sizing: border-box;
+    margin: 3px 0;
+  }
+  .customize-type-text {
+    flex: 1;
+    overflow:hidden;
+    word-break:keep-all;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+  }
+  .delete-customize-btn {
+    width: 15px;
+    height: 15px;
+    margin: 0 5px;
   }
   .types {
     padding:1px 10px;
     margin-left:10px;
     border-radius:5px;
-    margin-bottom: 5px;
+  }
 
+  .types-wrap2 {
+    padding-bottom: 5px;
+
+    .types {
+      margin-bottom: 10px;
+    }
   }
   .customize {
     height: 20px;
-    width: 70px;
+    width: 100%;
     line-height: 20px;
     padding-left: 5px;
     box-sizing: border-box;
@@ -324,6 +374,9 @@
     padding: 0;
     white-space: nowrap;
   }
+  .zan-popup__container {
+    overflow: auto;
+  }
 </style>
 
 <template>
@@ -441,15 +494,30 @@
       <view class="dag-wrap flex-c">
         <view class="types-wrap" style="top:30px;">
           <repeat for="{{typeList1}}" key="index" index="index" item="item">
-            <view @tap="onTypeClick(1, {{index}})" class="types {{type1 === index ? 'actived' : ''}}" >{{item}}</view>
+            <view @tap="onTypeClick({{index}})" class="types {{type1 === index ? 'actived' : ''}}" >{{item.name}}</view>
           </repeat>
         </view>
-        <view class="types-wrap" style="top:70px;">
-          <repeat for="{{typeList2}}" key="index" index="index" item="item">
-            <view @tap="onTypeClick(2, {{index}})" class="types {{type2 === index ? 'actived' : ''}}" >{{item}}</view>
-          </repeat>
-          <input class="types customize {{customizeFocus ? 'focus' : ''}}" placeholder="自定义" bindfocus="customizeFocus" value="{{customizeValue}}" bindblur="customizeBlur('typeList2')" />
-        </view>
+        <repeat for="{{typeList2}}" key="index" index="index" item="item">
+          <view class="types-wrap2" style="top:70px;">
+            <repeat for="{{item.childList}}" key="index2" index="index2" item="item2">
+              <view @tap="onSystemTypeClick({{index}}, {{index2}})" class="types {{typeName == 'childList' && type2 === index && type3 === index2 ? 'actived' : ''}}" >
+                {{item2.name}}
+              </view>
+            </repeat>
+            <view class="customize-types">
+              <input class="customize {{item.customizeFocus ? 'focus' : ''}} {{typeName == 'customList' && type4 >= 0 ? 'actived' : ''}}"
+                     placeholder="自定义" bindfocus="customizeFocus({{index}})" value="{{item.customizeValue}}" bindblur="customizeBlur({{index}})" />
+              <view class="customize-types-pannel {{item.customizeFocus && item.customList && item.customList.length ? '' : 'hide'}}">
+                <repeat for="{{item.customList}}" key="index3" index="index3" item="item3">
+                  <view class="customize-type">
+                    <view class="customize-type-text" bindtap="selectCustomize({{index}}, {{index3}})">{{item3.name}}</view>
+                    <image class="delete-customize-btn" bindtap="deleteEx({{index}}, {{index3}})" src="/images/delete.png" />
+                  </view>
+                </repeat>
+              </view>
+            </view>
+          </view>
+        </repeat>
       </view>
       <view class="ok-btn" @tap="onSetExType">确定</view>
     </setExType>
@@ -513,10 +581,14 @@
     return res
   }
 
-  const getListByName = function(arr, name) {
+  const getListByNameAncCode = function(arr, name, code) {
     const res = []
+
     arr.forEach(t => {
-      if(t[name]) res.push(t[name])
+      let newObj = {}
+      if(name && t[name]) newObj[name] = t[name]
+      if(code && t[code]) newObj[code] = t[code]
+      res.push(newObj)
     })
 
     return res
@@ -561,6 +633,21 @@
     }
   }
 
+  const setTypeList2 = function(type1Index = 0) {
+    let childList = this.typeListAll[type1Index].childList
+
+    if (!childList || !childList.length) {
+      childList = [{}]
+    }
+
+    for (let c of childList) {
+      c.customizeValue = ''
+      c.customizeFocus = false
+    }
+
+    console.log(childList)
+    this.typeList2 = childList
+  }
 
   /**
    * 添加自定义练习方法
@@ -583,6 +670,7 @@
       },
       fail: () => {
         console.log('fail')
+        initMethods.call(this)
       }
     })
   }
@@ -606,6 +694,27 @@
     })
   }
 
+  const initMethods = function () {
+    // 设置方法
+    ajax({
+      ins: this,
+      url: '/train/methods',
+      params: {},
+      success: (d) => {
+        console.log(d)
+        this.typeListAll = d;
+        this.typeList1 = getListByNameAncCode(d, 'name', 'id')
+        setTypeList2.apply(this, [0])
+
+        // this.typeList2 = this.type1 ? getListByNameAncCode(d[+this.type1, ].sencondLevelList, 'name') : getListByName(d[0].sencondLevelList, 'name')
+        /*
+        this.exList = [this.typeList1[this.type1], this.typeList2[this.type2]]
+        this.$apply()
+        */
+      }
+    })
+  }
+
   export default class Tag extends wepy.page {
     config = {
       disableScroll: true,
@@ -617,6 +726,7 @@
       setMusic: zanPop,
     }
     data = {
+      typeListAll: [],
       totalTrainDay: 0,
       averageDayTime: 0,
       totalCount: 0,
@@ -670,6 +780,9 @@
       typeList2: [],
       type1: 0,
       type2: 0,
+      type3: 0,
+      type4: -1,
+      typeName: 'childList',
       // music
       music: '无',
       musicTypeList: [],
@@ -681,9 +794,7 @@
       // 全局
       backgroundImage: '',
       userInfo: {},
-      isShowUserInfo: false,
-      customizeFocus: false,
-      customizeValue: ''
+      isShowUserInfo: false
     }
     onLoad() {
       // 缓存
@@ -709,30 +820,14 @@
 
       initAjax.call(this)
 
-      // 设置方法
-      ajax({
-        ins: this,
-        url: '/train/methods',
-        params: {},
-        success: (d) => {
-          console.log(d)
-          /*
-          this.typeListAll = d;
-          this.typeList1 = getListByName(d, 'name')
-          this.typeList2 = this.type1 ? getListByName(d[+this.type1].sencondLevelList, 'name') : getListByName(d[0].sencondLevelList, 'name')
-          this.exList = [this.typeList1[this.type1], this.typeList2[this.type2]]
-          this.$apply()
-          */
-        }
-      })
-
+      initMethods.call(this)
       // 音乐类型
       ajax({
         ins: this,
         url: '/music/list',
         params: {},
         success: (d) => {
-          this.musicTypeList = getListByName(d, 'typeName')
+          this.musicTypeList = getListByNameAncCode(d, 'typeName')
           d.forEach(t => {
             t.musicList.forEach(it => {
               const minute = it.duration > 60 ? Math.floor(it.duration / 60) : 0
@@ -812,13 +907,30 @@
         this.exList = [this.typeList1[this.type1], this.typeList2[this.type2]]
         this.$invoke('setExType', 'togglePopup')
       },
-      onTypeClick(type, index) {
-        if(type === '1') {
-          this.type2 = 0;
-          this.typeList2 = getListByName(this.typeListAll[index].sencondLevelList, 'name')
-        }
+      onTypeClick(index) {
+        this.type1 = index
+        this.type2 = 0;
+        this.type3 = 0;
+        this.type4 = -1;
+        this.typeName = 'childList';
+        setTypeList2.apply(this, [index]);
+      },
+      onSystemTypeClick(type2index, type3index) {
+        this.type2 = type2index
+        this.type3 = type3index
+        this.type4 = -1
+        this.typeName = 'childList'
 
-        this['type' + type] = index
+        const item = this.typeList2[type2index]
+        item.customizeValue = ''
+        item.customizeFocus = false
+      },
+      onCustomizeTypeClick(type2index, type3index) {
+        console.log(type2index + ' : ' + type3index)
+
+        this.type2 = type2index
+        this.type3 = type3index
+        this.typeName = 'customList'
       },
 
       //设置音乐相关
@@ -957,18 +1069,53 @@
       toExBriefing() {
         this.$navigate('./ex-briefing');
       },
-      customizeFocus() {
-        this.customizeFocus = true
-        console.log('customizeFocus')
+      customizeFocus(index) {
+        let item = this.typeList2[index]
+        item.customizeFocus = true
+        this.$apply()
       },
-      customizeBlur(typeListKey, e) {
+      customizeBlur(index, e) {
         const value = e.detail.value
         if (!value) return
 
-        this[typeListKey].push(value)
-        this.setData({'customizeValue': ''})
-        this.customizeFocus = false
-        // console.log('customizeBlur')
+        let item = this.typeList2[index]
+        item.customizeFocus = false
+        item.customizeValue = ''
+
+        if (item.customList && item.customList.length >= 3) {
+          wx.showToast({
+            title: '自定义方法不能超过3个哦',
+            icon: 'error',
+            duration: 2000,
+            mask:true
+          })
+
+          return
+        }
+        const parentId = this.typeList1[this.type1].id
+        addCustomize.apply(this, [parentId, value])
+
+        this.$apply()
+      },
+      selectCustomize(index, index3) {
+        this.type2 = index
+        this.type3 = -1
+        this.type4 = index3
+
+        const item = this.typeList2[index]
+        const typeObj = item.customList[index3]
+        item.customizeValue = typeObj.name
+        item.customizeFocus = false
+      },
+      deleteEx(index, index3) {
+        this.type4 = -1
+
+        const item = this.typeList2[index]
+        item.customList.splice(index3, 1)
+        item.customizeValue = ''
+
+        const typeObj = item.customList[index3]
+        delCustomize.call(this, typeObj.id)
       }
     }
   }
