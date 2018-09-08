@@ -274,7 +274,7 @@
       ajax({
         ins: this,
         url: '/train/submit',
-        params:this.$parent.globalData.submitData,
+        params: this.$parent.globalData.submitData,
         method: 'POST',
         success: (d) => {
           this.$parent.globalData.curDataId = d

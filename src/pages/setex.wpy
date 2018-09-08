@@ -645,7 +645,6 @@
       c.customizeFocus = false
     }
 
-    console.log(childList)
     this.typeList2 = childList
   }
 
@@ -808,6 +807,9 @@
       if(exTypeL) {
         this.type1 = exTypeL.type1
         this.type2 = exTypeL.type2
+        this.type3 = exTypeL.type3
+        this.type4 = exTypeL.type4
+        this.typeName = exTypeL.typeName
       }
 
       this.backgroundImage = this.$parent.globalData.backgroundImage;
@@ -904,7 +906,36 @@
         this.$invoke('setExType', 'togglePopup')
       },
       onSetExType() {
-        this.exList = [this.typeList1[this.type1], this.typeList2[this.type2]]
+        const type1Name = this.typeList1[this.type1].name
+        if (!type1Name) {
+          wx.showToast({
+            title: '请选择练习方法',
+            icon: 'error',
+            duration: 2000,
+            mask:true
+          })
+          return
+        }
+
+        let type2Name = ''
+        const typeObj = this.typeList2[this.type2]
+        if (this.typeName == 'childList') {
+          type2Name = typeObj.childList[this.type3].name
+        } else {
+          type2Name = typeObj.customList[this.type4].name
+        }
+
+        if (!type2Name) {
+          wx.showToast({
+            title: '请选择练习方法',
+            icon: 'error',
+            duration: 2000,
+            mask:true
+          })
+          return
+        }
+
+        this.exList = [type1Name, type2Name]
         this.$invoke('setExType', 'togglePopup')
       },
       onTypeClick(index) {
@@ -1031,7 +1062,10 @@
           key: 'exType',
           data: {
             type1: this.type1,
-            type2: this.type2
+            type2: this.type2,
+            type3: this.type3,
+            type4: this.type4,
+            typeName: this.typeName,
           },
           success: function(res){
             console.log('本地存储exType成功')
