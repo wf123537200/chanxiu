@@ -13,7 +13,7 @@
         </view>
 
         <view class="btn-box btn-save-image">
-            <button class="btn-primary" @tap="saveImage">保持图片</button>
+            <button class="btn-primary" @tap="saveImage">保存图片</button>
         </view>
     </view>
 </template>

@@ -23,7 +23,7 @@
         </view>
     </block>
 
-    <applyPopup :id.sync="classID"></applyPopup>
+    <applyPopup :classd.sync="classID"></applyPopup>
 </template>
 
 <style lang="less">

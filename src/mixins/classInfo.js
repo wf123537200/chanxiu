@@ -1,21 +1,51 @@
 import wepy from "wepy";
+import getGlobalData from "../components/getGlobalData";
 import {getClassDetail, joinClass, exitClass, applyClass} from "../modules/Classes";
 
 export default class extends wepy.mixin {
     data = {
-        classID: "",
+        classId: "",
         detail: {}
     };
 
     computed = {
+        classLogo () {
+            const logo = this.detail.logo;
+
+            if (logo) {
+                const global = getGlobalData(this);
+                const {ajaxPerfix} = global.data;
+
+                return `${ajaxPerfix}${logo}`;
+            }
+
+            return logo;
+        },
+        classQrCodeUrl () {
+            const qrCodeUrl = this.detail.qrCodeUrl;
+
+            if (qrCodeUrl) {
+                const global = getGlobalData(this);
+                const {ajaxPerfix} = global.data;
+
+                return `${ajaxPerfix}${qrCodeUrl}`;
+            }
+
+            return qrCodeUrl;
+        },
         isAdministrator () {
-            return false;
+            const role = this.detail.role;
+
+            return role > 0;
         },
         isMyClass () {
-            return !!(this.detail.myclass);
+            const role = this.detail.role;
+
+            return role !== null && role !== undefined;
         },
         noValidateOnApply () {
-            return this.detail.addType === 0;
+            //
+            return this.detail.addType !== 0;
         }
     };
 
@@ -37,6 +67,7 @@ export default class extends wepy.mixin {
                         complete: () => {
                             // todo
                             this.detail.myclass = true;
+                            this.$apply();
                         }
                     });
                 }
@@ -56,7 +87,6 @@ export default class extends wepy.mixin {
                         // todo
                         this.detail.myclass = false;
                         this.$apply();
-                        console.log(this.isMyClass);
                     }
                 });
             }
@@ -73,7 +103,7 @@ export default class extends wepy.mixin {
 
     onLoad(options) {
         if (options) {
-            this.classID = options.id;
+            this.classId = options.id;
         }
     }
 };

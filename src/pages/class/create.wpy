@@ -21,14 +21,14 @@
                 <view class="row">
                     <view class="label">班级头像</view>
                     <view class="content flex-h flex-vertical-bottom">
-                        <view class="upload-image" @tap="uploadImage('icon')">
-                            <image src="{{iconImagePath}}" wx:if="{{iconImagePath}}"></image>
+                        <view class="upload-image" @tap="uploadImage('logo')">
+                            <image src="{{_logo}}" wx:if="{{_logo}}"></image>
                         </view>
                         <text class="tip flex-1">
                             <text>可选。</text>
                             <text>您可以选择一个班级LOGO，最佳尺寸为116*116，不超过1M</text>
                         </text>
-                        <input hidden name="icon" class="input" maxlength="-1" />
+                        <input hidden name="logo" value="{{logo}}" class="input" maxlength="-1"/>
                     </view>
                 </view>
             </view>
@@ -41,13 +41,13 @@
                 <view class="row radio-group-row">
                     <view class="label required">加入条件</view>
                     <view class="content">
-                        <radio-group @change="onAddTypeChanged">
-                            <label class="radio {{addType == 1 ? 'checked' : ''}}">
-                                <radio hidden name="addTypeName" value="1" checked="true" />
+                        <radio-group name="addType" @change="onAddTypeChanged">
+                            <label class="radio {{addType === 0 ? 'checked' : ''}}">
+                                <radio hidden value="0" checked="true" />
                                 <text>直接加入，无需确认</text>
                             </label>
-                            <label class="radio {{addType != 1 ? 'checked' : ''}}">
-                                <radio hidden name="addTypeName" value="2" />
+                            <label class="radio {{addType !== 0 ? 'checked' : ''}}">
+                                <radio hidden value="1" />
                                 <text>邀请确认</text>
                             </label>
                         </radio-group>
@@ -57,9 +57,9 @@
                 <view class="row radio-group-row">
                     <view class="label">限额人数</view>
                     <view class="content">
-                        <radio-group @change="onCountChanged">
-                            <label class="radio {{students == item ? 'checked' : ''}}" wx:for="{{studentSupported}}" wx:key="index">
-                                <radio hidden name="students" value="{{item}}" checked="{{index === defaultCheckedStudent}}" />
+                        <radio-group name="maxStudentNum" @change="onCountChanged">
+                            <label class="radio {{students === item ? 'checked' : ''}}" wx:for="{{studentSupported}}" wx:key="index">
+                                <radio hidden value="{{item}}" checked="{{index === defaultCheckedStudent}}" />
                                 <text>{{item}}人</text>
                             </label>
                         </radio-group>
@@ -69,20 +69,20 @@
                 <view class="row">
                     <view class="label">支持加群</view>
                     <view class="content">
-                        <switch checked="{{isSupportAdd}}" color="#b0976e" @change="onSupportAddChanged"></switch>
+                        <switch checked="{{isSupportAdd}}" name="isSupportAdd" color="#b0976e" @change="onSupportAddChanged"></switch>
 
                         <block wx:if="{{isSupportAdd}}">
-                            <input type="text" name="admin-name" class="input v-space" maxlength="-1" placeholder="请输入班干部微信号" />
+                            <input type="text" name="committee" class="input v-space" maxlength="-1" placeholder="请输入班干部微信号" />
 
                             <view class="flex-h flex-vertical-bottom v-space">
-                                <view class="upload-image" @tap="uploadImage('qr')">
-                                    <image src="{{qrImagePath}}" wx:if="{{qrImagePath}}"></image>
+                                <view class="upload-image" @tap="uploadImage('qrCodeUrl')">
+                                    <image src="{{_qrCodeUrl}}" wx:if="{{_qrCodeUrl}}"></image>
                                 </view>
                                 <text class="tip flex-1">
                                     <text>可选。</text>
                                     <text>请上传群二维码。为防止7天过期失效，建议您每周更新</text>
                                 </text>
-                                <input hidden name="qr" class="input" maxlength="-1" />
+                                <input hidden name="qrCodeUrl" value="{{qrCodeUrl}}" class="input" maxlength="-1" />
                             </view>
                         </block>
                     </view>
@@ -240,6 +240,8 @@
     import {ajax} from "./../../components/ajax";
     import getUserInfo from "../../mixins/getUserInfo";
     import ready from "../../mixins/ready";
+    import {createClass} from "../../modules/Classes";
+    import getGlobalData from "../../components/getGlobalData";
 
     const STUDENTS = [150];
     const defaultCheckedStudent = 0;
@@ -253,13 +255,15 @@
         mixins = [getUserInfo, ready];
 
         data = {
-            addType: 1,
+            addType: 0,
             studentSupported: STUDENTS,
             defaultCheckedStudent,
             students: STUDENTS[defaultCheckedStudent],
             isSupportAdd: true,
-            iconImagePath: "",
-            qrImagePath: ""
+            logo: "",
+            _logo: "",
+            qrCodeUrl: "",
+            _qrCodeUrl: ""
         };
 
         methods = {
@@ -276,23 +280,51 @@
                 wx.chooseImage({
                     count: 1,
                     sizeType: ["compressed"],
-                    success: (res) => {
+                    success: async (res) => {
                         const file = res.tempFilePaths[0];
+                        const global = getGlobalData(this);
+                        const {ajaxPerfix} = global.data;
+                        const token = global.ins.accessToken;
 
-                        this[`${type}ImagePath`] = file;
-                        // todo 写入input.value
-                        this.$apply();
-                        //wx.uploadFile();
+                        this[`_${type}`] = file;
+
+                        wx.uploadFile({
+                            url: `${ajaxPerfix}/fileupload`,
+                            filePath: file,
+                            name: "file",
+                            formData:{
+                                "access_token": token
+                            },
+                            header: {
+                                "content-type": "multipart/form-data"
+                            },
+                            success: ({data}) => {
+                                data = JSON.parse(data);
+
+                                this[type] = data.data;
+                                this.$apply();
+                            }
+                        });
                     }
                 });
             },
-            submit (e) {
-                //const data = e.detai.value;
-                wx.navigateTo({
-                    url: "/pages/class/detail"
-                });
+            async submit (e) {
+                const result = await this.createClass(e.detail.value);
+
+                if (!result.isFail) {
+                    wx.showToast({
+                        title: "创建成功",
+                        complete () {
+                            wx.navigateTo({
+                                url: "/pages/class/detail?id=" + result
+                            });
+                        }
+                    });
+                }
             }
         };
+
+        createClass = createClass;
 
         async onLoad() {
             await this.runReadyCallbacks();

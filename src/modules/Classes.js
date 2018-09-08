@@ -22,14 +22,16 @@ export async function getMyClasses() {
     this.$apply();
 }
 
-export async function createClass() {
-    await ajax2promise({
+export async function createClass(params = {}) {
+    const result = await ajax2promise({
         ins: this,
         method: "POST",
-        url: "/class/myadds"
+        url: "/class/create",
+        params
     });
 
     this.$apply();
+    return result;
 }
 
 export async function getClassDetail() {
@@ -37,7 +39,7 @@ export async function getClassDetail() {
         ins: this,
         url: "/class/brief",
         params: {
-            id: this.classID
+            id: this.classId
         }
     });
 
@@ -50,7 +52,7 @@ export async function joinClass() {
         method: "POST",
         url: "/class/add",
         params: {
-            id: this.classID
+            id: this.classId
         }
     });
 
@@ -58,14 +60,17 @@ export async function joinClass() {
     return result;
 }
 
-export async function applyClass() {
+export async function applyClass(params = {}) {
+    params = Object.assign({
+        classId: this.classId,
+        pages: "/pages/class/detail?id=" + this.classId
+    }, params);
+
     await ajax2promise({
         ins: this,
         method: "POST",
         url: "/class/add/apply",
-        params: {
-            id: this.classID
-        }
+        params
     });
 
     this.$apply();
@@ -77,7 +82,7 @@ export async function exitClass() {
         method: "POST",
         url: "/class/exit",
         params: {
-            id: this.classID
+            id: this.classId
         }
     });
 
