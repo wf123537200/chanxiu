@@ -210,7 +210,7 @@
     padding-left: 5px;
     box-sizing: border-box;
     font-size: 13px;
-    border-radius: 2px;
+    border-radius: 5px;
   }
   .customize.focus {
     border: 1px solid $border-color;
@@ -505,7 +505,7 @@
               </view>
             </repeat>
             <view class="customize-types">
-              <input class="customize {{item.customizeFocus ? 'focus' : ''}} {{typeName == 'customList' && type4 >= 0 ? 'actived' : ''}}"
+              <input class="customize {{item.customizeFocus ? 'focus' : ''}} {{typeName == 'customList' && type2 === index && type4 >= 0 ? 'actived' : ''}}"
                      placeholder="自定义" bindfocus="customizeFocus({{index}})" value="{{item.customizeValue}}" bindblur="customizeBlur({{index}})" />
               <view class="customize-types-pannel {{item.customizeFocus && item.customList && item.customList.length ? '' : 'hide'}}">
                 <repeat for="{{item.customList}}" key="index3" index="index3" item="item3">
@@ -636,11 +636,16 @@
   const setTypeList2 = function(type1Index = 0) {
     let childList = this.typeListAll[type1Index].childList
 
-    for (let c of childList) {
-      c.customizeValue = ''
+    childList.forEach( (c, index) => {
+      let customizeValue = ''
+      if (index == this.type2) {
+        customizeValue = this.customizeValue || ''
+      }
+      c.customizeValue = customizeValue
       c.customizeFocus = false
-    }
+    })
 
+    console.log(childList)
     this.typeList2 = childList
   }
 
@@ -660,10 +665,10 @@
       method: 'POST',
       success: (d) => {
         console.log('success')
+        initMethods.call(this)
       },
       fail: () => {
         console.log('fail')
-        initMethods.call(this)
       }
     })
   }
@@ -697,7 +702,7 @@
         console.log(d)
         this.typeListAll = d;
         this.typeList1 = getListByNameAncCode(d, 'name', 'id')
-        setTypeList2.apply(this, [0])
+        setTypeList2.apply(this, [this.type1])
 
         buildExList.call(this)
         this.$apply()
@@ -957,17 +962,17 @@
         this.type3 = 0;
         this.type4 = -1;
         this.typeName = 'childList';
-        setTypeList2.apply(this, [index]);
+        setTypeList2.apply(this, [this.type1]);
       },
       onSystemTypeClick(type2index, type3index) {
         this.type2 = type2index
         this.type3 = type3index
         this.type4 = -1
         this.typeName = 'childList'
-
-        const item = this.typeList2[type2index]
-        item.customizeValue = ''
-        item.customizeFocus = false
+        for (let t of this.typeList2) {
+          t.customizeValue = ''
+          t.customizeFocus = false
+        }
       },
       onCustomizeTypeClick(type2index, type3index) {
         console.log(type2index + ' : ' + type3index)
@@ -1013,7 +1018,7 @@
         if(+musicSelectIndex) {
           let musicObj = '';
           this.musicList.forEach(it => {
-            let x = it.find(t => t.id === musicSelectIndex)
+            let x = it.find(t => t.id === musicSelectIndex)``
             if(x) musicObj = x
           })
           if(!musicObj) {
@@ -1126,12 +1131,18 @@
       customizeBlur(index, e) {
         const value = e.detail.value
         if (!value) return
-
         let item = this.typeList2[index]
-        item.customizeFocus = false
-        item.customizeValue = ''
+        const customList = item.customList || []
+        const extentObj = customList.find(c => c.name == value)
+        if (extentObj) return
 
-        if (item.customList && item.customList.length >= 3) {
+        this.type3 = -1
+        this.type4 = customList.length
+        this.typeName = 'customList'
+        item.customizeFocus = false
+        this.customizeValue = item.customizeValue = value
+
+        if (customList && customList.length >= 3) {
           wx.showToast({
             title: '自定义方法不能超过3个哦',
             icon: 'error',
@@ -1156,6 +1167,7 @@
         this.type2 = index
         this.type3 = -1
         this.type4 = index3
+        this.typeName = 'customList'
 
         const item = this.typeList2[index]
         const typeObj = item.customList[index3]
@@ -1166,11 +1178,15 @@
         this.type4 = -1
 
         const item = this.typeList2[index]
-        item.customList.splice(index3, 1)
-        item.customizeValue = ''
+        const customList = item.customList
+        const typeObj = customList[index3]
 
-        const typeObj = item.customList[index3]
-        delCustomize.call(this, typeObj.id)
+        console.log(typeObj)
+        if (typeObj) {
+          customList.splice(index3, 1)
+          item.customizeValue = ''
+          delCustomize.call(this, typeObj.id)
+        }
       }
     }
   }

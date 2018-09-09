@@ -14,7 +14,9 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
       if(networkType === 'none' || networkType === 'unkonwn' && method === 'GET') {
         globalData.hasNetwork = false;
         // 拿本地存储
+        console.log('url:' +ajaxPerfix + url)
         const d = wx.getStorageSync(ajaxPerfix + url);
+        console.log(d)
         if(d) {
           success && success(d)
         } else {
