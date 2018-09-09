@@ -14,11 +14,10 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
       if(networkType === 'none' || networkType === 'unkonwn' && method === 'GET') {
         globalData.hasNetwork = false;
         // 拿本地存储
-        console.log('url:' +ajaxPerfix + url)
-        const d = wx.getStorageSync(ajaxPerfix + url);
-        console.log(d)
-        if(d) {
-          success && success(d)
+        const data = wx.getStorageSync(ajaxPerfix + url);
+
+        if(data) {
+          success && success(data)
         } else {
           fail ? fail() : wx.showToast({
             title: data.data.msg || '调用接口失败',
@@ -26,8 +25,6 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
             duration: 2000,
             mask:true
           })
-
-          throw new Error(data.data.msg + ':' + url)
         }
       } else {
         wepy.request({url: ajaxPerfix + url, data: Object.assign(params, {'access_token': token}), method, header: {'content-type': 'application/x-www-form-urlencoded'}}).then(data => {

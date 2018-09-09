@@ -396,7 +396,7 @@
             <image src="../images/record.png" class="diary-wait-edit  {{!item.content ? '' : 'hide'}}" />
             <image src="../images/log.png" class="diary-wait-edit  {{item.content ? '' : 'hide'}}" />
             <view class="ex-title">{{item.title}}</view>
-            <view class="ex-date">{{item.strCreateTime}}</view>
+            <view class="ex-date">{{item.strCreateTimeStr}}</view>
           </view>
           <view class="flex-r line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">
             {{item.content}}
@@ -455,6 +455,7 @@
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
   import zanPop from '../components/zan-popup'
+  import moment from 'moment'
 
   /**
    * 获取历史练习数据
@@ -523,6 +524,20 @@
       success: (data) => {
         if (data) {
           for (let d of data) {
+            console.log(d.strCreateTime)
+            if (d.strCreateTime) {
+              let minuteDesc =moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
+              let hourDesc =moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('hours').fromNow()
+
+              if (minuteDesc.indexOf(' minute ago') >= 0) {
+                d.strCreateTimeStr = hourDesc.replace(' minute ago', '分钟前')
+              } else if (hourDesc.indexOf(' hours ago') >= 0) {
+                d.strCreateTimeStr = hourDesc.replace(' hours ago', '小时前')
+              } else {
+                d.strCreateTimeStr = moment(d.strCreateTime).format('YYYY-MM-DD HH:mm')
+              }
+            }
+
             d.readAll = false
           }
           this.dynamicList = data
