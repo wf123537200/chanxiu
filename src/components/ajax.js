@@ -19,12 +19,15 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
         if(data) {
           success && success(data)
         } else {
-          fail ? fail() : wx.showToast({
-            title: data.data.msg || '调用接口失败',
-            icon: 'error',
-            duration: 2000,
-            mask:true
-          })
+          if (typeof data != 'string') {
+            const message = data && data.data ? data.data.msg : '调用接口失败'
+            fail ? fail() : wx.showToast({
+              title: message,
+              icon: 'error',
+              duration: 2000,
+              mask:true
+            })
+          }
         }
       } else {
         wepy.request({url: ajaxPerfix + url, data: Object.assign(params, {'access_token': token}), method, header: {'content-type': 'application/x-www-form-urlencoded'}}).then(data => {

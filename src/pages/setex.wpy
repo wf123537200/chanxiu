@@ -645,7 +645,6 @@
       c.customizeFocus = false
     })
 
-    console.log(childList)
     this.typeList2 = childList
   }
 
@@ -664,7 +663,6 @@
       },
       method: 'POST',
       success: (d) => {
-        console.log('success')
         initMethods.call(this)
       },
       fail: () => {
@@ -699,7 +697,6 @@
       url: '/train/methods',
       params: {},
       success: (d) => {
-        console.log(d)
         this.typeListAll = d;
         this.typeList1 = getListByNameAncCode(d, 'name', 'id')
         setTypeList2.apply(this, [this.type1])
@@ -974,14 +971,6 @@
           t.customizeFocus = false
         }
       },
-      onCustomizeTypeClick(type2index, type3index) {
-        console.log(type2index + ' : ' + type3index)
-
-        this.type2 = type2index
-        this.type3 = type3index
-        this.typeName = 'customList'
-      },
-
       //设置音乐相关
       onShowSetMusic() {
         this.$invoke('setMusic', 'togglePopup')
@@ -1094,11 +1083,11 @@
       },
       getUserInfo(e) {
         const that = this
-
         this.$parent.getUserInfo((userInfo) => {
+
           if (userInfo) {
             that.userInfo = userInfo
-            if(that.userInfo && that.userInfo.nickName) {
+            if(that.userInfo) {
               that.methods.onJump2Ex.call(that)
               return
             }
@@ -1153,7 +1142,6 @@
           return
         }
 
-        console.log(item)
         const childList = item.childList || []
         let parentTrainMethodId = ''
         if (childList && childList.length) {
@@ -1181,7 +1169,6 @@
         const customList = item.customList
         const typeObj = customList[index3]
 
-        console.log(typeObj)
         if (typeObj) {
           customList.splice(index3, 1)
           item.customizeValue = ''

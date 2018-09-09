@@ -270,21 +270,30 @@
 
         this.$apply()
       })
-
+      const submitData = this.$parent.globalData.submitData
       ajax({
         ins: this,
         url: '/train/submit',
-        params: this.$parent.globalData.submitData,
+        params: submitData,
         method: 'POST',
         success: (d) => {
           this.$parent.globalData.curDataId = d
-          wx.setStorage({
-            key: 'exTimeOffline',
-            data: {},
-            success: function(){
-              console.log('清除 补充提交练习')
+
+          const etoaArr = wx.getStorageSync('exTimeOfflineArray') || []
+          if (etoaArr && etoaArr.length) {
+            const index = etoaArr.findIndex(e => e.timeSet == submitData.timeSet && e.trainMethodIds == submitData.trainMethodIds)
+            if (index >= 0) {
+              etoaArr.splice(index, 0)
+
+              wx.setStorage({
+                key: 'exTimeOfflineArray',
+                data: etoaArr,
+                success: function(res){
+                  console.log('本地存储 exTimeOfflineArray 成功')
+                }
+              })
             }
-          })
+          }
         },
         fail: () => {
           console.log('提交失败~~')

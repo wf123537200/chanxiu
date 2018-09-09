@@ -99,7 +99,7 @@
     }
   }
 
-  const TIME = 1000;
+  const TIME = 10;
   function getMinusTime(d) {
     const dx = this._d = new Date(d.setSeconds(d.getSeconds() - 1))
     return {hour: dx.getHours(), minute: d.getMinutes(), second: d.getSeconds()}
@@ -158,13 +158,19 @@
       success: (res) => {
         const networkType = res.networkType
         if(networkType === 'none' || networkType === 'unkonwn') {
-          wx.setStorage({
-            key: 'exTimeOffline',
-            data: submitData,
-            success: function(res){
-              console.log('本地存储 exTimeOffline 成功')
-            }
-          })
+          const etoaArr = wx.getStorageSync('exTimeOfflineArray') || []
+          const extentObj = etoaArr.find(e => e.timeSet == submitData.timeSet && e.trainMethodIds == submitData.trainMethodIds)
+          if (!extentObj) {
+            etoaArr.push(submitData)
+
+            wx.setStorage({
+              key: 'exTimeOfflineArray',
+              data: etoaArr,
+              success: function(res){
+                console.log('本地存储 exTimeOfflineArray 成功')
+              }
+            })
+          }
         }
       }
     })
