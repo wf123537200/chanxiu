@@ -335,7 +335,7 @@
         <view class="cur-times">今天练习{{todayInfo.todayTrainCount}}次{{todayInfo.todayDuration}}分钟</view>
         <view class="">连续练习{{todayInfo.continuousNum}}天，最大练习{{todayInfo.maxContinuousNum}}天</view>
       </view>
-      <view class="gray-button mr-20">去打卡</view>
+      <view class="gray-button mr-20" >去打卡</view>
     </view>
 
     <!-- 数据 -->

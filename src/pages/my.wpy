@@ -147,7 +147,7 @@
         </view>
         <view>
           <view class="header-banner">单次最多</view>
-          <view class="inline num">{{totalCount}}</view><view class="inline">次</view>
+          <view class="inline num">{{totalCount}}</view><view class="inline">分钟</view>
         </view>
       </view>
 
