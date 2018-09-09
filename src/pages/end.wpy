@@ -108,7 +108,7 @@
     position:fixed;
     background:#fff;
     width:100%;
-    height:120px;
+    height:140px;
     bottom:0;
     z-index: 10000
   }
@@ -433,7 +433,6 @@
                 this.isShowImage = false
                 this.$apply()
 
-                console.log(err);
                 if (err.errMsg === "saveImageToPhotosAlbum:fail auth deny") {
                   wx.openSetting({
                     success(settingdata) {
