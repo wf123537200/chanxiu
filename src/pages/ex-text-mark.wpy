@@ -20,7 +20,7 @@
     position: absolute;
     top: 15px;
     right: 60px;
-    width: 190px;
+    width: 177px;
     height: auto;
     line-height: 1.5;
     padding: 10px;
@@ -82,13 +82,13 @@
   <view class="container">
     <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
     <view class="user-mark">
-      【静坐-内观30分钟连续25天】
-       感觉被舒服的身体包围
+      【{{exList}}{{exTime}}分钟连续{{continuousNum}}天】
+       感觉被舒服的身体包围。
     </view>
 
     <view class="user-mark-pannel">
-      <view>【静坐-内观30分钟连续25天】</view>
-      <view>感觉被舒服的身体包围</view>
+      <view>【{{exList}}{{exTime}}分钟连续{{continuousNum}}天】】</view>
+      <view>感觉被舒服的身体包围。</view>
     </view>
 
     <view class="copy-btn cancel-btn confirm-btn" @tap="copy">
@@ -110,14 +110,18 @@
     }
     data = {
       userInfo: {},
-      text: '【静坐-内观30分钟连续25天】\n感觉被舒服的身体包围'
+      exList: '',
+      exTime: 0,
+      continuousNum: 0
     }
     onGotUserInfo(e) {
     }
     methods = {
       copy() {
+        const text =  `【${this.exList}${this.exTime}分钟连续${this.ontinuousNum}天】感觉被舒服的身体包围。`
+
         wx.setClipboardData({
-          data: this.text,
+          data: text,
           success: function(res) {
             wx.showToast({
               title: '拷贝成功',
@@ -130,12 +134,26 @@
       }
     }
     onLoad() {
+      const that = this
+      const exTypeL = wx.getStorageSync('exType');
       this.$parent.getUserInfo((userInfo) => {
         if (userInfo) {
-          this.userInfo = userInfo
+          that.userInfo = userInfo
         }
-
+        const exList = exTypeL.exList || ''
+        that.exList = exList.replace(' ', '-')
+        that.exTime = Math.abs(that.$parent.globalData['exTime']) || 0
         this.$apply()
+      })
+
+      ajax({
+        ins: this,
+        url: '/train/summary',
+        params: {},
+        success: (d) => {
+          this.continuousNum = d.trainInfo.continuousNum || 0
+          this.$apply()
+        }
       })
     }
   }

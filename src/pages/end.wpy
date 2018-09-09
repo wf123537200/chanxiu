@@ -103,10 +103,12 @@
   }
 
   .share-wrap {
+    display: flex;
+    flex-direction: column;
     position:fixed;
     background:#fff;
     width:100%;
-    height:150px;
+    height:120px;
     bottom:0;
     z-index: 10000
   }
@@ -117,8 +119,6 @@
   .share-line {
     border-bottom:1px solid #ccc;
     margin-top:10px;
-    position:fixed;
-    bottom:137px;
     z-index:1000;
     width:70%;
     height:1px;
@@ -129,17 +129,19 @@
     font-size:0.6rem;
     padding:5px;
     color:#ccc;
-    position:fixed;
     z-index:10000;
     background:#fff;
-    left:50%;
-    transform:translateX(-50%);
+    text-align: center;
+  }
+  .share-btn-wrap {
+    display: flex;
+    flex:1;
+    justify-content:center;
+    align-items:center;
   }
   .share-btn {
-    position:fixed;
     background:#fff;
     border:2px solid #fff;
-    bottom:40px;
     font-size:0.6rem;
     color:#ccc;
     line-height:1.8;
@@ -218,18 +220,20 @@
         <view class="share-line"></view>
         <view class="share-title">分享</view>
       </view>
-      <button class="share-btn" style="left:25%;" @tap="onShowImage">
-        <image class="share-image" src="/images/firend.png"></image>
-        <view>朋友圈</view>
-      </button>
-      <button class="share-btn" style="right:25%;" open-type="share">
-        <image class="share-image" src="/images/weixin.png"></image>
-        <view>微信</view>
-      </button>
-      <button class="share-btn" style="right:25%;" bindtap="textMark">
-        <image class="share-image" src="/images/text.png"></image>
-        <view>文字信息打卡</view>
-      </button>
+      <view class="share-btn-wrap">
+        <button class="share-btn" @tap="onShowImage">
+          <image class="share-image" src="/images/firend.png"></image>
+          <view>朋友圈</view>
+        </button>
+        <button class="share-btn" open-type="share">
+          <image class="share-image" src="/images/weixin.png"></image>
+          <view>微信</view>
+        </button>
+        <button class="share-btn" bindtap="textMark">
+          <image class="share-image" src="/images/text.png"></image>
+          <view>文字信息打卡</view>
+        </button>
+      </view>
     </view>
   </view>
 </template>

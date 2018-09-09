@@ -28,7 +28,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 2,
+			"current": 3,
 			"list": [
 				{
 					"id": -1,
@@ -45,7 +45,13 @@
 				{
 					"id": -1,
 					"name": "pages/ex-briefing",
-					"pathName": "pages/ex-briefing"
+					"pathName": "pages/ex-briefing",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "pages/end",
+					"pathName": "pages/end"
 				}
 			]
 		}
