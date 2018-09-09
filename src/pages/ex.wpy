@@ -191,6 +191,12 @@
     am.title = title || src
     am.src = src
   }
+  const onTapStop = function() {
+    this.isPause = true
+    clearInterval(this.timer)
+    this.timer = ''
+    wx.pauseBackgroundAudio()
+  }
 
   const d = new Date()
   export default class Tag extends wepy.page {
@@ -208,6 +214,9 @@
         hour: 0,
         minute: 0
       }
+    }
+    onHide() {
+      onTapStop.call(this)
     }
     onLoad(params) {
       wx.setKeepScreenOn({
@@ -244,10 +253,7 @@
     }
     methods = {
       onTapStop() {
-        this.isPause = true
-        clearInterval(this.timer)
-        this.timer = ''
-        wx.pauseBackgroundAudio()
+        onTapStop.call(this)
       },
       onGoon() {
         if(this.timer) return

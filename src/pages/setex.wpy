@@ -699,13 +699,56 @@
         this.typeList1 = getListByNameAncCode(d, 'name', 'id')
         setTypeList2.apply(this, [0])
 
-        // this.typeList2 = this.type1 ? getListByNameAncCode(d[+this.type1, ].sencondLevelList, 'name') : getListByName(d[0].sencondLevelList, 'name')
-        /*
-        this.exList = [this.typeList1[this.type1], this.typeList2[this.type2]]
+        buildExList.call(this)
         this.$apply()
-        */
       }
     })
+  }
+  const buildExList = function (isValid) {
+    const type1Name = this.typeList1[this.type1].name || ''
+    if (isValid && !type1Name) {
+      wx.showToast({
+        title: '请选择练习方法',
+        icon: 'error',
+        duration: 2000,
+        mask:true
+      })
+      return
+    }
+
+    let type2Name = ''
+    const typeObj = this.typeList2[this.type2]
+    if (this.typeName == 'childList') {
+      type2Name = typeObj.childList[this.type3].name
+    } else if (typeObj.customList && typeObj.customList.length){
+      type2Name = typeObj.customList[this.type4].name || ''
+    }
+
+    if (isValid && !type2Name) {
+      wx.showToast({
+        title: '请选择练习方法',
+        icon: 'error',
+        duration: 2000,
+        mask:true
+      })
+      return
+    }
+
+    this.exList = [type1Name, type2Name]
+  }
+  const getTrainMethodIds = function () {
+    const type1id = this.typeList1[this.type1].id
+
+    let type2Id = ''
+    const typeObj = this.typeList2[this.type2]
+    if (this.typeName == 'childList') {
+      type2Id = typeObj.childList[this.type3].id
+    } else if (typeObj.customList && typeObj.customList.length){
+      type2Id = typeObj.customList[this.type4].id
+    }
+
+    if (!type1id || !type2Id) return console.error('getTrainMethodIds error')
+    return [type1id, type2Id].join(' ')
   }
 
   export default class Tag extends wepy.page {
@@ -804,6 +847,7 @@
         this.type3 = exTypeL.type3
         this.type4 = exTypeL.type4
         this.typeName = exTypeL.typeName
+        this.exList = exTypeL.exList.split(' ')
       }
 
       this.backgroundImage = this.$parent.globalData.backgroundImage;
@@ -904,36 +948,7 @@
         this.$invoke('setExType', 'togglePopup')
       },
       onSetExType() {
-        const type1Name = this.typeList1[this.type1].name
-        if (!type1Name) {
-          wx.showToast({
-            title: '请选择练习方法',
-            icon: 'error',
-            duration: 2000,
-            mask:true
-          })
-          return
-        }
-
-        let type2Name = ''
-        const typeObj = this.typeList2[this.type2]
-        if (this.typeName == 'childList') {
-          type2Name = typeObj.childList[this.type3].name
-        } else {
-          type2Name = typeObj.customList[this.type4].name
-        }
-
-        if (!type2Name) {
-          wx.showToast({
-            title: '请选择练习方法',
-            icon: 'error',
-            duration: 2000,
-            mask:true
-          })
-          return
-        }
-
-        this.exList = [type1Name, type2Name]
+        buildExList.call(this, true)
         this.$invoke('setExType', 'togglePopup')
       },
       onTypeClick(index) {
@@ -1039,8 +1054,8 @@
       onJump2Ex() {
         try {
           Object.assign(this.$parent.globalData, {
-            setExType: this.typeList1 ? this.typeList1[this.type1] : '',
-            trainMethodIds: this.typeList2.length ? this.typeListAll[this.type1].id + ',' + this.typeListAll[this.type1].sencondLevelList[this.type2].id : this.typeListAll[this.type1].id,
+            setExType: this.exList[0],
+            trainMethodIds: getTrainMethodIds.call(this),
             musicId: this.musicId || 0
           })
         } catch(e) {
@@ -1056,6 +1071,7 @@
             console.log('本地存储setTime成功')
           }
         })
+
         wx.setStorage({
           key: 'exType',
           data: {
@@ -1064,6 +1080,7 @@
             type3: this.type3,
             type4: this.type4,
             typeName: this.typeName,
+            exList: this.exList.join(' '),
           },
           success: function(res){
             console.log('本地存储exType成功')
