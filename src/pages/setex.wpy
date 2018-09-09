@@ -636,10 +636,6 @@
   const setTypeList2 = function(type1Index = 0) {
     let childList = this.typeListAll[type1Index].childList
 
-    if (!childList || !childList.length) {
-      childList = [{}]
-    }
-
     for (let c of childList) {
       c.customizeValue = ''
       c.customizeFocus = false
@@ -650,17 +646,15 @@
 
   /**
    * 添加自定义练习方法
-   * @param parentId
-   * @param name
    */
-  const addCustomize = function (parentId, name) {
+  const addCustomize = function (name, parentTrainMethodId) {
     const that = this
 
     ajax({
       ins: that,
       url: '/train/custom/add',
       params: {
-        parentTrainMethodId: parentId,
+        parentTrainMethodId: parentTrainMethodId,
         name
       },
       method: 'POST',
@@ -818,6 +812,10 @@
       setTimeout(t => {
         this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
         this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+        this.$parent.getUserInfo((userInfo) => {
+          this.userInfo = userInfo
+          this.$apply()
+        })
       }, 1000)
 
       initAjax.call(this)
@@ -1126,8 +1124,14 @@
 
           return
         }
-        const parentId = this.typeList1[this.type1].id
-        addCustomize.apply(this, [parentId, value])
+
+        console.log(item)
+        const childList = item.childList || []
+        let parentTrainMethodId = ''
+        if (childList && childList.length) {
+          parentTrainMethodId = childList[0].parentTrainMethodId
+        }
+        addCustomize.apply(this, [value, parentTrainMethodId])
 
         this.$apply()
       },

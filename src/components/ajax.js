@@ -43,7 +43,7 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
           } else {
             fail && fail()
             if(data.data.code === 500211) {
-              wx.setStorage({
+                wx.setStorage({
                 key: 'token',
                 data: {},
                 success: function(res){

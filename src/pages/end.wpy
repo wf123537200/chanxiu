@@ -191,7 +191,7 @@
       <view class="pr">
         <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
         <view class="nickname">{{userInfo.nickName}}</view>
-        <view class="desc {{exTime === 0 ? 'hide' : ''}}">{{extype}} {{exTime}} 分钟，第{{continuousNum}}天</view>
+        <view class="desc {{exTime === 0 ? 'hide' : ''}}">{{extype}} {{exTime}} 分钟，连续第{{continuousNum}}天</view>
         <view class="desc {{exTime === 0 ? '' : 'hide'}}">练习不足1分钟，将不计入成绩统计。</view>
       </view>
       <view class="tips-btn {{exTime === 0 ? 'hide' : ''}}">
