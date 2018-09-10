@@ -81,7 +81,6 @@
         mixins = [ready, getUserInfo, classInfo, env];
 
         async onShow() {
-            console.log(this)
             this.addReadyCallback(this.getUserInfo());
             this.addReadyCallback(this.getClassDetail());
             await this.runReadyCallbacks();
