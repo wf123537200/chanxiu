@@ -457,7 +457,7 @@
     <setTime style="width: 100%" class="pr">
       <view class="set-time-wrap">
         <repeat for="{{setTimes}}" key="index" index="index" item="item">
-          <view @tap="onChangeTimesets({{index}})" style="line-height: 50px; padding: 0 5px;" class="{{item.isChecked ? 'set-time-active' : ''}}">{{item.label}}</view>
+          <view @tap="onChangeTimesets({{index}})" style="line-height: 50px; padding: 0 5px;overflow: hidden;" class="{{item.isChecked ? 'set-time-active' : ''}}">{{item.label}}</view>
         </repeat>
       </view>
       <view class="time-set-wrap dag-wrap {{hour == '00' && minute == '00' ? 'hide' : ''}}" style="margin-top:-100rpx;">
