@@ -33,19 +33,26 @@ export default class extends wepy.mixin {
 
             return qrCodeUrl;
         },
-        isAdministrator () {
+        isMonitor () {
             const role = this.detail.role;
 
-            return role > 0;
+            return role === 1;
+        },
+        isViceMonitor () {
+            const role = this.detail.role;
+
+            return role === 2;
+        },
+        isAdministrator () {
+            return this.isMonitor || this.isViceMonitor;
         },
         isMyClass () {
             const role = this.detail.role;
 
-            return role !== null && role !== undefined;
+            return role !== null && role !== undefined && role !== "";
         },
         noValidateOnApply () {
-            //
-            return this.detail.addType !== 0;
+            return this.detail.addType === 0;
         }
     };
 
@@ -65,8 +72,7 @@ export default class extends wepy.mixin {
                     wx.showToast({
                         title: "加入成功",
                         complete: () => {
-                            // todo
-                            this.detail.myclass = true;
+                            this.detail.role = 0;
                             this.$apply();
                         }
                     });
@@ -84,8 +90,7 @@ export default class extends wepy.mixin {
                 wx.showToast({
                     title: "退出成功",
                     complete: () => {
-                        // todo
-                        this.detail.myclass = false;
+                        this.detail.role = undefined;
                         this.$apply();
                     }
                 });

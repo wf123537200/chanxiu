@@ -145,7 +145,7 @@
             }
         }
 
-        async onLoad() {
+        async onShow() {
             this.addReadyCallback(this.getClassDetail());
             this.runReadyCallbacks();
         }

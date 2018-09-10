@@ -78,7 +78,7 @@
             }
         };
 
-        async onLoad () {
+        async onShow () {
             this.addReadyCallback(this.getClassDetail());
             await this.runReadyCallbacks();
         }

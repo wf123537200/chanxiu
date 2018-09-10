@@ -86,7 +86,7 @@
 
         getMyClasses = getMyClasses;
 
-        async onLoad() {
+        async onShow() {
             this.addReadyCallback(this.getUserInfo());
             this.addReadyCallback(this.getOpenClasses());
             this.addReadyCallback(this.getMyClasses());

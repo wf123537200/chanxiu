@@ -1,8 +1,8 @@
 <template>
     <block wx:if="{{ready}}">
-        <nav :id.sync="classID" nav=""></nav>
+        <nav :id.sync="classId" nav="intro"></nav>
 
-        <info class="classInfo" :id.sync="classID" :detail.sync="detail"></info>
+        <info class="classInfo" :id.sync="classId" :detail.sync="detail"></info>
 
         <view class="intro">
             <intro :detail.sync="detail"></intro>
@@ -23,7 +23,7 @@
         </view>
     </block>
 
-    <applyPopup :classd.sync="classID"></applyPopup>
+    <applyPopup :classId.sync="classId"></applyPopup>
 </template>
 
 <style lang="less">
@@ -80,7 +80,8 @@
 
         mixins = [ready, getUserInfo, classInfo, env];
 
-        async onLoad() {
+        async onShow() {
+            console.log(this)
             this.addReadyCallback(this.getUserInfo());
             this.addReadyCallback(this.getClassDetail());
             await this.runReadyCallbacks();

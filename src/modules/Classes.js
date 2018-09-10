@@ -90,3 +90,50 @@ export async function exitClass() {
     return result;
 }
 
+// 训练名单
+export async function getTrainList () {
+    const result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/briefing/train/list",
+        params: {
+            id: this.classId,
+            timeType: this.brief.timeType
+        }
+    });
+
+    this.$apply();
+    return result;
+}
+
+// 排行榜
+export async function getTrainRanks () {
+    const result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/briefing/ranking",
+        params: {
+            id: this.classId,
+            timeType: this.brief.timeType
+        }
+    });
+
+    this.$apply();
+    return result;
+}
+
+// 中断榜
+export async function getInterrupts () {
+    const result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/briefing/Interrupt",
+        params: {
+            id: this.classId,
+            timeType: this.brief.timeType
+        }
+    });
+
+    this.$apply();
+    return result;
+}

@@ -166,8 +166,8 @@
             }
         };
 
-        async onLoad() {
-            await this.runReadyCallbacks();
-        }
+//        async onShow() {
+//            await this.runReadyCallbacks();
+//        }
     }
 </script>

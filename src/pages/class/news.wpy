@@ -1,6 +1,6 @@
 <template>
     <view class="full-height flex-v" @tap="hideTrainTimeTypeDrop" wx:if="{{ready}}">
-        <nav :id.sync="id" nav="news"></nav>
+        <nav :id.sync="classId" nav="news"></nav>
 
         <view class="tab">
             <view data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
@@ -23,7 +23,9 @@
                             <view data-type="3" @tap.stop="setTrainTimeType">本月</view>
                         </view>
                     </view>
-                    <text class="total">共{{briefTrainInfo.trainNum}}人参与，人均{{briefTrainInfo.averageTime}}分钟</text>
+
+                    <text class="total" wx:if="{{hasTrainInfo}}">共{{briefTrainInfo.trainNum}}人参与，人均{{briefTrainInfo.averageTime}}分钟</text>
+                    <text class="total" wx:else>暂无人参与禅修</text>
                 </view>
 
                 <view class="tab sub">
@@ -32,32 +34,58 @@
                     </view>
                 </view>
 
+                <!--练习名单-->
                 <scroll-view class="data-list flex-1" scroll-y wx:if="{{currentRankTab === 'train'}}">
-                    <view class="data-item" wx:key="index" wx:for="{{briefTrainList}}">
-                        <image class="avatar" src="{{item.avatarUrl}}"></image>
-                        <view class="total">
-                            <view class="time">{{item.trainInfo}}</view>
-                            <view class="nick-name">{{item.nickName}}</view>
+                    <block wx:if="{{hasTrainInfo}}">
+                        <view class="data-item" wx:key="index" wx:for="{{briefTrainList}}">
+                            <image class="avatar" src="{{item.avatarUrl}}"></image>
+                            <view class="total">
+                                <view class="time">{{item.trainInfo}}</view>
+                                <view class="nick-name">{{item.nickName}}</view>
+                            </view>
+                            <view class="detail">
+                                <view class="time">{{item.strCreateTime}}</view>
+                                <view class="every">{{item.everyTrainDuration}}</view>
+                            </view>
                         </view>
-                        <view class="detail">
-                            <view class="time">{{item.strCreateTime}}</view>
-                            <view class="every">{{item.everyTrainDuration}}</view>
-                        </view>
-                    </view>
+                    </block>
+                    <view class="no-records" wx:else>暂无人参与禅修</view>
                 </scroll-view>
 
+                <!--排行榜-->
                 <scroll-view class="data-list flex-1" scroll-y wx:elif="{{currentRankTab === 'rank'}}">
-                    <view class="data-item" wx:key="index" wx:for="{{briefTrainList}}">
-                        <image class="avatar" src="{{item.avatarUrl}}"></image>
-                        <view class="total">
-                            <view class="time">{{item.trainInfo}}</view>
-                            <view class="nick-name">{{item.nickName}}</view>
+                    <block wx:if="{{hasTrainInfo}}">
+                        <view class="data-item" wx:key="index" wx:for="{{briefTrainList}}">
+                            <image class="avatar" src="{{item.avatarUrl}}"></image>
+                            <view class="total">
+                                <view class="time">{{item.trainInfo}}</view>
+                                <view class="nick-name">{{item.nickName}}</view>
+                            </view>
+                            <view class="detail">
+                                <view class="time">{{item.strCreateTime}}</view>
+                                <view class="every">{{item.everyTrainDuration}}</view>
+                            </view>
                         </view>
-                        <view class="detail">
-                            <view class="time">{{item.strCreateTime}}</view>
-                            <view class="every">{{item.everyTrainDuration}}</view>
+                    </block>
+                    <view class="no-records" wx:else>暂无人参与禅修</view>
+                </scroll-view>
+
+                <!--排行榜-->
+                <scroll-view class="data-list flex-1" scroll-y wx:else="{{currentRankTab === 'break'}}">
+                    <block wx:if="{{hasTrainInfo}}">
+                        <view class="data-item" wx:key="index" wx:for="{{briefTrainList}}">
+                            <image class="avatar" src="{{item.avatarUrl}}"></image>
+                            <view class="total">
+                                <view class="time">{{item.trainInfo}}</view>
+                                <view class="nick-name">{{item.nickName}}</view>
+                            </view>
+                            <view class="detail">
+                                <view class="time">{{item.strCreateTime}}</view>
+                                <view class="every">{{item.everyTrainDuration}}</view>
+                            </view>
                         </view>
-                    </view>
+                    </block>
+                    <view class="no-records" wx:else>暂无人参与禅修</view>
                 </scroll-view>
             </block>
 
@@ -91,11 +119,25 @@
             </block>
         </view>
 
-        <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
-            <button class="btn-primary" @tap="joinClass">加入班级</button>
-        </view>
+        <block wx:if="{{currentTab === 'brief'}}">
+            <block wx:if="{{currentRankTab === 'train'}}">
+                <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
+                    <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass">加入班级</button>
+                </view>
 
-        <applyPopup :id.sync="id"></applyPopup>
+                <block wx:else>
+                    <view class="btn-box fixed to-bottom">
+                        <button class="btn-primary" open-type="getUserInfo" @getuserinfo="exitClass">退出班级</button>
+                    </view>
+                </block>
+
+                <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
+                    <navigator url="/pages/class/index" open-type="switchTab">首页</navigator>
+                </view>
+            </block>
+        </block>
+
+        <applyPopup :classId.sync="classId"></applyPopup>
     </view>
 </template>
 
@@ -248,6 +290,13 @@
                 white-space: nowrap;
             }
         }
+
+        .no-records {
+            padding-top: 50rpx;
+            text-align: center;
+            font-size: 24rpx;
+            color: #ccc;
+        }
     }
 </style>
 
@@ -258,7 +307,9 @@
     import classInfo from "../../mixins/classInfo";
     //import applyClass from "../../mixins/applyClass";
     import getUserInfo from "../../mixins/getUserInfo";
+    import {getTrainList, getTrainRanks, getInterrupts} from "../../modules/Classes";
     import ready from "../../mixins/ready";
+    import env from "../../mixins/env";
 
     import nav from "./detail/navigator";
     import applyPopup from "./detail/apply-popup";
@@ -291,6 +342,7 @@
                 trainInfo: {},
                 trainList: []
             },
+            //trainRanks: [],
             trainRecords: [],
             currentRankTab: "train",
             rankTab: [
@@ -311,7 +363,7 @@
             userInfo: {}
         };
 
-        mixins = [ready, getUserInfo, classInfo];
+        mixins = [ready, getUserInfo, classInfo, env];
 
         computed = {
             trainTimeTypeText () {
@@ -323,6 +375,9 @@
                 } else {
                     return "本月";
                 }
+            },
+            hasTrainInfo () {
+                return this.briefTrainInfo && !!this.briefTrainInfo.trainNum;
             },
             briefTrainInfo () {
                 return this.brief.trainInfo;
@@ -336,7 +391,7 @@
             async brief (value, oldValue) {
                 if (parseInt(value.timeType) !== parseInt(oldValue.timeType)) {
                     wx.showLoading();
-                    await this.getTrainList(value);
+                    await this.getData();
                     wx.hideLoading();
                 }
             }
@@ -348,6 +403,7 @@
             },
             switchRankTab (e) {
                 this.currentRankTab = e.currentTarget.dataset.tab;
+                this.getData();
             },
             toggleTrainTimeTypeDrop () {
                 this.trainTimeTypeDropVisible = !this.trainTimeTypeDropVisible;
@@ -365,35 +421,37 @@
             this.trainTimeTypeDropVisible = false;
         }
 
-        async getTrainList (type) {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    this.brief.trainInfo = {
-                        trainNum: Math.floor(Math.random() * 150),
-                        averageTime: Math.floor(Math.random() * 100)
-                    };
+        async getTrainList () {
+            const {trainInfo, trainList} = await getTrainList.bind(this)();
 
-                    this.brief.trainList = [];
-                    let id = 0;
-                    const mock = () => {
-                        this.brief.trainList.push({
-                            id: id++,
-                            nickName: "Drencky",
-                            avatarUrl: "/temp/a.png",
-                            trainInfo: "8次，150分钟",
-                            everyTrainDuration: "60分钟，60分钟，30分钟，45分钟，60分钟，60分钟，30分钟，45分钟",
-                            strCreateTime: "18:00"
-                        });
-                    };
+            this.brief.trainInfo = trainInfo || {};
+            this.brief.trainList = trainList || [];
+        }
 
-                    for (let i = 0; i < 10; i++) {
-                        mock();
-                    }
+        async getTrainRanks () {
+            const {trainInfo, trainList} = await getTrainRanks.bind(this)();
 
-                    this.$apply();
-                    resolve();
-                }, 1000);
-            });
+            this.brief.trainInfo = trainInfo || {};
+            this.brief.trainList = trainList || [];
+        }
+
+        async getInterrupts () {
+            const {trainInfo, trainList} = await getInterrupts.bind(this)();
+
+            this.brief.trainInfo = trainInfo || {};
+            this.brief.trainList = trainList || [];
+        }
+
+        async getData () {
+            if (this.currentRankTab === "train") {
+                await this.getTrainList();
+            }
+            else if (this.currentRankTab === "rank") {
+                await this.getTrainRanks();
+            }
+            else {
+                await this.getInterrupts();
+            }
         }
 
         async getTrainRecords () {
@@ -437,7 +495,7 @@
             });
         }
 
-        async onLoad() {
+        async onShow() {
             //this.nav = options.nav;
             this.addReadyCallback(this.getClassDetail());
             this.addReadyCallback(this.getTrainList());
