@@ -460,7 +460,7 @@
           <view @tap="onChangeTimesets({{index}})" style="line-height: 50px; padding: 0 5px;" class="{{item.isChecked ? 'set-time-active' : ''}}">{{item.label}}</view>
         </repeat>
       </view>
-      <view class="time-set-wrap dag-wrap" style="margin-top:-100rpx;">
+      <view class="time-set-wrap dag-wrap {{hour == '00' && minute == '00' ? 'hide' : ''}}" style="margin-top:-100rpx;">
         <picker-view indicator-style="height: 50px;"
                      style="margin-left:15%;height: 80px"
                      class="picker-view"
