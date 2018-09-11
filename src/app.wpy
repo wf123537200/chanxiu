@@ -27,6 +27,19 @@
   height: 0;
   color: transparent;
 }
+.reset-button:after,.reset-button:before {
+  border: 0;
+  outline: 0;
+}
+.reset-button {
+  border: 0;
+  outline: 0;
+  text-align:left;
+  border-radius: 0;
+  background-color: transparent;
+  padding: 0;
+  height: auto;
+}
 </style>
 
 <script>

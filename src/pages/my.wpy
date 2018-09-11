@@ -130,15 +130,8 @@
     padding:5px 0;
     font-size:0.9rem;
   }
-  .reset-button:after,.reset-button:before {
-    border: 0;
-    outline: 0;
-  }
   .reset-button {
-    border: 0;
-    outline: 0;
     background-color: #fff;
-    text-align:left;
     font-size:0.9rem;
   }
   .suggest {

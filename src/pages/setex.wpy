@@ -96,7 +96,7 @@
   .dag-wrap {
     color: #666;
     background: #eee;
-    min-height: 650rpx;
+    min-height: 500rpx;
   }
   .ok-btn {
     position:absolute;
@@ -377,13 +377,21 @@
   .zan-popup__container {
     overflow: auto;
   }
+  .reset-button {
+    height: 300rpx;
+    color: #bbb;
+    margin-top: 0;
+    padding-top: -15px;
+    padding-bottom: 15px;
+    line-height: 1.22;
+  }
 </style>
 
 <template>
-  <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" >
+  <view class="container ex {{!!promotionArticleName ? '' : 'hide'}}" style="background-size:cover; background-image: url({{backgroundImage}})" >
     <!-- 展示栏 -->
-    <view class="wrap" style="height: 300rpx;color: #bbb;margin-top:0; padding-top: 0;padding-bottom:15px;">
-      <view class="header-banner-wrap" @tap="toExBriefing">
+    <button class="wrap reset-button" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfoToBriefing">
+      <view class="header-banner-wrap">
         <view class="header-banner">
           <view>总天数</view>
           <view class="inline num">{{totalTrainDay}}</view><view class="inline">天</view>
@@ -403,7 +411,7 @@
       <view class="continue-time {{ct === 1 ? 'orange' : 'hide'}}">连续练习{{continuousNum}}天</view>
       <view class="continue-time {{ct === 0 ? '' : 'hide'}}">连续练习{{continuousNum}}天,今天{{todayDuration}}分钟</view>
       <view class="continue-time {{ct > 1 ? 'red' : 'hide'}}">已中断{{ct}}天</view>
-    </view>
+    </button>
     <!-- 展示栏 end -->
 
     <!-- 入门指南-->
@@ -449,7 +457,7 @@
       <hr class="hrx"/>
 
       <view>
-        <button class="btn-image" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
+        <button class="btn-image" open-type="getUserInfoToEx" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
       </view>
     </view>
     <!-- 设置 end-->
@@ -1085,7 +1093,17 @@
           }
         })
       },
-      getUserInfo(e) {
+      getUserInfoToBriefing(e) {
+        const that = this
+        this.$parent.getUserInfo((userInfo) => {
+
+          if (userInfo) {
+            that.userInfo = userInfo
+            that.$navigate('./ex-briefing');
+          }
+        }, e.detail)
+      },
+      getUserInfoToEx(e) {
         const that = this
         this.$parent.getUserInfo((userInfo) => {
 
@@ -1112,9 +1130,6 @@
             console.log(e)
           }
         }
-      },
-      toExBriefing() {
-        this.$navigate('./ex-briefing');
       },
       customizeFocus(index) {
         let item = this.typeList2[index]
