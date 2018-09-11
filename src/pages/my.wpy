@@ -14,7 +14,18 @@
     text-align: center;
     padding: 10px;
   }
-
+  .login-fixed-wrap {
+    position: fixed;
+    left: 0;
+    top: 69px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    z-index: 2000;
+  }
+  .t-85 {
+    top: 85px;
+  }
   .header-wrap {
     position:relative;
     height:69px;
@@ -138,12 +149,13 @@
 
 <template>
   <view class="container">
+    <view class="login-fixed-wrap {{!userInfo.nickName ? '' : 'hide'}}"></view>
     <!-- user -->
     <view class="header-wrap">
       <view class="pr">
         <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
         <button class="nickname button" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
-          {{userInfo.nickName || '未授权'}}
+          {{userInfo.nickName || '请点击登录'}}
         </button>
         <view class="desc">练习{{totalTrainDay}}天，今日{{exTime}}分钟</view>
       </view>
@@ -192,6 +204,20 @@
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
 
+  const initPage = function () {
+    // my info
+    ajax({
+      ins: this,
+      url: '/me/info',
+      params: {},
+      success: (d) => {
+        Object.assign(this, d.trainInfo)
+        this.exTime = d.trainInfo.todayDuration || 0
+        this.$apply()
+      }
+    })
+  }
+
   export default class Tag extends wepy.page {
     config = {
       disableScroll: true,
@@ -199,7 +225,9 @@
     }
     components = {}
     data = {
-      userInfo: {},
+      userInfo: {
+        nickName: ''
+      },
       starList: [1,1,1],
       totalTrainDay: 0,
       averageDayTime: 0,
@@ -208,25 +236,19 @@
       exTime: 0
     }
     onGotUserInfo(e) {
+      console.log(e.detail)
       this.$parent.getUserInfo((userInfo) => {
-        if (userInfo) {
+        console.log(userInfo)
+        if (userInfo && userInfo.nickName) {
           this.userInfo = userInfo
-
-          // my info
-          ajax({
-            ins: this,
-            url: '/me/info',
-            params: {},
-            success: (d) => {
-              Object.assign(this, d.trainInfo)
-              this.exTime = d.trainInfo.todayDuration || 0
-              this.$apply()
-            }
-          })
+          initPage.call(this)
         }
 
         this.$apply()
       }, e.detail)
+    }
+    onShow() {
+      initPage.call(this)
     }
     methods = {
       onGoAboutMe() {

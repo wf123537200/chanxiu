@@ -114,9 +114,6 @@ export default class extends wepy.app {
   }
 
   onLaunch() {
-    this.getUserInfo((userinfo) => {
-      this.globalData.userInfo = userinfo
-    })
   }
 
   getUserInfo(cb, user) {
@@ -127,7 +124,7 @@ export default class extends wepy.app {
 
       if (typeof user == 'string') user = null
 
-      if (this.globalData.userInfo && d && d.accessToken) {
+      if (this.globalData.userInfo && this.globalData.userInfo.nickName && d && d.accessToken) {
         cb && cb(this.globalData.userInfo)
         return this.globalData.userInfo
       }
@@ -202,15 +199,16 @@ export default class extends wepy.app {
 
           if (user) {
             userInfoProcess(user)
+          } else {
+            wx.getUserInfo({
+              success (userinfo) {
+                userInfoProcess(userinfo)
+              },
+              fail: function() {
+                console.log(arguments)
+              }
+            });
           }
-          wx.getUserInfo({
-            success (userinfo) {
-              userInfoProcess(userinfo)
-            },
-            fail: function() {
-              console.log(arguments)
-            }
-          });
         }
       });
     }

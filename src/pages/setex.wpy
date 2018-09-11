@@ -753,6 +753,68 @@
     return [type1id, type2Id].join(' ')
   }
 
+  const initPage = async function() {
+    // 缓存
+    const setTimeL = wx.getStorageSync('setTime');
+    const exTypeL = wx.getStorageSync('exType');
+    if(setTimeL) {
+      this.hour = this.oHour = setTimeL.hour
+      this.minute = this.oMinute = setTimeL.minute
+      this.isFinite = this.hour === '00' && this.minute === '00'
+    }
+    if(exTypeL) {
+      this.type1 = exTypeL.type1
+      this.type2 = exTypeL.type2
+      this.type3 = exTypeL.type3
+      this.type4 = exTypeL.type4
+      this.typeName = exTypeL.typeName
+      this.exList = exTypeL.exList.split(' ')
+    }
+
+    this.backgroundImage = this.$parent.globalData.backgroundImage;
+    this.resPirfix = this.$parent.globalData.resPerfix;
+
+    setTimeout(t => {
+      this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
+      this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+    }, 1000)
+
+    initAjax.call(this)
+
+    initMethods.call(this)
+    // 音乐类型
+    ajax({
+      ins: this,
+      url: '/music/list',
+      params: {},
+      success: (d) => {
+        this.musicTypeList = getListByNameAncCode(d, 'typeName')
+        d.forEach(t => {
+          t.musicList.forEach(it => {
+            const minute = it.duration > 60 ? Math.floor(it.duration / 60) : 0
+            const second = it.duration - minute * 60
+            it.duration = (minute < 10 ? '0' + minute : minute) + ':' +  (second < 10 ? '0' + second : second)
+          })
+          this.musicList.push(t.musicList)
+        })
+      }
+    })
+
+    ajax({
+      ins: this,
+      url: '/push/article',
+      params: {},
+      success: (d) => {
+        Object.assign(this, {
+          promotionArticleName: d.name,
+          promotionArticleUrl: d.url,
+          promotionArticleBrief: d.brief,
+        })
+        this.$apply()
+      }
+    })
+  }
+
   export default class Tag extends wepy.page {
     config = {
       disableScroll: true,
@@ -835,69 +897,11 @@
       isShowUserInfo: false
     }
     onLoad() {
-      // 缓存
-      const setTimeL = wx.getStorageSync('setTime');
-      const exTypeL = wx.getStorageSync('exType');
-      if(setTimeL) {
-        this.hour = this.oHour = setTimeL.hour
-        this.minute = this.oMinute = setTimeL.minute
-        this.isFinite = this.hour === '00' && this.minute === '00'
-      }
-      if(exTypeL) {
-        this.type1 = exTypeL.type1
-        this.type2 = exTypeL.type2
-        this.type3 = exTypeL.type3
-        this.type4 = exTypeL.type4
-        this.typeName = exTypeL.typeName
-        this.exList = exTypeL.exList.split(' ')
-      }
+      const self = this
 
-      this.backgroundImage = this.$parent.globalData.backgroundImage;
-      this.resPirfix = this.$parent.globalData.resPerfix;
-
-      setTimeout(t => {
-        this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
-        this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
-        this.$parent.getUserInfo((userInfo) => {
-          this.userInfo = userInfo
-          this.$apply()
-        })
-      }, 1000)
-
-      initAjax.call(this)
-
-      initMethods.call(this)
-      // 音乐类型
-      ajax({
-        ins: this,
-        url: '/music/list',
-        params: {},
-        success: (d) => {
-          this.musicTypeList = getListByNameAncCode(d, 'typeName')
-          d.forEach(t => {
-            t.musicList.forEach(it => {
-              const minute = it.duration > 60 ? Math.floor(it.duration / 60) : 0
-              const second = it.duration - minute * 60
-              it.duration = (minute < 10 ? '0' + minute : minute) + ':' +  (second < 10 ? '0' + second : second)
-            })
-            this.musicList.push(t.musicList)
-          })
-        }
-      })
-
-      ajax({
-        ins: this,
-        url: '/push/article',
-        params: {},
-        success: (d) => {
-          Object.assign(this, {
-            promotionArticleName: d.name,
-            promotionArticleUrl: d.url,
-            promotionArticleBrief: d.brief,
-          })
-          this.$apply()
-        }
-      })
+      self.$parent.getUserInfo((userInfo) => {
+        initPage.call(self)
+      }, {userInfo: {}})
     }
     watch =  {
       minute(val) {
