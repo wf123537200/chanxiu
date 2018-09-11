@@ -96,12 +96,13 @@
   .dag-wrap {
     color: #666;
     background: #eee;
-    min-height: 500rpx;
   }
   .ok-btn {
     position:absolute;
     bottom:20px;
     right:20px;
+  }
+  .type-ok-btn,.ok-btn {
     background: #B0976E;
     border:1px solid #ccc;
     padding:4px 12px;
@@ -109,7 +110,13 @@
     font-size:13px;
     color:#eee;
   }
-
+  .type-ok-btn {
+    display: inline-block;
+  }
+  .ok-btn-wrap {
+    margin: 20px 20px 20px 0;
+    text-align: right;
+  }
   /* time */
   .time-set-wrap {
     display:flex;
@@ -198,7 +205,7 @@
 
   .types-wrap2 {
     padding-bottom: 5px;
-
+    background-color: #fff;
     .types {
       margin-bottom: 10px;
     }
@@ -500,7 +507,7 @@
 
     <setExType style="width: 100%" class="pr">
       <view class="dag-wrap flex-c">
-        <view class="types-wrap" style="top:30px;">
+        <view class="types-wrap2" style="top:30px;">
           <repeat for="{{typeList1}}" key="index" index="index" item="item">
             <view @tap="onTypeClick({{index}})" class="types {{type1 === index ? 'actived' : ''}}" >{{item.name}}</view>
           </repeat>
@@ -527,7 +534,9 @@
           </view>
         </repeat>
       </view>
-      <view class="ok-btn" @tap="onSetExType">确定</view>
+      <view class="ok-btn-wrap">
+        <view class="type-ok-btn" @tap="onSetExType">确定</view>
+      </view>
     </setExType>
 
     <setMusic style="width: 100%" class="pr">
@@ -690,7 +699,7 @@
       },
       method: 'POST',
       success: (d) => {
-        console.log('success')
+        console.log('delete success')
       },
       fail: () => {
         console.log('fail')
@@ -821,6 +830,14 @@
         this.$apply()
       }
     })
+  }
+
+  const selectDefaultMethod = function (item) {
+    this.customizeValue = item.customizeValue = ''
+    this.type2 = 0
+    this.type3 = 0
+    this.type4 = -1
+    this.typeName = 'childList'
   }
 
   export default class Tag extends wepy.page {
@@ -1137,13 +1154,19 @@
         this.$apply()
       },
       customizeBlur(index, e) {
+        console.log(index)
         const value = e.detail.value
         if (!value) return
         let item = this.typeList2[index]
+        console.log(item)
         const customList = item.customList || []
         const extentObj = customList.find(c => c.name == value)
-        if (extentObj) return
+        if (extentObj) {
+          selectDefaultMethod.call(this, item)
+          return
+        }
 
+        this.type2 = index
         this.type3 = -1
         this.type4 = customList.length
         this.typeName = 'customList'
@@ -1151,8 +1174,9 @@
         this.customizeValue = item.customizeValue = value
 
         if (customList && customList.length >= 3) {
+          selectDefaultMethod.call(this, item)
           wx.showToast({
-            title: '自定义方法不能超过3个哦',
+            title: '不能超过3个哦',
             icon: 'error',
             duration: 2000,
             mask:true
@@ -1176,7 +1200,12 @@
         this.type4 = index3
         this.typeName = 'customList'
 
-        const item = this.typeList2[index]
+        const typeList2 = this.typeList2
+        for (let t of typeList2) {
+          t.customizeValue = ''
+        }
+
+        const item = typeList2[index]
         const typeObj = item.customList[index3]
         item.customizeValue = typeObj.name
         item.customizeFocus = false
@@ -1192,6 +1221,7 @@
           customList.splice(index3, 1)
           item.customizeValue = ''
           delCustomize.call(this, typeObj.id)
+          selectDefaultMethod.call(this, item)
         }
       }
     }
