@@ -125,18 +125,29 @@
     font-size: 0.8rem
   }
   .header-cols {
+    position: relative;
     width: 33%;
-    border-right: 1px solid #ccc;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     box-sizing: border-box;
     padding: 10px 0;
     box-sizing: border-box;
+  }
+  .hry {
+    position: absolute;
+    right: 0;
+    top: 35px;
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: #444;
+    transform: rotate(90deg);
+    opacity: .2;
   }
   .header-banner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom:10px;
+    margin-bottom: 5px;
     color: $text-color;
     text-align: center;
   }
@@ -359,12 +370,14 @@
           <view class="flex-r-center">
             <view class="inline num">{{totalTrainDay}}</view><view class="inline unit">天</view>
           </view>
+          <hr class="hry" style="left:150rpx;"/>
         </view>
         <view class="header-cols">
           <view class="header-banner">日均时长</view>
           <view class="flex-r-center">
             <view class="inline num">{{averageDayTime}}</view><view class="inline unit">分钟</view>
           </view>
+          <hr class="hry" style="left:150rpx;"/>
         </view>
         <view class="header-cols">
           <view class="header-banner">总次数</view>
@@ -377,6 +390,7 @@
           <view class="flex-r-center">
             <view class="inline num">{{averageEveryTime}}</view><view class="inline unit">分钟</view>
           </view>
+          <hr class="hry" style="left:150rpx;"/>
         </view>
         <view class="header-cols">
           <view class="header-banner">单次最多</view>
