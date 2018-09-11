@@ -346,14 +346,14 @@
     background:#666;
   }
   .hry {
-    display:block;
-    width:44px;
-    height:1px;
-    background:#444;
-    transform:rotate(90deg);
-    position:absolute;
-    left:90%;
-    top:40px;
+    display: block;
+    width: 44px;
+    height: 1px;
+    background: #444;
+    transform: rotate(90deg);
+    position: absolute;
+    left: 90%;
+    top: 30px;
   }
   .red {
     color: #ff2a2a;

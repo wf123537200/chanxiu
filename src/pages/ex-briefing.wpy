@@ -48,7 +48,7 @@
   }
   .add-flag {
     position: absolute;
-    right: 10px;
+    right: 20px;
     top: 4px;
     font-size: 14px;
     color: #fff;
@@ -96,8 +96,14 @@
   .mr-20 {
     margin-right: 20px;
   }
+  .mr-40 {
+    margin-right: 40px;
+  }
   .pl-20 {
     padding-left: 20px;
+  }
+  .pl-40 {
+    padding-left: 40px;
   }
 
   .wrap {
@@ -122,6 +128,8 @@
     width: 33%;
     border-right: 1px solid #ccc;
     margin-bottom: 10px;
+    box-sizing: border-box;
+    padding: 10px 0;
     box-sizing: border-box;
   }
   .header-banner {
@@ -330,12 +338,12 @@
     <view class="header-pannel pl-20">
       练习数据
     </view>
-    <view class="pl-20 ex-data-pannel">
+    <view class="pl-40 ex-data-pannel">
       <view class="ex-data">
         <view class="cur-times">今天练习{{todayInfo.todayTrainCount}}次{{todayInfo.todayDuration}}分钟</view>
         <view class="">连续练习{{todayInfo.continuousNum}}天，最大练习{{todayInfo.maxContinuousNum}}天</view>
       </view>
-      <view class="gray-button mr-20" >去打卡</view>
+      <view class="gray-button mr-40" >去打卡</view>
     </view>
 
     <!-- 数据 -->
