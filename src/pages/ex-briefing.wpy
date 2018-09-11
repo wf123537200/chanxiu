@@ -41,15 +41,15 @@
     width: 100%;
     align-self: start;
     font-size: 13px;
-    height: 25px;
-    line-height: 25px;
+    height: 35px;
+    line-height: 35px;
     color: #ccc;
     box-sizing: border-box;
   }
   .add-flag {
     position: absolute;
     right: 20px;
-    top: 4px;
+    top: 9px;
     font-size: 14px;
     color: #fff;
     background-color: $text-color;
@@ -121,7 +121,6 @@
     width:80%;
     margin-left: 10%;
     margin-top:5px;
-    margin-bottom: 10px;
     font-size: 0.8rem
   }
   .header-cols {
@@ -129,13 +128,14 @@
     width: 33%;
     margin-bottom: 5px;
     box-sizing: border-box;
-    padding: 10px 0;
+    box-sizing: border-box;
+    padding: 4px 0;
     box-sizing: border-box;
   }
   .hry {
     position: absolute;
-    right: 0;
-    top: 35px;
+    right: -10px;
+    top: 28px;
     display: block;
     width: 40px;
     height: 1px;
@@ -291,6 +291,12 @@
   .confirm-btn {
     background-color: $light-orange;
   }
+  .zan-popup .edit-content {
+    display: none;
+  }
+  .zan-popup--show .edit-content {
+    display: block;
+  }
   .edit-content {
     height: 180px;
     background-color: #fff;
@@ -444,7 +450,7 @@
         </view>
         <image class="close-icon" src="/images/close-icon.png" @tap="editExCancel"/>
       </view>
-      <textarea class="edit-content" auto-focus bindblur="contentBlur" value="{{dynamic.content}}" placeholder="请输入练习简报" />
+      <textarea class="edit-content" bindblur="contentBlur" value="{{dynamic.content}}" placeholder="请输入练习简报" />
       <view class="popup-footer">
         <view class="cancel-btn mr-20" @tap="editExCancel">取消</view>
         <view class="cancel-btn confirm-btn" @tap="editInfoSave">保存</view>

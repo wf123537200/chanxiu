@@ -156,7 +156,7 @@
 
     <!-- 数据 -->
     <view class="wrap ex" style="height: 120px">
-      <view class="header-banner-wrap">
+      <view class="header-banner-wrap" @tap="toBriefing">
         <view class="header-cols">
           <view class="header-banner">总天数</view>
           <view class="inline num">{{totalTrainDay}}</view><view class="inline">天</view>
@@ -247,8 +247,8 @@
       onGoAboutMe() {
         this.$navigate('./aboutme', {hour: this.hour, minute: this.minute});
       },
-      suggest() {
-        this.$navigate('./ex-text-mark');
+      toBriefing() {
+        this.$navigate('./ex-briefing');
       }
     }
   }
