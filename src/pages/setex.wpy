@@ -1035,8 +1035,9 @@
         // music带入
         if(+musicSelectIndex) {
           let musicObj = '';
+
           this.musicList.forEach(it => {
-            let x = it.find(t => t.id === musicSelectIndex)``
+            let x = it.find(t => t.id === musicSelectIndex)
             if(x) musicObj = x
           })
           if(!musicObj) {
@@ -1158,7 +1159,7 @@
         const value = e.detail.value
         if (!value) return
         let item = this.typeList2[index]
-        console.log(item)
+        coonSetMusicnsole.log(item)
         const customList = item.customList || []
         const extentObj = customList.find(c => c.name == value)
         if (extentObj) {
