@@ -509,10 +509,10 @@
     </setTime>
 
     <setExType style="width: 100%" class="pr">
-      <view class="dag-wrap flex-c">
+      <view class="dag-wrap flex-c" bindtap="exTypeWrapClick">
         <view class="types-wrap2" style="top:30px;">
           <repeat for="{{typeList1}}" key="index" index="index" item="item">
-            <view @tap="onTypeClick({{index}})" class="types {{type1 === index ? 'actived' : ''}}" >{{item.name}}</view>
+            <view catchtap="onTypeClick({{index}})" class="types {{type1 === index ? 'actived' : ''}}" >{{item.name}}</view>
           </repeat>
         </view>
         <repeat for="{{typeList2}}" key="index" index="index" item="item">
@@ -522,14 +522,14 @@
                 {{item2.name}}
               </view>
             </repeat>
-            <view class="customize-types">
-              <input class="customize {{item.customizeFocus ? 'focus' : ''}} {{typeName == 'customList' && type2 === index && type4 >= 0 ? 'actived' : ''}}"
-                     placeholder="自定义" bindfocus="customizeFocus({{index}})" value="{{item.customizeValue}}" bindblur="customizeBlur({{index}})" />
+            <view class="customize-types {{userInfo.nickName && index == 0? '' : 'hide'}}">
+              <input catchtap class="customize {{item.customizeFocus ? 'focus' : ''}} {{typeName == 'customList' && type2 === index && type4 >= 0 ? 'actived' : ''}}"
+                     placeholder="自定义" catchfocus="customizeFocus({{index}})" value="{{item.customizeValue}}" catchblur="customizeBlur({{index}})" />
               <view class="customize-types-pannel {{item.customizeFocus && item.customList && item.customList.length ? '' : 'hide'}}">
                 <repeat for="{{item.customList}}" key="index3" index="index3" item="item3">
-                  <view class="customize-type">
-                    <view class="customize-type-text" bindtap="selectCustomize({{index}}, {{index3}})">{{item3.name}}</view>
-                    <image class="delete-customize-btn" bindtap="deleteEx({{index}}, {{index3}})" src="/images/delete.png" />
+                  <view catchtap class="customize-type">
+                    <view class="customize-type-text" catchtap="selectCustomize({{index}}, {{index3}})">{{item3.name}}</view>
+                    <image class="delete-customize-btn" catchtap="deleteEx({{index}}, {{index3}})" src="/images/delete.png" />
                   </view>
                 </repeat>
               </view>
@@ -924,9 +924,18 @@
       userInfo: {},
       isShowUserInfo: false
     }
-    onLoad() {
+    onShow() {
       const self = this
 
+      const userInfo = self.$parent.globalData.userInfo || {}
+      console.log(userInfo)
+      if (userInfo.nickName) {
+        self.userInfo = userInfo
+      }
+    }
+    onLoad() {
+      const self = this
+      console.log('onLoad')
       self.$parent.getUserInfo((userInfo) => {
         initPage.call(self)
       }, {userInfo: {}})
@@ -1157,12 +1166,18 @@
         item.customizeFocus = true
         this.$apply()
       },
+      exTypeWrapClick() {
+        console.log('exTypeWrapClick')
+        let list = this.typeList2
+        for (let l of list) {
+          l.customizeFocus = false
+        }
+      },
       customizeBlur(index, e) {
         console.log(index)
         const value = e.detail.value
         if (!value) return
         let item = this.typeList2[index]
-        coonSetMusicnsole.log(item)
         const customList = item.customList || []
         const extentObj = customList.find(c => c.name == value)
         if (extentObj) {
