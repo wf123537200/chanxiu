@@ -215,14 +215,6 @@
         this.$apply()
       }
     })
-
-    this.$parent.getUserInfo((userInfo) => {
-      if (userInfo && userInfo.nickName) {
-        this.userInfo = userInfo
-      }
-
-      this.$apply()
-    })
   }
 
   export default class Tag extends wepy.page {
@@ -255,6 +247,9 @@
     }
     onShow() {
       initPage.call(this)
+
+      const userInfo = this.$parent.globalData.userInfo || {}
+      this.userInfo = userInfo
     }
     methods = {
       onGoAboutMe() {

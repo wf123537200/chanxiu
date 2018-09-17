@@ -936,7 +936,7 @@
       // 全局
       backgroundImage: '',
       userInfo: {
-        nickName: ''
+        nickName: ' '
       },
       isShowUserInfo: false
     }
@@ -944,9 +944,7 @@
       const self = this
 
       const userInfo = self.$parent.globalData.userInfo || {}
-      if (userInfo.nickName) {
-        self.userInfo = userInfo
-      }
+      self.userInfo = userInfo
     }
     onLoad() {
       const self = this
@@ -1148,19 +1146,6 @@
           if (userInfo && userInfo.nickName) {
             that.userInfo = userInfo
             that.$apply()
-          }
-        }, e.detail)
-      },
-      getUserInfoToEx(e) {
-        const that = this
-        this.$parent.getUserInfo((userInfo) => {
-
-          if (userInfo) {
-            that.userInfo = userInfo
-            if(that.userInfo) {
-              that.methods.onJump2Ex.call(that)
-              return
-            }
           }
         }, e.detail)
       },
