@@ -105,7 +105,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    version: '1.0',
+    version: '1.1',
     hasNetwork: true,
     authInfo: null,
     userInfo: null,
@@ -210,18 +210,7 @@ export default class extends wepy.app {
             }
           }
 
-          if (user) {
-            userInfoProcess(user)
-          } else {
-            wx.getUserInfo({
-              success (userinfo) {
-                userInfoProcess(userinfo)
-              },
-              fail: function() {
-                console.log(arguments)
-              }
-            });
-          }
+          userInfoProcess(user || {})
         }
       });
     }

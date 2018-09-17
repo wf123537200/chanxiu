@@ -309,8 +309,8 @@
     bottom:17px;
     left:20px;
     font-size:0.8rem;
-    border:2px solid #ccc;
-    color: #444;
+    border:2px solid #d2d2d2;
+    color: #a4a4a4;
     padding:2px 7px;
     border-radius:20px;
   }
@@ -324,7 +324,8 @@
     border-radius:20px;
   }
   .music-over-active {
-    border:2px solid #B0976E;
+    border:2px solid #d2c5ad;
+    color: #aa8e5c;
   }
 
   /* 授权 */
@@ -467,7 +468,7 @@
       <hr class="hrx"/>
 
       <view>
-        <button class="btn-image" open-type="getUserInfoToEx" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
+        <button class="btn-image" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfoToEx"></button>
       </view>
     </view>
     <!-- 设置 end-->
@@ -550,7 +551,7 @@
           <scroll-view scroll-x="true" class="ip_tab_comtainer">
             <repeat for="{{musicTypeList}}" item="item" key="index">
               <view class="{{musicType === index ? 'actived' : ''}} music-type" @tap="onMusicTypeClick({{index}})" key="index" data-item="{{index}}">
-                {{item}}
+                {{item.typeName}}
               </view>
             </repeat>
           </scroll-view>
@@ -738,8 +739,14 @@
       return
     }
 
+    const typeList2 = this.typeList2 || []
+    if(!typeList2.length) {
+      this.exList = [type1Name]
+      return
+    }
+
     let type2Name = ''
-    const typeObj = this.typeList2[this.type2]
+    const typeObj = typeList2[this.type2]
     if (this.typeName == 'childList') {
       type2Name = typeObj.childList[this.type3].name
     } else if (typeObj.customList && typeObj.customList.length){
@@ -760,6 +767,11 @@
   }
   const getTrainMethodIds = function () {
     const type1id = this.typeList1[this.type1].id
+
+    const typeList2 = this.typeList2 || []
+    if (!typeList2.length) {
+      return type1id
+    }
 
     let type2Id = ''
     const typeObj = this.typeList2[this.type2]
@@ -1174,14 +1186,24 @@
         }
       },
       customizeBlur(index, e) {
-        console.log(index)
         const value = e.detail.value
         if (!value) return
+
+        if (value.replace(/[^\x00-\xff]/g,"01").length > 10) {
+          wx.showToast({
+            title: '最多限5个字',
+            icon: 'error',
+            duration: 2000,
+            mask:true
+          })
+          return
+        }
+
         let item = this.typeList2[index]
         const customList = item.customList || []
         const extentObj = customList.find(c => c.name == value)
         if (extentObj) {
-          selectDefaultMethod.call(this, item)
+          // selectDefaultMethod.call(this, item)
           return
         }
 
@@ -1195,7 +1217,7 @@
         if (customList && customList.length >= 3) {
           selectDefaultMethod.call(this, item)
           wx.showToast({
-            title: '不能超过3个哦',
+            title: '自定义最多3个',
             icon: 'error',
             duration: 2000,
             mask:true
