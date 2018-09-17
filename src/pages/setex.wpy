@@ -944,14 +944,12 @@
       const self = this
 
       const userInfo = self.$parent.globalData.userInfo || {}
-      console.log(userInfo)
       if (userInfo.nickName) {
         self.userInfo = userInfo
       }
     }
     onLoad() {
       const self = this
-      console.log('onLoad')
       self.$parent.getUserInfo((userInfo) => {
         initPage.call(self)
       }, {userInfo: {}})
@@ -1187,7 +1185,6 @@
         this.$apply()
       },
       exTypeWrapClick() {
-        console.log('exTypeWrapClick')
         let list = this.typeList2
         for (let l of list) {
           l.customizeFocus = false
