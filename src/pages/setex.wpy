@@ -385,14 +385,6 @@
   .zan-popup__container {
     overflow: auto;
   }
-  .reset-button {
-    height: 300rpx;
-    color: #bbb;
-    margin-top: 0;
-    padding-top: -15px;
-    padding-bottom: 15px;
-    line-height: 1.22;
-  }
   .v-hidden {
     visibility: hidden;
   }
@@ -400,8 +392,18 @@
 
 <template>
   <view class="container ex {{!!promotionArticleName ? '' : 'hide'}}" style="background-size:cover; background-image: url({{backgroundImage}})" >
+    <view class="login-fixed-wrap {{!userInfo.nickName ? '' : 'hide'}}">
+      <view class="login-pannel">
+        <view class="login-title">请先登录</view>
+
+        <button class="login-button" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo">
+          <image class="weixin-blue-icon" src="/images/weixin_blue.svg"></image>
+          <view>微信快捷登录</view>
+        </button>
+      </view>
+    </view>
     <!-- 展示栏 -->
-    <button class="wrap reset-button" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfoToBriefing">
+    <view class="wrap" @tap="toBriefing">
       <view class="header-banner-wrap">
         <view class="header-banner">
           <view>总天数</view>
@@ -422,7 +424,7 @@
       <view class="continue-time {{ct === 1 ? 'orange' : 'hide'}}">连续练习{{continuousNum}}天</view>
       <view class="continue-time {{ct === 0 ? '' : 'hide'}}">连续练习{{continuousNum}}天,今天{{todayDuration}}分钟</view>
       <view class="continue-time {{ct > 1 ? 'red' : 'hide'}}">已中断{{ct}}天</view>
-    </button>
+    </view>
     <!-- 展示栏 end -->
 
     <!-- 入门指南-->
@@ -468,7 +470,7 @@
       <hr class="hrx"/>
 
       <view>
-        <button class="btn-image" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfoToEx"></button>
+        <view class="btn-image" @tap="onJump2Ex"></view>
       </view>
     </view>
     <!-- 设置 end-->
@@ -933,7 +935,9 @@
       isMusicStopOnOver: false,
       // 全局
       backgroundImage: '',
-      userInfo: {},
+      userInfo: {
+        nickName: ''
+      },
       isShowUserInfo: false
     }
     onShow() {
@@ -961,6 +965,9 @@
       }
     }
     methods = {
+      toBriefing() {
+        this.$navigate('./ex-briefing');
+      },
       onShowSetTime() {
         this.$invoke('setTime', 'togglePopup')
       },
@@ -1135,13 +1142,14 @@
           }
         })
       },
-      getUserInfoToBriefing(e) {
+      getUserInfo(e) {
         const that = this
-        this.$parent.getUserInfo((userInfo) => {
 
-          if (userInfo) {
+        that.$parent.getUserInfo(userInfo => {
+
+          if (userInfo && userInfo.nickName) {
             that.userInfo = userInfo
-            that.$navigate('./ex-briefing');
+            that.$apply()
           }
         }, e.detail)
       },
