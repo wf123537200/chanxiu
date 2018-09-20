@@ -309,18 +309,20 @@
                 });
             },
             async submit (e) {
-                const result = await this.createClass(e.detail.value);
-
-                if (!result.isFail) {
+                const result = await this.createClass(e.detail.value).catch(() => {
                     wx.showToast({
-                        title: "创建成功",
-                        complete () {
-                            wx.navigateTo({
-                                url: "/pages/class/detail?id=" + result
-                            });
-                        }
+                        title: "创建失败"
                     });
-                }
+                });
+
+                wx.showToast({
+                    title: "创建成功",
+                    complete () {
+                        wx.navigateTo({
+                            url: "/pages/class/detail?id=" + result
+                        });
+                    }
+                });
             }
         };
 

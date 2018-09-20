@@ -137,3 +137,19 @@ export async function getInterrupts () {
     this.$apply();
     return result;
 }
+
+export async function remind (params = {}) {
+    params = Object.assign({
+        classId: this.classId,
+        pages: "/pages/class/detail?id=" + this.classId
+    }, params);
+
+    await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/remind",
+        params
+    });
+
+    this.$apply();
+}

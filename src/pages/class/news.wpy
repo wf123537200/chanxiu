@@ -37,7 +37,7 @@
                 <!--练习名单-->
                 <scroll-view class="data-list flex-1" scroll-y wx:if="{{currentRankTab === 'train'}}">
                     <block wx:if="{{hasTrainInfo}}">
-                        <view class="data-item" wx:key="index" wx:for="{{briefTrainList}}">
+                        <view class="data-item" wx:key="index" wx:for="{{brief.trainList1}}">
                             <image class="avatar" src="{{item.avatarUrl}}"></image>
                             <view class="total">
                                 <view class="time">{{item.trainInfo}}</view>
@@ -55,7 +55,7 @@
                 <!--排行榜-->
                 <scroll-view class="data-list flex-1" scroll-y wx:elif="{{currentRankTab === 'rank'}}">
                     <block wx:if="{{hasTrainInfo}}">
-                        <view class="data-item" wx:key="index" wx:for="{{briefTrainList}}">
+                        <view class="data-item" wx:key="index" wx:for="{{brief.trainList2}}">
                             <image class="avatar" src="{{item.avatarUrl}}"></image>
                             <view class="total">
                                 <view class="time">{{item.trainInfo}}</view>
@@ -70,10 +70,10 @@
                     <view class="no-records" wx:else>暂无人参与禅修</view>
                 </scroll-view>
 
-                <!--排行榜-->
+                <!--中断榜-->
                 <scroll-view class="data-list flex-1" scroll-y wx:else="{{currentRankTab === 'break'}}">
                     <block wx:if="{{hasTrainInfo}}">
-                        <view class="data-item" wx:key="index" wx:for="{{briefTrainList}}">
+                        <view class="data-item" wx:key="index" wx:for="{{brief.trainList3}}">
                             <image class="avatar" src="{{item.avatarUrl}}"></image>
                             <view class="total">
                                 <view class="time">{{item.trainInfo}}</view>
@@ -135,9 +135,27 @@
                     <navigator url="/pages/class/index" open-type="switchTab">首页</navigator>
                 </view>
             </block>
+
+            <block wx:if="{{currentRankTab === 'break'}}">
+                <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
+                    <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass">加入班级</button>
+                </view>
+
+                <block wx:elif="{{isAdministrator}}">
+                    <view class="btn-box fixed to-bottom">
+                        <button class="btn-primary w-1-2" open-type="getUserInfo" @getuserinfo="exitClass">通报到群里</button>
+                        <button class="btn-secondary w-1-2" open-type="getUserInfo" @getuserinfo="showRemindPopup">提醒他们</button>
+                    </view>
+                </block>
+
+                <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
+                    <navigator url="/pages/class/index" open-type="switchTab">首页</navigator>
+                </view>
+            </block>
         </block>
 
         <applyPopup :classId.sync="classId"></applyPopup>
+        <remindPopup :classId.sync="classId"></remindPopup>
     </view>
 </template>
 
@@ -313,6 +331,7 @@
 
     import nav from "./detail/navigator";
     import applyPopup from "./detail/apply-popup";
+    import remindPopup from "./detail/remind-popup";
 
     export default class extends wepy.page {
         config = {
@@ -322,7 +341,8 @@
 
         components = {
             nav,
-            applyPopup
+            applyPopup,
+            remindPopup
         };
 
         data = {
@@ -339,8 +359,12 @@
             ],
             brief: {
                 timeType: 1,
-                trainInfo: {},
-                trainList: []
+                trainInfo1: {},
+                trainList1: [],
+                trainInfo2: {},
+                trainList2: [],
+                trainInfo3: {},
+                trainList3: []
             },
             //trainRanks: [],
             trainRecords: [],
@@ -377,13 +401,27 @@
                 }
             },
             hasTrainInfo () {
-                return this.briefTrainInfo && !!this.briefTrainInfo.trainNum;
+                //return this.briefTrainInfo && !!this.briefTrainInfo.trainNum;
+                if (this.currentRankTab === "train") {
+                    return this.brief.trainInfo1 && !!this.brief.trainInfo1.trainNum;
+                }
+                else if (this.currentRankTab === "rank") {
+                    return this.brief.trainInfo2 && !!this.brief.trainInfo2.trainNum;
+                }
+                else {
+                    return this.brief.trainInfo3 && !!this.brief.trainInfo3.trainNum;
+                }
             },
             briefTrainInfo () {
-                return this.brief.trainInfo;
-            },
-            briefTrainList () {
-                return this.brief.trainList;
+                if (this.currentRankTab === "train") {
+                    return this.brief.trainInfo1;
+                }
+                else if (this.currentRankTab === "rank") {
+                    return this.brief.trainInfo2;
+                }
+                else {
+                    return this.brief.trainInfo3;
+                }
             }
         };
 
@@ -402,8 +440,12 @@
                 this.currentTab = e.currentTarget.dataset.tab;
             },
             switchRankTab (e) {
-                this.currentRankTab = e.currentTarget.dataset.tab;
-                this.getData();
+                const nextTab = e.currentTarget.dataset.tab;
+
+                if (this.currentRankTab !== nextTab) {
+                    this.currentRankTab = nextTab;
+                    this.getData();
+                }
             },
             toggleTrainTimeTypeDrop () {
                 this.trainTimeTypeDropVisible = !this.trainTimeTypeDropVisible;
@@ -414,6 +456,9 @@
             setTrainTimeType (e) {
                 this.brief.timeType = parseInt(e.currentTarget.dataset.type);
                 this.hideTrainTimeTypeDrop();
+            },
+            showRemindPopup () {
+                this.$invoke("remindPopup", "show");
             }
         };
 
@@ -424,22 +469,25 @@
         async getTrainList () {
             const {trainInfo, trainList} = await getTrainList.bind(this)();
 
-            this.brief.trainInfo = trainInfo || {};
-            this.brief.trainList = trainList || [];
+            this.brief.trainInfo1 = trainInfo || {};
+            this.brief.trainList1 = trainList || [];
+            this.$apply();
         }
 
         async getTrainRanks () {
             const {trainInfo, trainList} = await getTrainRanks.bind(this)();
 
-            this.brief.trainInfo = trainInfo || {};
-            this.brief.trainList = trainList || [];
+            this.brief.trainInfo2 = trainInfo || {};
+            this.brief.trainList2 = trainList || [];
+            this.$apply();
         }
 
         async getInterrupts () {
             const {trainInfo, trainList} = await getInterrupts.bind(this)();
 
-            this.brief.trainInfo = trainInfo || {};
-            this.brief.trainList = trainList || [];
+            this.brief.trainInfo3 = trainInfo || {};
+            this.brief.trainList3 = trainList || [];
+            this.$apply();
         }
 
         async getData () {

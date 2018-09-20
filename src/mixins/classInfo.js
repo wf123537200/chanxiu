@@ -62,39 +62,35 @@ export default class extends wepy.mixin {
                 this.$invoke("applyPopup", "show");
             }
             else {
-                const result = await this.joinClass();
-
-                if (result.isFail) {
+                const result = await this.joinClass().catch(() => {
                     wx.showToast({
                         title: "加入失败"
                     });
-                } else {
-                    wx.showToast({
-                        title: "加入成功",
-                        complete: () => {
-                            this.detail.role = 0;
-                            this.$apply();
-                        }
-                    });
-                }
-            }
-        },
-        async exitClass () {
-            const result = await this.exitClass();
-
-            if (result.isFail) {
-                wx.showToast({
-                    title: "退出失败"
                 });
-            } else {
+
                 wx.showToast({
-                    title: "退出成功",
+                    title: "加入成功",
                     complete: () => {
-                        this.detail.role = undefined;
+                        this.detail.role = 0;
                         this.$apply();
                     }
                 });
             }
+        },
+        async exitClass () {
+            const result = await this.exitClass().catch(() => {
+                wx.showToast({
+                    title: "退出失败"
+                });
+            });
+
+            wx.showToast({
+                title: "退出成功",
+                complete: () => {
+                    this.detail.role = undefined;
+                    this.$apply();
+                }
+            });
         }
     };
 
