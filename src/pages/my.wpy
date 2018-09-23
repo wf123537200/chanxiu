@@ -210,9 +210,11 @@
       url: '/me/info',
       params: {},
       success: (d) => {
-        Object.assign(this, d.trainInfo)
-        this.exTime = d.trainInfo.todayDuration || 0
-        this.$apply()
+        if (d && d.trainInfo) {
+          Object.assign(this, d.trainInfo)
+          this.exTime = d.trainInfo.todayDuration || 0
+          this.$apply()
+        }
       }
     })
   }

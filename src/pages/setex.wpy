@@ -23,10 +23,11 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    width:80%;
-    margin: 0 80rpx;
-    text-align:center;
-    margin-top:45rpx;
+    width:100%;
+    padding: 0 4% 0 10%;
+    box-sizing: border-box;
+    text-align: center;
+    margin-top: 45rpx;
   }
   .header-banner {
     position: relative;
@@ -44,6 +45,8 @@
     justify-content:center;
     padding-top: 10px;
     font-size: 16px;
+    line-height: 1;
+    padding-bottom: 10px;
   }
 
   .ml10p {
@@ -62,6 +65,13 @@
     transform:translateY(-50%);
     width:18px;
     height:18px;
+  }
+  .header-arrow {
+    width:18px;
+    height:18px;
+    justify-self: right;
+    align-self:center;
+
   }
 
   .set-x {
@@ -419,6 +429,7 @@
           <view>单次最多</view>
           <view class="inline num">{{singleMostDuration}}</view><view class="inline">分钟</view>
         </view>
+        <image class="header-arrow" src="/images/more.png"></image>
       </view>
 
       <view class="continue-time {{ct === 1 ? 'orange' : 'hide'}}">连续练习{{continuousNum}}天</view>
@@ -481,7 +492,7 @@
           <view @tap="onChangeTimesets({{index}})" style="line-height: 50px; padding: 0 5px;" class="{{item.isChecked ? 'set-time-active' : ''}}">{{item.label}}</view>
         </repeat>
       </view>
-      <view class="time-set-wrap dag-wrap {{hour == '00' && minute == '00' ? 'v-hidden' : ''}}" style="margin-top:-100rpx;min-height: 180px;">
+      <view class="time-set-wrap dag-wrap" style="margin-top:-100rpx;min-height: 180px;">
         <picker-view indicator-style="height: 50px;"
                      style="margin-left:15%;height: 80px"
                      class="picker-view"
@@ -507,7 +518,7 @@
         </picker-view>
         <view class="time-text">分</view>
       </view>
-      <view class="time-notice">练习时请勿关闭屏幕或者退出小程序</view>
+      <view class="time-notice {{hour == '00' && minute == '00' ? 'v-hidden' : ''}}">练习时请勿关闭屏幕或者退出小程序</view>
       <view class="ok-btn" @tap="onSetTime">确定</view>
     </setTime>
 
