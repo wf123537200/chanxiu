@@ -76,10 +76,11 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    width:80%;
-    margin-left: 10%;
-    margin-top:5px;
-    font-size: 0.8rem
+    width:100%;
+    padding: 0 8% 0 10%;
+    box-sizing: border-box;
+    text-align: center;
+    margin-top: 45rpx;
   }
   .header-cols {
     border-right:1px solid #ccc;
@@ -88,17 +89,26 @@
   .header-banner {
     margin-bottom:10px;
   }
+  .header-arrow {
+    position: relative;
+    height:18px;
+    justify-self: right;
+    align-self:center;
+    transform: translateY(-50%);
+    color: #B0976E;
+    font-size:0.9rem;
+  }
   .num {
     font-size: 1.6rem;
     margin-right: 10rpx;
     font-weight: bold;
   }
   .continue-time {
-    position: relative;
-    display:flex;
+    display: flex;
     justify-content:center;
-    margin-top:16px;
-    color:#ccc;
+    padding-top: 10px;
+    font-size: 16px;
+    line-height: 1;
   }
   .ex {
     color: #B0976E;
@@ -152,7 +162,7 @@
           {{userInfo.nickName || '未登录'}}
         </view>
         <view class="desc">
-          {{userInfo.province ? (userInfo.province + ' ' + userInfo.city) : '请点击登录'}}
+          {{userInfo.province + ' ' + userInfo.city}}
         </view>
       </view>
     </view>
@@ -172,11 +182,11 @@
           <view class="header-banner">单次最多</view>
           <view class="inline num">{{singleMostDuration}}</view><view class="inline">分钟</view>
         </view>
+        <view class="header-arrow">></view>
       </view>
 
       <view class="continue-time">
         已连续练习{{continuousNum}}天
-        <view class="arrow" style="height: 20px;">></view>
       </view>
     </view>
     <!-- 数据 end -->

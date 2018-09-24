@@ -75,13 +75,14 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    font-size: 14px;
   }
   .cur-times {
     color: $light-orange;
+    font-size: 14px;
   }
   .ex-desc {
     color: $gray-dark;
+    font-size: 12px;
   }
   .gray-button {
     border: 1px solid $light-orange;
@@ -118,8 +119,7 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    width:80%;
-    margin-left: 10%;
+    width: 100%;
     margin-top:5px;
     font-size: 0.8rem
   }
@@ -134,8 +134,8 @@
   }
   .hry {
     position: absolute;
-    right: -10px;
-    top: 28px;
+    right: -20px;
+    top: 35px;
     display: block;
     width: 40px;
     height: 1px;
@@ -148,21 +148,23 @@
     flex-direction: column;
     align-items: center;
     margin-bottom: 5px;
-    color: $text-color;
+    color: #707070;
     text-align: center;
+    font-size: 16px;
   }
   .num {
-    font-size: 18px;
+    font-size: 30px;
     margin-right: 10rpx;
     font-weight: bold;
+    line-height: 1;
   }
   .unit {
-    font-size: 14px;
+    font-size: 16px;
     color: $light-orange;
   }
   .flex-r-center {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
   }
   .ex {
@@ -207,7 +209,7 @@
     flex-direction: column;
     width: 100%;
     padding: 0 20px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     box-sizing: border-box;
     font-size: 12px;
     color: $gray-dark;
@@ -239,7 +241,7 @@
   .ex-process-pannel {
     display: flex;
     width: 100%;
-    margin-top: 5px;
+    margin-top: 10px;
   }
   .read-all {
     flex: 1;
@@ -250,9 +252,9 @@
 
   }
   .process-btn {
-    width: 15px;
-    height: 15px;
-    margin-left: 20px;
+    width: 16px;
+    height: 16px;
+    margin-left: 30px;
   }
 
   .popup-headerr {
@@ -358,7 +360,7 @@
     <view class="pl-40 ex-data-pannel">
       <view class="ex-data">
         <view class="cur-times">今天练习{{todayInfo.todayTrainCount}}次{{todayInfo.todayDuration}}分钟</view>
-        <view class="">连续练习{{todayInfo.continuousNum}}天，最大练习{{todayInfo.maxContinuousNum}}天</view>
+        <view class="ex-desc">连续练习{{todayInfo.continuousNum}}天，最大练习{{todayInfo.maxContinuousNum}}天</view>
       </view>
       <view class="gray-button mr-40" >去打卡</view>
     </view>
@@ -376,14 +378,14 @@
           <view class="flex-r-center">
             <view class="inline num">{{totalTrainDay}}</view><view class="inline unit">天</view>
           </view>
-          <hr class="hry" style="left:150rpx;"/>
+          <hr class="hry"/>
         </view>
         <view class="header-cols">
           <view class="header-banner">日均时长</view>
           <view class="flex-r-center">
             <view class="inline num">{{averageDayTime}}</view><view class="inline unit">分钟</view>
           </view>
-          <hr class="hry" style="left:150rpx;"/>
+          <hr class="hry"/>
         </view>
         <view class="header-cols">
           <view class="header-banner">总次数</view>
@@ -396,7 +398,7 @@
           <view class="flex-r-center">
             <view class="inline num">{{averageEveryTime}}</view><view class="inline unit">分钟</view>
           </view>
-          <hr class="hry" style="left:150rpx;"/>
+          <hr class="hry"/>
         </view>
         <view class="header-cols">
           <view class="header-banner">单次最多</view>
@@ -450,7 +452,7 @@
         </view>
         <image class="close-icon" src="/images/close-icon.png" @tap="editExCancel"/>
       </view>
-      <textarea class="edit-content" bindblur="contentBlur" value="{{dynamic.content}}" placeholder="请输入练习简报" />
+      <textarea class="edit-content" bindblur="contentBlur" value="{{dynamic.content}}" placeholder="请输入练习状态" />
       <view class="popup-footer">
         <view class="cancel-btn mr-20" @tap="editExCancel">取消</view>
         <view class="cancel-btn confirm-btn" @tap="editInfoSave">保存</view>
@@ -695,8 +697,12 @@
         this.$invoke('editEx', 'togglePopup')
       },
       editInfoSave() {
-        const {id, title, content} = this.dynamic
-        dynamicSave.apply(this, [id, title, content])
+        const that = this
+
+        setTimeout(_ => {
+          const {id, title, content} = that.dynamic
+          dynamicSave.apply(that, [id, title, content])
+        }, 200)
       },
       deleteEx(item) {
         this.dynamic = item
