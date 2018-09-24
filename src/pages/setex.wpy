@@ -979,9 +979,13 @@
       self.userInfo = userInfo
     }
     onLoad() {
-      const self = this
-      self.$parent.getUserInfo((userInfo) => {
-        initPage.call(self)
+      const that = this
+      that.$parent.getUserInfo((userInfo) => {
+        console.log(userInfo)
+        if (userInfo && userInfo.nickName) {
+          that.userInfo = userInfo
+        }
+        initPage.call(that)
       }, {userInfo: {}})
     }
     watch =  {
@@ -1174,10 +1178,7 @@
       },
       getUserInfo(e) {
         const that = this
-        console.log(e)
         that.$parent.getUserInfo(userInfo => {
-
-          console.log(userInfo)
           if (userInfo && userInfo.nickName) {
             that.userInfo = userInfo
             that.$apply()

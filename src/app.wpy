@@ -113,6 +113,28 @@ import {ajax} from './components/ajax'
 import 'wepy-async-function'
 import 'wepy-async-function';
 
+const getUserInfoByCache = function (cb, userinfo) {
+  const that = this
+  console.log('userinfo1 :: ')
+  console.log(userinfo)
+  userinfo = userinfo|| {userInfo: {}}
+
+  if (userinfo && userinfo.userInfo && userinfo.userInfo.nickName) {
+    that.globalData.authInfo = userinfo
+    that.globalData.userInfo = userinfo.userInfo
+  } else {
+    userinfo = wx.getStorageSync('userinfo') || {}
+    console.log('userinfo :: ')
+    console.log(userinfo)
+    if (userinfo && userinfo.userInfo && userinfo.userInfo.nickName) {
+      that.globalData.authInfo = userinfo
+      that.globalData.userInfo = userinfo.userInfo
+    }
+  }
+
+  cb && cb.call(that, userinfo.userInfo || {})
+}
+
 export default class extends wepy.app {
   config = {
     pages: [
@@ -211,19 +233,19 @@ export default class extends wepy.app {
           console.log('登录成功, %o', data)
 
           function userInfoProcess(userinfo) {
-            wx.setStorage({
-              key: 'userinfo',
-              data: userinfo,
-              success: function success(res) {
-                console.log('本地存储userinfo成功');
-              }
-            });
+            if (userinfo && userinfo.userInfo && userinfo.userInfo.nickName) {
+              wx.setStorage({
+                key: 'userinfo',
+                data: userinfo,
+                success: function success(res) {
+                  console.log('本地存储userinfo成功');
+                }
+              })
+            }
 
             if(d && d.accessToken) {
               Object.assign(that, d)
-              that.globalData.authInfo = userinfo
-              that.globalData.userInfo = userinfo.userInfo
-              cb && cb(userinfo.userInfo);
+              getUserInfoByCache.apply(that, [cb, userinfo])
               console.log('正在使用token： ' + d.accessToken)
             } else {
               ajax({
@@ -237,9 +259,7 @@ export default class extends wepy.app {
                 method: 'POST',
                 success: (d) => {
                   Object.assign(that, d)
-                  that.globalData.authInfo = userinfo
-                  that.globalData.userInfo = userinfo.userInfo
-                  cb && cb(userinfo.userInfo);
+                  getUserInfoByCache.apply(that, [cb, userinfo])
                   console.log('授权成功 %o, token ok', userinfo.userInfo)
                   wx.setStorage({
                     key: 'token',
@@ -261,9 +281,7 @@ export default class extends wepy.app {
                     method: 'POST',
                     success: (d) => {
                       Object.assign(that, d)
-                      that.globalData.authInfo = userinfo
-                      that.globalData.userInfo = userinfo.userInfo
-                      cb && cb(userinfo.userInfo);
+                      getUserInfoByCache.apply(that, [cb, userinfo])
                       console.log('授权成功 %o, token ok', userinfo.userInfo)
                     },
                     fail: () => {
@@ -317,10 +335,7 @@ export default class extends wepy.app {
           })
 
         } else {
-          const userinfo = wx.getStorageSync('userinfo') || {}
-          that.globalData.authInfo = userinfo
-          that.globalData.userInfo = userinfo.userInfo
-          cb.call(that, userinfo.userInfo || {})
+          getUserInfoByCache.apply(that, [cb])
         }
       }
     })
