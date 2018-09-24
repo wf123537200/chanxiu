@@ -243,6 +243,10 @@
     width: 100%;
     margin-top: 10px;
   }
+  .m-l-20 {
+    margin-left: 20px;
+    box-sizing: border-box;
+  }
   .read-all {
     flex: 1;
     font-size: 12px;
@@ -544,7 +548,7 @@
             <view class="ex-title">{{item.title}}</view>
             <view class="ex-date">{{item.strCreateTimeStr}}</view>
           </view>
-          <view class="flex-r line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">
+          <view class="flex-r m-l-20 line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">
             {{item.content}}
           </view>
           <view class="ex-process-pannel">
