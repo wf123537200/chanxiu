@@ -82,8 +82,8 @@
   <view class="container">
     <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
     <view class="user-mark">
-      {{text}}
-      感觉被舒服的身体包围。
+      <view>{{text}}</view>
+      <view>感觉被舒服的身体包围。</view>
     </view>
 
     <view class="user-mark-pannel">
@@ -122,7 +122,7 @@
     methods = {
       copy() {
         wx.setClipboardData({
-          data: this.text,
+          data: this.text + `\n感觉被舒服的身体包围。`,
           success: function(res) {
             wx.showToast({
               title: '拷贝成功',
@@ -130,6 +130,9 @@
               duration: 2000,
               mask: true
             })
+            setTimeout(_ => {
+              wx.navigateBack({ changed: true })
+            }, 1500)
           }
         })
       }
@@ -152,7 +155,7 @@
           success: (d) => {
             console.log(d)
             that.continuousNum = d.trainInfo.continuousNum || 0
-            that.text = `【${that.exList}${that.exTime}分钟连续${that.ontinuousNum}天】感觉被舒服的身体包围。`
+            that.text = `【${that.exList}${that.exTime}分钟，连续${that.continuousNum}天】`
             that.$apply()
           }
         })
