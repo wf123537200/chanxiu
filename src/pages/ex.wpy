@@ -99,8 +99,7 @@
     }
   }
 
-  // TODO
-  const TIME = 10;
+  const TIME = 100;
   function getMinusTime(d) {
     const dx = this._d = new Date(d.setSeconds(d.getSeconds() - 1))
     return {hour: dx.getHours(), minute: d.getMinutes(), second: d.getSeconds()}
@@ -223,7 +222,7 @@
       }
     }
     onHide() {
-      onTapStop.call(this)
+      // onTapStop.call(this)
     }
     onLoad(params) {
       wx.setKeepScreenOn({
@@ -268,7 +267,8 @@
         wx.playBackgroundAudio()
 
         const timer = setInterval(() => {
-          this._d = new Date([d.getFullYear(), d.getMonth(), d.getDate()].join('/') + ' ' + ((hour > 0 || this.isFinite) ? this.showTime : ('00:' + this.showTime)))
+          let dVal = [d.getFullYear(), d.getMonth(), d.getDate()].join('/') + ' ' + ((this.showTime.length > 5 || this.isFinite) ? this.showTime : ('00:' + this.showTime))
+          this._d = new Date(dVal)
           const minusTime = this.curTime = this.isFinite ? getPlusTime.call(this, this._d) : getMinusTime.call(this, this._d)
           // 如果都是0结束
           if(minusTime.hour === 0 && minusTime.minute === 0 && minusTime.second === 0) {
@@ -280,7 +280,7 @@
           this.$apply()
         }, TIME)
 
-        this.timer = timer
+       this.timer = timer
         this.isPause = false
       },
       onEnd() {

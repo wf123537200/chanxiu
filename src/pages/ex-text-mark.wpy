@@ -132,7 +132,7 @@
             })
             setTimeout(_ => {
               wx.navigateBack({ changed: true })
-            }, 1500)
+            }, 1000)
           }
         })
       }

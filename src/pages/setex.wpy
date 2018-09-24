@@ -980,7 +980,6 @@
     onLoad() {
       const that = this
       that.$parent.getUserInfo((userInfo) => {
-        console.log(userInfo)
         if (userInfo && userInfo.nickName) {
           that.userInfo = userInfo
         }
@@ -1200,7 +1199,6 @@
         }
       },
       customizeFocus(index) {
-        console.log('customizeFocus')
         let item = this.typeList2[index]
         item.customizeFocus = true
         item.customizeInput = false
