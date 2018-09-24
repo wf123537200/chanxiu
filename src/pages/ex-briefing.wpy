@@ -25,9 +25,9 @@
     height:44px;
   }
   .nickname {
-    position:absolute;
-    top:7px;
-    left:86px;
+    position: absolute;
+    top: 17px;
+    left: 86px;
   }
   .desc {
     position: absolute;
@@ -838,7 +838,7 @@
         return {
           title: this.userInfo.nickName + `今天练习${this.todayInfo.todayTrainCount}次${this.todayInfo.todayDuration}分钟，连续练习${this.todayInfo.continuousNum}天，最大练习${this.todayInfo.maxContinuousNum}天`,
           path: '/pages/setex',
-          imageUrl: imageUrl,
+          // imageUrl: imageUrl,
           complete: (e) => {
             console.log(e)
           }

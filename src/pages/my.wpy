@@ -38,8 +38,8 @@
   }
   .nickname {
     position:absolute;
-    top:7px;
-    left:86px;
+    top: 17px;
+    left: 86px;
     color:#333;
     font-size:14px;
     background:#fff;
@@ -162,7 +162,7 @@
           {{userInfo.nickName || '未登录'}}
         </view>
         <view class="desc">
-          {{userInfo.province + ' ' + userInfo.city}}
+          {{(userInfo.province || '') + ' ' + (userInfo.city || '')}}
         </view>
       </view>
     </view>
