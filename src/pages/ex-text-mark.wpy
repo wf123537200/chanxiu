@@ -20,7 +20,7 @@
     position: absolute;
     top: 15px;
     right: 60px;
-    width: 177px;
+    width: 201px;
     height: auto;
     line-height: 1.5;
     padding: 10px;
