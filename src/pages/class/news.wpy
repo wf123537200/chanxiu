@@ -9,6 +9,7 @@
         </view>
 
         <view class="tab-body flex-v flex-1 {{currentTab}}">
+            <!--简报-->
             <block wx:if="{{currentTab === 'brief'}}">
                 <view class="train-info">
                     <view class="time-type">
@@ -89,29 +90,29 @@
                 </scroll-view>
             </block>
 
+            <!--记录-->
             <block wx:if="{{currentTab === 'record'}}">
-                <scroll-view class="data-list record flex-1" scroll-y>
-                    <block wx:key="index" wx:for="{{trainRecords}}">
+                <scroll-view class="data-list record flex-1" scroll-y @scrolltolower="getTrainRecords">
+                    <block wx:key="index" wx:for-index="index" wx:for-item="item" wx:for="{{trainRecords}}">
                         <view class="date">
-                            <text>{{item.date}}</text>
+                            <text>{{index}}</text>
                         </view>
 
-                        <view class="data-item" wx:key="detailIndex" wx:for="{{item.detail}}" wx:for-index="detailIndex" wx:for-item="detailItem">
+                        <view class="data-item" wx:key="detailIndex" wx:for="{{item}}" wx:for-index="detailIndex" wx:for-item="detailItem">
                             <image class="avatar" src="{{detailItem.avatarUrl}}"></image>
                             <view class="total">
-                                <view class="nick-name">
-                                    <text>{{detailItem.nickName}}</text>
-                                    <text wx:if="detailItem.diary">提交了练习日记</text>
-                                    <text wx:else>静坐-观呼吸15分钟</text>
-                                </view>
+                                <text class="nick-name">{{detailItem.nickName}}</text>
+                                <text class="acction">{{detailItem.title}}</text>
                             </view>
                             <view class="detail">
-                                <view class="time">{{formatTrainRecordTime(detailItem.strCreateTime)}}</view>
-                                <view class="every">{{detailItem.trainInfo}}</view>
+                                <view class="time">{{detailItem.strCreateTime}}</view>
+                                <view class="every">{{detailItem.secondTitle}}</view>
                             </view>
-                            <view class="diary" wx:if="{{detailItem.diary}}">
-                                <text>{{detailItem.diary}}</text>
-                                <navigator>查看全文</navigator>
+                            <view class="diary {{contentVisibleInfo[detailItem.id] || (contentHeights[detailItem.id] && hasInitContentHeight[detailItem.id] && contentHeights[detailItem.id].boxHeight >= contentHeights[detailItem.id].textHeight) ? 'show' : ''}}" wx:if="{{detailItem.content}}">
+                                <view class="content-box {{hasInitContentHeight[detailItem.id] ? 'ready' : ''}}" data-id="{{detailItem.id}}">
+                                    <view class="text" data-id="{{detailItem.id}}">{{detailItem.content}}</view>
+                                </view>
+                                <text class="view-all" data-id="{{detailItem.id}}" @tap="showContent">查看全文</text>
                             </view>
                         </view>
                     </block>
@@ -119,6 +120,7 @@
             </block>
         </view>
 
+        <!--操作按钮-->
         <block wx:if="{{currentTab === 'brief'}}">
             <block wx:if="{{currentRankTab === 'train'}}">
                 <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
@@ -144,7 +146,7 @@
                 <block wx:elif="{{isAdministrator}}">
                     <view class="btn-box fixed to-bottom">
                         <button class="btn-primary w-1-2" open-type="getUserInfo" @getuserinfo="exitClass">通报到群里</button>
-                        <button class="btn-secondary w-1-2" open-type="getUserInfo" @getuserinfo="showRemindPopup">提醒他们</button>
+                        <button class="btn-secondary w-1-2" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind}}">提醒他们</button>
                     </view>
                 </block>
 
@@ -155,7 +157,7 @@
         </block>
 
         <applyPopup :classId.sync="classId"></applyPopup>
-        <remindPopup :classId.sync="classId"></remindPopup>
+        <remindPopup :classId.sync="classId" @onSubmit.user="markRemind"></remindPopup>
     </view>
 </template>
 
@@ -240,33 +242,53 @@
                 .diary {
                     margin-left: 110rpx;
                     margin-top: 20rpx;
-                    line-height: 30rpx;
                     font-size: 24rpx;
                     color: #aaa;
 
-                    text {
-                        display: block;
+                    .content-box {
+                        max-height: 30rpx * 10;
+                        line-height: 30rpx;
+                        overflow: hidden;
+
+                        &.ready {
+                            display: -webkit-box;
+                            max-height: initial;
+                            -webkit-box-orient: vertical;
+                            -webkit-line-clamp: 10;
+                            text-overflow:ellipsis;
+                        }
                     }
 
-                    navigator {
+                    .view-all {
                         display: inline-block;
                         margin-top: 10rpx;
                         font-size: 22rpx;
                         color: #b0976e;
+                    }
+
+                    &.show {
+                        .content-box {
+                            display: block;
+                        }
+
+                        .view-all {
+                            display: none;
+                        }
                     }
                 }
 
                 .date {
                     margin: 45rpx auto;
                     text-align: center;
+                    line-height: 30rpx;
 
                     text {
                         display: inline-block;
+                        vertical-align: top;
                         min-width: 90rpx;
                         padding: 0 30rpx;
                         text-align: center;
                         background-color: #aaa;
-                        line-height: 30rpx;
                         font-size: 22rpx;
                         color: #fff;
                     }
@@ -291,6 +313,10 @@
                 font-size: 28rpx;
                 color: #000;
                 overflow: hidden;
+
+                .nick-name {
+                    margin-right: 5rpx;
+                }
             }
 
             .detail {
@@ -321,13 +347,12 @@
 <script>
     import wepy from "wepy";
     import moment from "moment";
-    import {ajax} from './../../components/ajax';
     import classInfo from "../../mixins/classInfo";
-    //import applyClass from "../../mixins/applyClass";
     import getUserInfo from "../../mixins/getUserInfo";
-    import {getTrainList, getTrainRanks, getInterrupts} from "../../modules/Classes";
+    import {getTrainList, getTrainRanks, getInterrupts, getTrainRecords} from "../../modules/Classes";
     import ready from "../../mixins/ready";
     import env from "../../mixins/env";
+    import "moment";
 
     import nav from "./detail/navigator";
     import applyPopup from "./detail/apply-popup";
@@ -367,7 +392,12 @@
                 trainList3: []
             },
             //trainRanks: [],
-            trainRecords: [],
+            _trainRecords: [],
+            trainRecordCount: 10,
+            trainRecordRequestCount: 0,
+            hasFetchRecords: false,
+            //trainRecords: [],
+            contentHeights: {},
             currentRankTab: "train",
             rankTab: [
                 {
@@ -384,6 +414,8 @@
                 }
             ],
             trainTimeTypeDropVisible: false,
+            hasInitContentHeight: {},
+            contentVisibleInfo: {},
             userInfo: {}
         };
 
@@ -401,7 +433,6 @@
                 }
             },
             hasTrainInfo () {
-                //return this.briefTrainInfo && !!this.briefTrainInfo.trainNum;
                 if (this.currentRankTab === "train") {
                     return this.brief.trainInfo1 && !!this.brief.trainInfo1.trainNum;
                 }
@@ -422,6 +453,64 @@
                 else {
                     return this.brief.trainInfo3;
                 }
+            },
+            trainRecords () {
+                let _trainRecords = [...this._trainRecords];
+                let trainRecords = _trainRecords.reduce((total, current) =>{
+                    let date = current.strCreateTime.substring(0, 10);
+
+                    if (!total[date]) {
+                        total[date] = [];
+                    }
+
+                    total[date].push(current);
+                    return total;
+                }, {});
+                let __trainRecords = {};
+
+                let now = new Date();
+                let y = now.getFullYear();
+                let m = now.getMonth() + 1;
+                let d = now.getDate();
+
+                for (let [key, value] of Object.entries(trainRecords)) {
+                    let _key = key.split("-");
+                    let _y = _key[0] - 0;
+                    let _m = _key[1] - 0;
+                    let _d = _key[2] - 0;
+                    let yesterday = new Date(y, m, d - 1);
+                    let currentDay = new Date(_y, _m - 1, _d);
+
+                    if (_y === y && _m === m && _d === d) {
+                        __trainRecords["今天"] = value.map(n => {
+                            let m = Object.assign({}, n);
+                            let diffHours = moment().diff(m.strCreateTime, "hours");
+
+                            if (diffHours <= 1) {
+                                m.strCreateTime = moment(m.strCreateTime).fromNow();
+                            }
+                            else {
+                                m.strCreateTime = m.strCreateTime.substring(11);
+                            }
+
+                            return m;
+                        });
+                    }
+                    else if (yesterday.getTime() === currentDay.getTime()) {
+                        __trainRecords["昨天"] = value;
+                    }
+                    else {
+                        __trainRecords[key.replace("-", "年").replace("-", "月")] = value.map(n => {
+                            let m = Object.assign({}, n);
+
+                            m.content = m.content.repeat(100);
+
+                            return m;
+                        });
+                    }
+                }
+
+                return __trainRecords;
             }
         };
 
@@ -431,6 +520,12 @@
                     wx.showLoading();
                     await this.getData();
                     wx.hideLoading();
+                }
+            },
+            async currentTab (value, oldValue) {
+                if (value === "record" && oldValue !== "record" && !this.hasFetchRecords) {
+                    await this.getTrainRecords();
+                    this.hasFetchRecords = true;
                 }
             }
         };
@@ -459,6 +554,12 @@
             },
             showRemindPopup () {
                 this.$invoke("remindPopup", "show");
+            },
+            showContent (e) {
+                this.contentVisibleInfo[e.currentTarget.dataset.id] = true;
+            },
+            markRemind () {
+                this.detail.isRemind = true;
             }
         };
 
@@ -503,51 +604,54 @@
         }
 
         async getTrainRecords () {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    this.trainRecords = [
-                        {
-                            date: "20180819",
-                            detail: [
-                                {
-                                    id: 1,
-                                    nickName: "Drencky",
-                                    action: "提交了练习日记",
-                                    actionType: 1,
-                                    avatarUrl: "/temp/a.png",
-                                    trainInfo: "第30天，连续练习2天",
-                                    diary: "今t天是第30天，奇怪哦，冥想中头没有出汗，脖子以下开始，汗珠一颗一颗的滚下来。",
-                                    time: "142300"
-                                }
-                            ]
-                        },
-                        {
-                            date: "20180818",
-                            detail: [
-                                {
-                                    id: 2,
-                                    nickName: "Drencky",
-                                    action: "提交了练习日记",
-                                    actionType: 2,
-                                    avatarUrl: "/temp/a.png",
-                                    trainInfo: "第30天，连续练习2天",
-                                    time: "14:00"
-                                }
-                            ]
-                        }
-                    ];
+            await getTrainRecords.bind(this)();
+            this.initContentHeight();
+        }
 
-                    this.$apply();
-                    resolve();
-                }, 1000);
+        initContentHeight () {
+            let query = wx.createSelectorQuery();
+
+            query.selectAll(".data-list.record .diary .content-box").boundingClientRect((rects) => {
+                rects.forEach((rect) =>{
+                    const id = rect.dataset.id;
+
+                    if (!this.hasInitContentHeight[id]) {
+                        this.contentHeights[id] = this.contentHeights[id] || {};
+                        this.contentHeights[id].boxHeight = rect.height;
+                    }
+                });
             });
+
+            query.selectAll(".data-list.record .diary .content-box .text").boundingClientRect((rects) => {
+                rects.forEach((rect) =>{
+                    const id = rect.dataset.id;
+
+                    if (!this.hasInitContentHeight[id]) {
+                        this.contentHeights[id] = this.contentHeights[id] || {};
+                        this.contentHeights[id].textHeight = rect.height;
+                    }
+                });
+            }).exec((rects) => {
+                rects[0].forEach((rect) =>{
+                    const id = rect.dataset.id;
+                    this.hasInitContentHeight[id] = true;
+                });
+
+                this.$apply();
+            });
+        }
+
+        init () {
+            this._trainRecords = [];
+            this.trainRecordRequestCount = 0;
+            this.contentHeights = {};
         }
 
         async onShow() {
             //this.nav = options.nav;
+            this.init();
             this.addReadyCallback(this.getClassDetail());
             this.addReadyCallback(this.getTrainList());
-            this.addReadyCallback(this.getTrainRecords());
             this.runReadyCallbacks();
         }
     }

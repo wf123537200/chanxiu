@@ -151,5 +151,26 @@ export async function remind (params = {}) {
         params
     });
 
+    //this.detail.isRemind = true;
     this.$apply();
+}
+
+export async function getTrainRecords (params = {}) {
+    params = Object.assign({
+        classId: this.classId,
+        offset: this.trainRecordCount * this.trainRecordRequestCount,
+        count: this.trainRecordCount || 10
+    }, params);
+
+    const result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/dynamic/list",
+        params
+    });
+
+    result.forEach(n => this._trainRecords.push(n));
+    this.trainRecordRequestCount++;
+    this.$apply();
+    return result;
 }
