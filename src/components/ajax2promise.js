@@ -11,9 +11,7 @@ export default function (ajaxParams) {
 
         ajaxParams.fail = function () {
             fail && fail();
-            resolve({
-                _state: "fail"
-            });
+            reject();
         };
 
         ajax(ajaxParams);

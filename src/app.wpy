@@ -134,7 +134,7 @@
         async getToken (data, userinfo, cb) {
             const that = this;
 
-            const getToken = await ajax2promise({
+            await ajax2promise({
                 ins: that,
                 url: '/weixin/token',
                 params: {
@@ -158,9 +158,8 @@
                         }
                     });
                 }
-            });
-
-            if (getToken._state === "fail") {
+            })
+            .catch(async () => {
                 await ajax2promise({
                     ins: that,
                     url: '/weixin/token/refresh',
@@ -181,7 +180,7 @@
                         console.log('多次授权失败')
                     }
                 });
-            }
+            });
         }
 
         async getUserInfo(cb) {
@@ -201,7 +200,6 @@
                             wx.getUserInfo({
                                 success (userinfo) {
                                     if (d && d.accessToken) {
-                                        console.log(4);
                                         Object.assign(that, d)
                                         that.globalData.authInfo = userinfo
                                         that.globalData.userInfo = userinfo.userInfo

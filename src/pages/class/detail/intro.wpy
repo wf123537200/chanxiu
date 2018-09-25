@@ -2,7 +2,7 @@
     <view class="intro-box">
         <text class="header">详细介绍</text>
 
-        <scroll-view class="content" scroll-y="true">{{detail.detail}}</scroll-view>
+        <scroll-view class="content" scroll-y="true">{{detail.detail || "暂无"}}</scroll-view>
     </view>
 </template>
 

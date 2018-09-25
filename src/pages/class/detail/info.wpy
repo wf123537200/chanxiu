@@ -1,22 +1,25 @@
 <template>
     <view class="info-box">
         <view class="base">
-            <image class="icon" src="{{detail.icon}}" mode="aspectFill"/>
+            <image class="logo" src="{{classLogo}}" mode="aspectFill"/>
             <text class="name text-nowrap text-ellipsis">{{detail.name}}</text>
             <text class="desc">{{detail.brief}}</text>
             <button class="btn-invite btn-secondary mini auto-width" open-type="getUserInfo" wx:if="{{isMyClass}}">邀请</button>
         </view>
 
-        <navigator url="/pages/class/qr?id={{id}}" class="field">
+        <navigator url="/pages/class/qr?id={{id}}" class="field" wx:if="{{classQrCodeUrl}}">
             <text class="label">班级二维码</text>
             <view class="content">
-                <block wx:if="{{detail.qrCodeUrl}}">
-                    <image class="qr" src="/images/qr.png"></image>
-                    <image class="more" src="/images/more-gray.png"></image>
-                </block>
-                <text wx:else>无</text>
+                <image class="qr" src="/images/qr.png"></image>
+                <image class="more" src="/images/more-gray.png"></image>
             </view>
         </navigator>
+        <view class="field" wx:else>
+            <text class="label">班级二维码</text>
+            <view class="content">
+                <text>无</text>
+            </view>
+        </view>
 
         <view class="field">
             <text class="label">加入方式</text>
@@ -46,7 +49,7 @@
             margin-bottom: 15rpx;
             overflow: hidden;
 
-            .icon {
+            .logo {
                 float: left;
                 width: 120rpx;
                 height: 120rpx;
@@ -137,10 +140,6 @@
 
         computed = {
             addTypeAndRemaining () {
-                if (!this.detail) {
-                    return "";
-                }
-
                 let text = `${this.detail.addTypeName}，`;
 
                 if (this.detail.remainingQuota > 0) {
@@ -153,7 +152,7 @@
                 return text;
             },
             isSupportAddText () {
-                if (this.detail && this.detail.isSupportAdd) {
+                if (this.detail.isSupportAdd) {
                     return "入班后可加群";
                 }
                 else {
@@ -161,9 +160,5 @@
                 }
             }
         };
-
-        onShow () {
-            console.log(this.detail);
-        }
     }
 </script>

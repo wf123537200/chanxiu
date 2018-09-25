@@ -1,11 +1,17 @@
-import wepy from 'wepy'
+import wepy from 'wepy';
+import getGlobalData from "./getGlobalData";
 
 export const ajax = function ({ins, url, params = {}, method = 'GET', success, fail}) {
     if (!ins) console.error('没有传入实体！');
 
-    const {ajaxPerfix, resPerfix} = ins.globalData || ins.$parent.globalData;
-    const token = url !== '/weixin/token' ? ins.accessToken || ins.$parent.accessToken : '';
-    const getTokenPromise = ins.getTokenPromise || (ins.$parent && ins.$parent.getTokenPromise);
+    const global = getGlobalData(ins);
+
+    let _ins = global.ins;
+    let globalData = global.data;
+
+    const {ajaxPerfix, resPerfix} = globalData;
+    const token = url !== '/weixin/token' ? ins.accessToken || _ins.accessToken : '';
+    const getTokenPromise = _ins.getTokenPromise;
 
     if (!token && url !== "/weixin/token") {
         console.log(`请求${url}时未检测到token，等待/weixin/token完成再重新请求${url}。`);

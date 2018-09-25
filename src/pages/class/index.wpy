@@ -5,9 +5,11 @@
         <myClasses :classes.sync="myClasses" />
     </view>
 
-    <view class="btn-create-class-box" wx:if="{{ready}}">
-        <button class="btn" plain="true" open-type="getUserInfo" @getuserinfo="create">创　　建</button>
-    </view>
+    <block wx:if="{{ready}}">
+        <view class="btn-create-class-box">
+            <button class="btn" plain="true" open-type="getUserInfo" @getuserinfo="create">创　　建</button>
+        </view>
+    </block>
 </template>
 
 <style lang="less">
@@ -84,7 +86,8 @@
 
         getMyClasses = getMyClasses;
 
-        async onLoad() {
+        async onShow() {
+            this.addReadyCallback(this.getUserInfo());
             this.addReadyCallback(this.getOpenClasses());
             this.addReadyCallback(this.getMyClasses());
             await this.runReadyCallbacks();

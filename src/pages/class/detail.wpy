@@ -1,19 +1,29 @@
 <template>
     <block wx:if="{{ready}}">
-        <nav :id.sync="classID" nav=""></nav>
+        <nav :id.sync="classId" nav="intro"></nav>
 
-        <info class="classInfo" :id.sync="classID" :detail.sync="detail"></info>
+        <info class="classInfo" :id.sync="classId" :detail.sync="detail"></info>
 
         <view class="intro">
             <intro :detail.sync="detail"></intro>
         </view>
 
-        <view class="btn-box fixed to-bottom join-class" wx:if="{{isNotMyClass}}">
-            <button class="btn-primary" @tap="joinClass">加入班级</button>
+        <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
+            <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass">加入班级</button>
+        </view>
+
+        <block wx:else>
+            <view class="btn-box fixed to-bottom">
+                <button class="btn-primary" open-type="getUserInfo" @getuserinfo="exitClass">退出班级</button>
+            </view>
+        </block>
+
+        <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
+            <navigator url="/pages/class/index" open-type="switchTab">首页</navigator>
         </view>
     </block>
 
-    <applyPopup :id.sync="classID"></applyPopup>
+    <applyPopup :classId.sync="classId"></applyPopup>
 </template>
 
 <style lang="less">
@@ -44,8 +54,9 @@
     import getUserInfo from "../../mixins/getUserInfo";
     import ready from "../../mixins/ready";
     import classInfo from "../../mixins/classInfo";
-    import applyPopup from "./detail/apply-popup";
+    import env from "../../mixins/env";
 
+    import applyPopup from "./detail/apply-popup";
     import nav from "./detail/navigator";
     import info from "./detail/info";
     import intro from "./detail/intro";
@@ -67,9 +78,10 @@
             userInfo: {}
         };
 
-        mixins = [ready, getUserInfo, classInfo];
+        mixins = [ready, getUserInfo, classInfo, env];
 
-        async onLoad() {
+        async onShow() {
+            this.addReadyCallback(this.getUserInfo());
             this.addReadyCallback(this.getClassDetail());
             await this.runReadyCallbacks();
             wx.setNavigationBarTitle({

@@ -22,14 +22,16 @@ export async function getMyClasses() {
     this.$apply();
 }
 
-export async function createClass() {
-    await ajax2promise({
+export async function createClass(params = {}) {
+    const result = await ajax2promise({
         ins: this,
         method: "POST",
-        url: "/class/myadds"
+        url: "/class/create",
+        params
     });
 
     this.$apply();
+    return result;
 }
 
 export async function getClassDetail() {
@@ -37,9 +39,138 @@ export async function getClassDetail() {
         ins: this,
         url: "/class/brief",
         params: {
-            id: this.classID
+            id: this.classId
         }
     });
 
     this.$apply();
+}
+
+export async function joinClass() {
+    const result = await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/add",
+        params: {
+            id: this.classId
+        }
+    });
+
+    this.$apply();
+    return result;
+}
+
+export async function applyClass(params = {}) {
+    params = Object.assign({
+        classId: this.classId,
+        pages: "/pages/class/detail?id=" + this.classId
+    }, params);
+
+    await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/add/apply",
+        params
+    });
+
+    this.$apply();
+}
+
+export async function exitClass() {
+    const result = await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/exit",
+        params: {
+            id: this.classId
+        }
+    });
+
+    this.$apply();
+    return result;
+}
+
+// 训练名单
+export async function getTrainList () {
+    const result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/briefing/train/list",
+        params: {
+            id: this.classId,
+            timeType: this.brief.timeType
+        }
+    });
+
+    this.$apply();
+    return result;
+}
+
+// 排行榜
+export async function getTrainRanks () {
+    const result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/briefing/ranking",
+        params: {
+            id: this.classId,
+            timeType: this.brief.timeType
+        }
+    });
+
+    this.$apply();
+    return result;
+}
+
+// 中断榜
+export async function getInterrupts () {
+    const result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/briefing/Interrupt",
+        params: {
+            id: this.classId,
+            timeType: this.brief.timeType
+        }
+    });
+
+    this.$apply();
+    return result;
+}
+
+export async function remind (params = {}) {
+    params = Object.assign({
+        classId: this.classId,
+        pages: "/pages/class/detail?id=" + this.classId
+    }, params);
+
+    await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/remind",
+        params
+    });
+
+    //this.detail.isRemind = true;
+    this.$apply();
+}
+
+export async function getTrainRecords (params = {}) {
+    params = Object.assign({
+        classId: this.classId,
+        offset: this.trainRecordCount * this.trainRecordRequestCount,
+        count: this.trainRecordCount || 10
+    }, params);
+
+    const result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/dynamic/list",
+        params
+    });
+
+    result.forEach(n => this._trainRecords.push(n));
+    this.trainRecordRequestCount++;
+    this.$apply();
+    return result;
 }
