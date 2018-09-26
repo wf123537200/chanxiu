@@ -1,0 +1,77 @@
+<template>
+    <popup title="中断提醒" @onHide.user="clearFormData">
+        <form report-submit="true" @submit="submit" @reset="reset">
+            <textarea class="textarea" value="{{message}}" name="message" placeholder="跟TA说两句，激励一下TA。最多30字。" @input="updateMessage"></textarea>
+
+            <view class="btn-box popup-btn-box">
+                <button class="btn-secondary" form-type="reset">取消</button>
+                <button class="btn-primary" form-type="submit">发送提醒</button>
+            </view>
+        </form>
+    </popup>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import {remind} from "../../../modules/Classes";
+
+    import popup from "../../../components/zan-popup-a";
+
+    export default class extends wepy.component {
+        components = {
+            popup
+        };
+
+        props = {
+            classId: Number
+        };
+
+        data = {
+            message: ""
+        };
+
+        methods = {
+            async submit (e) {
+                await this.remind({
+                    message: this.message,
+                    formId: e.detail.formId
+                });
+                this.$emit("onSubmit");
+                wx.showToast({
+                    title: "提醒完成"
+                });
+                this.hide();
+            },
+            reset () {
+                this.hide();
+                this.clearFormData();
+            },
+            updateMessage (e) {
+                this.message = e.detail.value;
+            },
+            clearFormData () {
+                this.clearFormData();
+            },
+            show () {
+                this.show();
+            },
+            hide () {
+                this.hide();
+            }
+        };
+
+        clearFormData () {
+            this.message = "";
+        }
+
+        show () {
+            this.$invoke("popup", "show");
+        }
+
+        hide () {
+            this.$invoke("popup", "hide");
+        }
+
+        remind = remind;
+    }
+</script>

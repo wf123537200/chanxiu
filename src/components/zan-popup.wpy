@@ -1,10 +1,4 @@
 <style lang="scss">
-.zan-popup {
-  visibility: hidden;
-}
-.zan-popup--show {
-  visibility: visible;
-}
 .zan-popup__mask {
   position: fixed;
   top: 0;
@@ -13,7 +7,6 @@
   bottom: 0;
   z-index: 10;
   background: rgba(0, 0, 0, 0.7);
-  display: none;
 }
 .zan-popup__container {
   position: fixed;
@@ -24,17 +17,10 @@
   transform-origin: center;
   transition: all 0.4s ease;
   z-index: 11;
-  opacity: 0;
+  opacity: 1;
   Width:90%;
   overflow:hidden;
 }
-.zan-popup--show .zan-popup__container {
-  opacity: 1;
-}
-.zan-popup--show .zan-popup__mask {
-  display: block;
-}
-
 /* 左侧popup */
 .zan-popup--left .zan-popup__container {
   left: 0;
@@ -109,7 +95,7 @@
 }
 </style>
 <template>
-  <view class="zan-popup {{direction ? 'popup-example--' + direction + ' zan-popup--' + direction : ''}} {{ showPopup ? 'zan-popup--show' : ''}}">
+  <view class="zan-popup {{direction ? 'popup-example--' + direction + ' zan-popup--' + direction : ''}} {{ showPopup ? 'zan-popup--show' : ''}}" wx:if="{{showPopup}}">
     <view class="zan-popup__mask" bindtap="togglePopup"></view>
     <view class="zan-popup__container {{direction ? '' : 'popup-example--center'}}">
       <slot></slot>
@@ -125,15 +111,23 @@ export default class zanToast extends wepy.component {
       type: String,
       default: ''
     }
-  }
+  };
+
   data = {
     showPopup: false
-  }
+  };
+
   methods = {
     togglePopup() {
-      this.showPopup = !this.showPopup
-      this.$apply()
+      this.showPopup = !this.showPopup;
+      this.$apply();
+    },
+    show () {
+        this.showPopup = true;
+    },
+    hide () {
+        this.showPopup = false;
     }
-  }
+  };
 }
 </script>

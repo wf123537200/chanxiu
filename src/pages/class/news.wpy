@@ -1,0 +1,658 @@
+<template>
+    <view class="full-height flex-v" @tap="hideTrainTimeTypeDrop" wx:if="{{ready}}">
+        <nav :id.sync="classId" nav="news"></nav>
+
+        <view class="tab">
+            <view data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
+                <text>{{item.text}}</text>
+            </view>
+        </view>
+
+        <view class="tab-body flex-v flex-1 {{currentTab}}">
+            <!--简报-->
+            <block wx:if="{{currentTab === 'brief'}}">
+                <view class="train-info">
+                    <view class="time-type">
+                        <view @tap.stop="toggleTrainTimeTypeDrop">
+                            <text class="text">{{trainTimeTypeText}}</text>
+                            <image class="arr" src="/images/arr-down-dark.png"></image>
+                        </view>
+
+                        <view class="drop" wx:if="{{trainTimeTypeDropVisible}}">
+                            <view data-type="1" @tap.stop="setTrainTimeType">今日</view>
+                            <view data-type="2" @tap.stop="setTrainTimeType">本周</view>
+                            <view data-type="3" @tap.stop="setTrainTimeType">本月</view>
+                        </view>
+                    </view>
+
+                    <text class="total" wx:if="{{hasTrainInfo}}">共{{briefTrainInfo.trainNum}}人参与，人均{{briefTrainInfo.averageTime}}分钟</text>
+                    <text class="total" wx:else>暂无人参与禅修</text>
+                </view>
+
+                <view class="tab sub">
+                    <view data-tab="{{item.id}}" class="tab-item {{currentRankTab === item.id ? 'on' : ''}}" @tap="switchRankTab" wx:key="index" wx:for="{{rankTab}}">
+                        <text>{{item.text}}</text>
+                    </view>
+                </view>
+
+                <!--练习名单-->
+                <scroll-view class="data-list flex-1" scroll-y wx:if="{{currentRankTab === 'train'}}">
+                    <block wx:if="{{hasTrainInfo}}">
+                        <view class="data-item" wx:key="index" wx:for="{{brief.trainList1}}">
+                            <image class="avatar" src="{{item.avatarUrl}}"></image>
+                            <view class="total">
+                                <view class="time">{{item.trainInfo}}</view>
+                                <view class="nick-name">{{item.nickName}}</view>
+                            </view>
+                            <view class="detail">
+                                <view class="time">{{item.strCreateTime}}</view>
+                                <view class="every">{{item.everyTrainDuration}}</view>
+                            </view>
+                        </view>
+                    </block>
+                    <view class="no-records" wx:else>暂无人参与禅修</view>
+                </scroll-view>
+
+                <!--排行榜-->
+                <scroll-view class="data-list flex-1" scroll-y wx:elif="{{currentRankTab === 'rank'}}">
+                    <block wx:if="{{hasTrainInfo}}">
+                        <view class="data-item" wx:key="index" wx:for="{{brief.trainList2}}">
+                            <image class="avatar" src="{{item.avatarUrl}}"></image>
+                            <view class="total">
+                                <view class="time">{{item.trainInfo}}</view>
+                                <view class="nick-name">{{item.nickName}}</view>
+                            </view>
+                            <view class="detail">
+                                <view class="time">{{item.strCreateTime}}</view>
+                                <view class="every">{{item.everyTrainDuration}}</view>
+                            </view>
+                        </view>
+                    </block>
+                    <view class="no-records" wx:else>暂无人参与禅修</view>
+                </scroll-view>
+
+                <!--中断榜-->
+                <scroll-view class="data-list flex-1" scroll-y wx:else="{{currentRankTab === 'break'}}">
+                    <block wx:if="{{hasTrainInfo}}">
+                        <view class="data-item" wx:key="index" wx:for="{{brief.trainList3}}">
+                            <image class="avatar" src="{{item.avatarUrl}}"></image>
+                            <view class="total">
+                                <view class="time">{{item.trainInfo}}</view>
+                                <view class="nick-name">{{item.nickName}}</view>
+                            </view>
+                            <view class="detail">
+                                <view class="time">{{item.strCreateTime}}</view>
+                                <view class="every">{{item.everyTrainDuration}}</view>
+                            </view>
+                        </view>
+                    </block>
+                    <view class="no-records" wx:else>暂无人参与禅修</view>
+                </scroll-view>
+            </block>
+
+            <!--记录-->
+            <block wx:if="{{currentTab === 'record'}}">
+                <scroll-view class="data-list record flex-1" scroll-y @scrolltolower="getTrainRecords">
+                    <block wx:key="index" wx:for-index="index" wx:for-item="item" wx:for="{{trainRecords}}">
+                        <view class="date">
+                            <text>{{index}}</text>
+                        </view>
+
+                        <view class="data-item" wx:key="detailIndex" wx:for="{{item}}" wx:for-index="detailIndex" wx:for-item="detailItem">
+                            <image class="avatar" src="{{detailItem.avatarUrl}}"></image>
+                            <view class="total">
+                                <text class="nick-name">{{detailItem.nickName}}</text>
+                                <text class="acction">{{detailItem.title}}</text>
+                            </view>
+                            <view class="detail">
+                                <view class="time">{{detailItem.strCreateTime}}</view>
+                                <view class="every">{{detailItem.secondTitle}}</view>
+                            </view>
+                            <view class="diary {{contentVisibleInfo[detailItem.id] || (contentHeights[detailItem.id] && hasInitContentHeight[detailItem.id] && contentHeights[detailItem.id].boxHeight >= contentHeights[detailItem.id].textHeight) ? 'show' : ''}}" wx:if="{{detailItem.content}}">
+                                <view class="content-box {{hasInitContentHeight[detailItem.id] ? 'ready' : ''}}" data-id="{{detailItem.id}}">
+                                    <view class="text" data-id="{{detailItem.id}}">{{detailItem.content}}</view>
+                                </view>
+                                <text class="view-all" data-id="{{detailItem.id}}" @tap="showContent">查看全文</text>
+                            </view>
+                        </view>
+                    </block>
+                </scroll-view>
+            </block>
+        </view>
+
+        <!--操作按钮-->
+        <block wx:if="{{currentTab === 'brief'}}">
+            <block wx:if="{{currentRankTab === 'train'}}">
+                <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
+                    <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass">加入班级</button>
+                </view>
+
+                <block wx:else>
+                    <view class="btn-box fixed to-bottom">
+                        <button class="btn-primary" open-type="getUserInfo" @getuserinfo="exitClass">退出班级</button>
+                    </view>
+                </block>
+
+                <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
+                    <navigator url="/pages/class/index" open-type="switchTab">首页</navigator>
+                </view>
+            </block>
+
+            <block wx:if="{{currentRankTab === 'break'}}">
+                <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
+                    <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass">加入班级</button>
+                </view>
+
+                <block wx:elif="{{isAdministrator}}">
+                    <view class="btn-box fixed to-bottom">
+                        <button class="btn-primary w-1-2" open-type="getUserInfo" @getuserinfo="exitClass">通报到群里</button>
+                        <button class="btn-secondary w-1-2" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind}}">提醒他们</button>
+                    </view>
+                </block>
+
+                <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
+                    <navigator url="/pages/class/index" open-type="switchTab">首页</navigator>
+                </view>
+            </block>
+        </block>
+
+        <applyPopup :classId.sync="classId"></applyPopup>
+        <remindPopup :classId.sync="classId" @onSubmit.user="markRemind"></remindPopup>
+    </view>
+</template>
+
+<style lang="less">
+    @import (reference) "../../static/less/utility";
+
+    page {
+        .full-height;
+        background-color: #eee;
+    }
+
+    .tab {
+        margin-top: 18rpx;
+    }
+
+    .tab-body {
+        position: relative;
+
+        .train-info {
+            padding-left: 30rpx;
+            background-color: #fff;
+            line-height: 74rpx;
+            font-size: 28rpx;
+
+            .time-type,
+            .text,
+            .arr,
+            .total {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .time-type {
+                position: relative;
+                color: #333;
+                z-index: 2;
+
+                .arr {
+                    width: 18rpx;
+                    height: 18rpx;
+                    margin-left: 6rpx;
+                }
+
+                .drop {
+                    position: absolute;
+                    left: -15rpx;
+                    top: auto;
+                    width: 100rpx;
+                    padding: 5rpx;
+                    margin-top: -10rpx;
+                    border: 2rpx solid #ccc;
+                    background-color: #fff;
+
+                    view {
+                        padding: 0 10rpx;
+                        line-height: 50rpx;
+
+                        &:active {
+                            background-color: #eee;
+                        }
+                    }
+                }
+            }
+
+            .total {
+                margin-left: 35rpx;
+                color: #aaa;
+            }
+        }
+
+        .data-list {
+            position: absolute;
+            top: 74rpx + 18rpx + 70rpx + 4rpx;
+            bottom: 0;
+            padding-top: 20rpx;
+            padding-bottom: 20rpx;
+            background-color: #fff;
+
+            &.record {
+                top: 0;
+
+                .diary {
+                    margin-left: 110rpx;
+                    margin-top: 20rpx;
+                    font-size: 24rpx;
+                    color: #aaa;
+
+                    .content-box {
+                        max-height: 30rpx * 10;
+                        line-height: 30rpx;
+                        overflow: hidden;
+
+                        &.ready {
+                            display: -webkit-box;
+                            max-height: initial;
+                            -webkit-box-orient: vertical;
+                            -webkit-line-clamp: 10;
+                            text-overflow:ellipsis;
+                        }
+                    }
+
+                    .view-all {
+                        display: inline-block;
+                        margin-top: 10rpx;
+                        font-size: 22rpx;
+                        color: #b0976e;
+                    }
+
+                    &.show {
+                        .content-box {
+                            display: block;
+                        }
+
+                        .view-all {
+                            display: none;
+                        }
+                    }
+                }
+
+                .date {
+                    margin: 45rpx auto;
+                    text-align: center;
+                    line-height: 30rpx;
+
+                    text {
+                        display: inline-block;
+                        vertical-align: top;
+                        min-width: 90rpx;
+                        padding: 0 30rpx;
+                        text-align: center;
+                        background-color: #aaa;
+                        font-size: 22rpx;
+                        color: #fff;
+                    }
+                }
+            }
+
+            .data-item {
+                position: relative;
+                padding: 20rpx 40rpx;
+                overflow: hidden;
+            }
+
+            .avatar {
+                float: left;
+                width: 90rpx;
+                height: 90rpx;
+                margin-right: 20rpx;
+                border: 2rpx solid #b0976e;
+            }
+
+            .total {
+                font-size: 28rpx;
+                color: #000;
+                overflow: hidden;
+
+                .nick-name {
+                    margin-right: 5rpx;
+                }
+            }
+
+            .detail {
+                margin-top: 10rpx;
+                font-size: 24rpx;
+                color: #aaa;
+                overflow: hidden;
+            }
+
+            .time {
+                float: right;
+                margin-left: 20rpx;
+                min-width: 80rpx;
+                text-align: right;
+                white-space: nowrap;
+            }
+        }
+
+        .no-records {
+            padding-top: 50rpx;
+            text-align: center;
+            font-size: 24rpx;
+            color: #ccc;
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import moment from "moment";
+    import classInfo from "../../mixins/classInfo";
+    import getUserInfo from "../../mixins/getUserInfo";
+    import {getTrainList, getTrainRanks, getInterrupts, getTrainRecords} from "../../modules/Classes";
+    import ready from "../../mixins/ready";
+    import env from "../../mixins/env";
+    import "moment";
+
+    import nav from "./detail/navigator";
+    import applyPopup from "./detail/apply-popup";
+    import remindPopup from "./detail/remind-popup";
+
+    export default class extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "班级"
+        };
+
+        components = {
+            nav,
+            applyPopup,
+            remindPopup
+        };
+
+        data = {
+            currentTab: "brief",
+            tab: [
+                {
+                    id: "brief",
+                    text: "简报"
+                },
+                {
+                    id: "record",
+                    text: "记录"
+                }
+            ],
+            brief: {
+                timeType: 1,
+                trainInfo1: {},
+                trainList1: [],
+                trainInfo2: {},
+                trainList2: [],
+                trainInfo3: {},
+                trainList3: []
+            },
+            //trainRanks: [],
+            _trainRecords: [],
+            trainRecordCount: 10,
+            trainRecordRequestCount: 0,
+            hasFetchRecords: false,
+            //trainRecords: [],
+            contentHeights: {},
+            currentRankTab: "train",
+            rankTab: [
+                {
+                    id: "train",
+                    text: "练习名单"
+                },
+                {
+                    id: "rank",
+                    text: "排行榜"
+                },
+                {
+                    id: "break",
+                    text: "中断榜"
+                }
+            ],
+            trainTimeTypeDropVisible: false,
+            hasInitContentHeight: {},
+            contentVisibleInfo: {},
+            userInfo: {}
+        };
+
+        mixins = [ready, getUserInfo, classInfo, env];
+
+        computed = {
+            trainTimeTypeText () {
+                if (this.brief.timeType === 1) {
+                    return "今日";
+                }
+                else if (this.brief.timeType === 2) {
+                    return "本周";
+                } else {
+                    return "本月";
+                }
+            },
+            hasTrainInfo () {
+                if (this.currentRankTab === "train") {
+                    return this.brief.trainInfo1 && !!this.brief.trainInfo1.trainNum;
+                }
+                else if (this.currentRankTab === "rank") {
+                    return this.brief.trainInfo2 && !!this.brief.trainInfo2.trainNum;
+                }
+                else {
+                    return this.brief.trainInfo3 && !!this.brief.trainInfo3.trainNum;
+                }
+            },
+            briefTrainInfo () {
+                if (this.currentRankTab === "train") {
+                    return this.brief.trainInfo1;
+                }
+                else if (this.currentRankTab === "rank") {
+                    return this.brief.trainInfo2;
+                }
+                else {
+                    return this.brief.trainInfo3;
+                }
+            },
+            trainRecords () {
+                let _trainRecords = [...this._trainRecords];
+                let trainRecords = _trainRecords.reduce((total, current) =>{
+                    let date = current.strCreateTime.substring(0, 10);
+
+                    if (!total[date]) {
+                        total[date] = [];
+                    }
+
+                    total[date].push(current);
+                    return total;
+                }, {});
+                let __trainRecords = {};
+
+                let now = new Date();
+                let y = now.getFullYear();
+                let m = now.getMonth() + 1;
+                let d = now.getDate();
+
+                for (let [key, value] of Object.entries(trainRecords)) {
+                    let _key = key.split("-");
+                    let _y = _key[0] - 0;
+                    let _m = _key[1] - 0;
+                    let _d = _key[2] - 0;
+                    let yesterday = new Date(y, m, d - 1);
+                    let currentDay = new Date(_y, _m - 1, _d);
+
+                    if (_y === y && _m === m && _d === d) {
+                        __trainRecords["今天"] = value.map(n => {
+                            let m = Object.assign({}, n);
+                            let diffHours = moment().diff(m.strCreateTime, "hours");
+
+                            if (diffHours <= 1) {
+                                m.strCreateTime = moment(m.strCreateTime).fromNow();
+                            }
+                            else {
+                                m.strCreateTime = m.strCreateTime.substring(11);
+                            }
+
+                            return m;
+                        });
+                    }
+                    else if (yesterday.getTime() === currentDay.getTime()) {
+                        __trainRecords["昨天"] = value;
+                    }
+                    else {
+                        __trainRecords[key.replace("-", "年").replace("-", "月")] = value.map(n => {
+                            let m = Object.assign({}, n);
+
+                            m.content = m.content.repeat(100);
+
+                            return m;
+                        });
+                    }
+                }
+
+                return __trainRecords;
+            }
+        };
+
+        watch = {
+            async brief (value, oldValue) {
+                if (parseInt(value.timeType) !== parseInt(oldValue.timeType)) {
+                    wx.showLoading();
+                    await this.getData();
+                    wx.hideLoading();
+                }
+            },
+            async currentTab (value, oldValue) {
+                if (value === "record" && oldValue !== "record" && !this.hasFetchRecords) {
+                    await this.getTrainRecords();
+                    this.hasFetchRecords = true;
+                }
+            }
+        };
+
+        methods = {
+            switchTab (e) {
+                this.currentTab = e.currentTarget.dataset.tab;
+            },
+            switchRankTab (e) {
+                const nextTab = e.currentTarget.dataset.tab;
+
+                if (this.currentRankTab !== nextTab) {
+                    this.currentRankTab = nextTab;
+                    this.getData();
+                }
+            },
+            toggleTrainTimeTypeDrop () {
+                this.trainTimeTypeDropVisible = !this.trainTimeTypeDropVisible;
+            },
+            hideTrainTimeTypeDrop () {
+                this.hideTrainTimeTypeDrop();
+            },
+            setTrainTimeType (e) {
+                this.brief.timeType = parseInt(e.currentTarget.dataset.type);
+                this.hideTrainTimeTypeDrop();
+            },
+            showRemindPopup () {
+                this.$invoke("remindPopup", "show");
+            },
+            showContent (e) {
+                this.contentVisibleInfo[e.currentTarget.dataset.id] = true;
+            },
+            markRemind () {
+                this.detail.isRemind = true;
+            }
+        };
+
+        hideTrainTimeTypeDrop () {
+            this.trainTimeTypeDropVisible = false;
+        }
+
+        async getTrainList () {
+            const {trainInfo, trainList} = await getTrainList.bind(this)();
+
+            this.brief.trainInfo1 = trainInfo || {};
+            this.brief.trainList1 = trainList || [];
+            this.$apply();
+        }
+
+        async getTrainRanks () {
+            const {trainInfo, trainList} = await getTrainRanks.bind(this)();
+
+            this.brief.trainInfo2 = trainInfo || {};
+            this.brief.trainList2 = trainList || [];
+            this.$apply();
+        }
+
+        async getInterrupts () {
+            const {trainInfo, trainList} = await getInterrupts.bind(this)();
+
+            this.brief.trainInfo3 = trainInfo || {};
+            this.brief.trainList3 = trainList || [];
+            this.$apply();
+        }
+
+        async getData () {
+            if (this.currentRankTab === "train") {
+                await this.getTrainList();
+            }
+            else if (this.currentRankTab === "rank") {
+                await this.getTrainRanks();
+            }
+            else {
+                await this.getInterrupts();
+            }
+        }
+
+        async getTrainRecords () {
+            await getTrainRecords.bind(this)();
+            this.initContentHeight();
+        }
+
+        initContentHeight () {
+            let query = wx.createSelectorQuery();
+
+            query.selectAll(".data-list.record .diary .content-box").boundingClientRect((rects) => {
+                rects.forEach((rect) =>{
+                    const id = rect.dataset.id;
+
+                    if (!this.hasInitContentHeight[id]) {
+                        this.contentHeights[id] = this.contentHeights[id] || {};
+                        this.contentHeights[id].boxHeight = rect.height;
+                    }
+                });
+            });
+
+            query.selectAll(".data-list.record .diary .content-box .text").boundingClientRect((rects) => {
+                rects.forEach((rect) =>{
+                    const id = rect.dataset.id;
+
+                    if (!this.hasInitContentHeight[id]) {
+                        this.contentHeights[id] = this.contentHeights[id] || {};
+                        this.contentHeights[id].textHeight = rect.height;
+                    }
+                });
+            }).exec((rects) => {
+                rects[0].forEach((rect) =>{
+                    const id = rect.dataset.id;
+                    this.hasInitContentHeight[id] = true;
+                });
+
+                this.$apply();
+            });
+        }
+
+        init () {
+            this._trainRecords = [];
+            this.trainRecordRequestCount = 0;
+            this.contentHeights = {};
+        }
+
+        async onShow() {
+            //this.nav = options.nav;
+            this.init();
+            this.addReadyCallback(this.getClassDetail());
+            this.addReadyCallback(this.getTrainList());
+            this.runReadyCallbacks();
+        }
+    }
+</script>

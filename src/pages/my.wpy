@@ -271,5 +271,25 @@
         this.$navigate('./ex-briefing');
       }
     }
+    onLoad() {
+      this.$parent.getUserInfo((userInfo) => {
+        if (userInfo) {
+          this.userInfo = userInfo
+          // my info
+          ajax({
+            ins: this,
+            url: '/me/info',
+            params: {},
+            success: (d) => {
+              Object.assign(this, d.trainInfo)
+              this.exTime = d.trainInfo.todayDuration || 0
+              this.$apply()
+            }
+          })
+        }
+
+        this.$apply()
+      })
+    }
   }
 </script>

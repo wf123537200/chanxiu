@@ -1,0 +1,110 @@
+<!--
+zanPopup场景实例：可定制标题、关闭按钮、操作按钮
+-->
+<template>
+    <zanPopup :direction.sync="direction">
+        <view class="popup-content-box flex-v">
+            <view class="popup-title" wx:if="{{title}}">{{title}}</view>
+            <image src="/images/popup-close.png" class="close" wx:if="{{close}}" @tap="hide"></image>
+
+            <view class="flex-1 popup-body-box">
+                <slot></slot>
+            </view>
+
+            <view class="btn-box popup-btn-box" wx:if="{{hasBtns}}">
+                <repeat wx:key="{{index}}" wx:for="{{btns}}">
+                    <button class="{{item.className}}" data-index="{{index}}" @tap="handlerBtnEvent">{{item.text}}</button>
+                </repeat>
+            </view>
+        </view>
+    </zanPopup>
+</template>
+
+<style lang="less">
+    .popup-content-box {
+        position: relative;
+        padding: 0 40rpx 40rpx;
+
+        & > .popup-title {
+            padding-top: 30rpx;
+            font-size: 30rpx;
+            color: #333;
+        }
+
+        & > .close {
+            position: absolute;
+            top: 30rpx;
+            right: 30rpx;
+            width: 30rpx;
+            height: 30rpx;
+        }
+
+        & > .popup-body-box {
+            padding-top: 30rpx;
+        }
+
+        & .popup-btn-box {
+            margin-top: 40rpx;
+
+            button {
+                width: 210rpx;
+
+                & + button {
+                    margin-left: 30rpx;
+                }
+            }
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import zanPopup from "./zan-popup";
+
+    export default class extends wepy.component {
+        props = {
+            direction: {
+                type: String,
+                default: ''
+            },
+            //height: Number,
+            title: String,
+            close: {
+                type: Boolean,
+                default: true
+            },
+            btns: {
+                type: Array,
+                default: []
+            }
+        };
+
+        components = {
+            zanPopup
+        };
+
+        computed = {
+            hasBtns () {
+                return this.btns.length > 0;
+            }
+        };
+
+        methods = {
+            hide () {
+                this.$emit("onHide");
+                this.$invoke("zanPopup", "hide");
+            },
+            show () {
+                this.$invoke("zanPopup", "show");
+            },
+            handlerBtnEvent (e) {
+                const index = e.currentTarget.dataset.index;
+                const cb = this.btns[index].fn;
+
+                if (typeof cb === "function") {
+                    cb();
+                }
+            }
+        };
+    }
+</script>

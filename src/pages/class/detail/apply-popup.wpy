@@ -1,0 +1,80 @@
+<template>
+    <popup title="请求加入班级" @onHide.user="clearFormData">
+        <form report-submit="true" @submit="submit" @reset="reset">
+            <textarea class="textarea" value="{{reason}}" name="reason" placeholder="你可以介绍下自己。选填。" @input="updateReason"></textarea>
+
+            <view class="btn-box popup-btn-box">
+                <button class="btn-secondary" form-type="reset">取消</button>
+                <button class="btn-primary" form-type="submit">提交</button>
+            </view>
+        </form>
+    </popup>
+</template>
+
+<style lang="less">
+</style>
+
+<script>
+    import wepy from "wepy";
+    import {applyClass} from "../../../modules/Classes";
+
+    import popup from "../../../components/zan-popup-a";
+
+    export default class extends wepy.component {
+        components = {
+            popup
+        };
+
+        props = {
+            classId: Number
+        };
+
+        data = {
+            reason: ""
+        };
+
+        methods = {
+            async submit (e) {
+                await this.applyClass({
+                    introduction: this.reason,
+                    formId: e.detail.formId
+                });
+                this.$emit("onSubmit");
+                wx.showToast({
+                    title: "发送成功"
+                });
+                this.hide();
+            },
+            reset () {
+                this.hide();
+                this.clearFormData();
+            },
+            updateReason (e) {
+                this.reason = e.detail.value;
+            },
+            clearFormData () {
+                this.clearFormData();
+            },
+            show () {
+                this.show();
+            },
+            hide () {
+                this.hide();
+            }
+        };
+
+        clearFormData () {
+            this.reason = "";
+        }
+
+        show () {
+            this.$invoke("popup", "show");
+        }
+
+        hide () {
+            this.$invoke("popup", "hide");
+        }
+
+        applyClass = applyClass;
+    }
+</script>
