@@ -309,11 +309,7 @@
                 });
             },
             async submit (e) {
-                const result = await this.createClass(e.detail.value).catch(() => {
-                    wx.showToast({
-                        title: "创建失败"
-                    });
-                });
+                await this.createClass(e.detail.value);
 
                 wx.showToast({
                     title: "创建成功",
@@ -327,9 +323,5 @@
         };
 
         createClass = createClass;
-
-//        async onShow() {
-//            await this.runReadyCallbacks();
-//        }
     }
 </script>

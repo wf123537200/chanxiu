@@ -3,8 +3,11 @@
  */
 
 import ajax2promise from "../components/ajax2promise";
+import "moment";
 
 export async function getOpenClasses () {
+    await this.getUserInfo();
+
     this.openedClasses = await ajax2promise({
         ins: this,
         url: "/class/opens"
@@ -14,6 +17,8 @@ export async function getOpenClasses () {
 }
 
 export async function getMyClasses() {
+    await this.getUserInfo();
+
     this.myClasses = await ajax2promise({
         ins: this,
         url: "/class/myadds"
@@ -23,6 +28,8 @@ export async function getMyClasses() {
 }
 
 export async function createClass(params = {}) {
+    await this.getUserInfo();
+
     const result = await ajax2promise({
         ins: this,
         method: "POST",
@@ -35,6 +42,8 @@ export async function createClass(params = {}) {
 }
 
 export async function getClassDetail() {
+    await this.getUserInfo();
+
     this.detail = await ajax2promise({
         ins: this,
         url: "/class/brief",
@@ -47,6 +56,8 @@ export async function getClassDetail() {
 }
 
 export async function joinClass() {
+    await this.getUserInfo();
+
     const result = await ajax2promise({
         ins: this,
         method: "POST",
@@ -61,6 +72,8 @@ export async function joinClass() {
 }
 
 export async function applyClass(params = {}) {
+    await this.getUserInfo();
+
     params = Object.assign({
         classId: this.classId,
         pages: "/pages/class/detail?id=" + this.classId
@@ -77,6 +90,8 @@ export async function applyClass(params = {}) {
 }
 
 export async function exitClass() {
+    await this.getUserInfo();
+
     const result = await ajax2promise({
         ins: this,
         method: "POST",
@@ -138,7 +153,10 @@ export async function getInterrupts () {
     return result;
 }
 
+// 提醒
 export async function remind (params = {}) {
+    await this.getUserInfo();
+
     params = Object.assign({
         classId: this.classId,
         pages: "/pages/class/detail?id=" + this.classId
@@ -205,6 +223,49 @@ export async function getStudents() {
     return result;
 }
 
+export async function getNewStudents () {
+    let result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/new/students",
+        params: {
+            classId: this.classId
+        }
+    });
+
+    let now = new Date();
+    let y = now.getFullYear();
+    let m = now.getMonth() + 1;
+    let d = now.getDate();
+
+    result = result.map(n => {
+        let m = Object.assign({}, n);
+        let _key = m.strCreateTime.substring(0, 10).split("-");
+        let _y = _key[0] - 0;
+        let _m = _key[1] - 0;
+        let _d = _key[2] - 0;
+
+        if (_y === y && _m === m && _d === d) {
+            m.strCreateTime = m.strCreateTime.substring(11);
+        }
+
+        if (m.status === 1) {
+            m.statusText = "已通过";
+        }
+        else if (m.status === 2) {
+            m.statusText = "已拒绝";
+        }
+        else {
+            m.statusText = "";
+        }
+
+        return m;
+    });
+
+    this.$apply();
+    return result;
+}
+
 export async function studentOperate(params = {}) {
     params = Object.assign({
         classId: this.classId
@@ -213,7 +274,7 @@ export async function studentOperate(params = {}) {
     await ajax2promise({
         ins: this,
         method: "POST",
-        url: "/class/students/operate",
+        url: "/class/student/operate",
         params
     });
 

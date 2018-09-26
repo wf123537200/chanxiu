@@ -23,7 +23,7 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
 
         wx.getNetworkType({
             success: (res) => {
-                const networkType = res.networkType
+                const networkType = res.networkType;
                 if (networkType === 'none' || networkType === 'unkonwn' && method === 'GET') {
                     // 拿本地存储
                     const d = wx.getStorageSync(ajaxPerfix + url);
@@ -35,7 +35,7 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
                             icon: 'error',
                             duration: 2000,
                             mask: true
-                        })
+                        });
 
                         throw new Error(data.data.msg + ':' + url)
                     }
