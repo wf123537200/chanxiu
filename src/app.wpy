@@ -31,7 +31,6 @@
     export default class extends wepy.app {
         config = {
             pages: [
-                'pages/class/index',
                 'pages/setex',
                 'pages/end',
                 'pages/out',
@@ -39,8 +38,10 @@
                 'pages/aboutme',
                 'pages/my',
                 'pages/class/create',
+                'pages/class/index',
                 'pages/class/detail',
                 'pages/class/news',
+                'pages/class/students',
                 'pages/class/welcome',
                 'pages/class/fail',
                 'pages/class/qr',

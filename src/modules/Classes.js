@@ -174,3 +174,48 @@ export async function getTrainRecords (params = {}) {
     this.$apply();
     return result;
 }
+
+export async function getStudents() {
+    let result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/students",
+        params: {
+            classId: this.classId
+        }
+    });
+
+    result = result.map(n => {
+        let m = Object.assign({}, n);
+        let role = parseInt(m.role);
+
+        if (role === 1) {
+            m.roleText = "班长";
+        }
+        else if (role === 2) {
+            m.roleText = "副班长";
+        }
+
+        m.strCreateTime = m.strCreateTime.substring(0, 10);
+
+        return m;
+    });
+
+    this.$apply();
+    return result;
+}
+
+export async function studentOperate(params = {}) {
+    params = Object.assign({
+        classId: this.classId
+    }, params);
+
+    await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/students/operate",
+        params
+    });
+
+    this.$apply();
+}
