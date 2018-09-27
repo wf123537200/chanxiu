@@ -1,35 +1,35 @@
 <template>
     <view class="welcome">
-        <image class="avatar" src="/temp/a.png"></image>
+        <image class="avatar" src="{{detail.avatarUrl}}"></image>
         <view class="nickname">
             <view class="box">
-                <text>Drencky</text>
+                <text>{{detail.nickName}}</text>
                 <text class="role">班长</text>
             </view>
         </view>
         <view class="wording">
             <view class="box">
-                慧默你好，欢迎你加入“持壹学院-精修1班”，成为我们班家庭中的一员！\n
+                {{userInfo.nickName}}你好，欢迎你加入“{{detail.name}}”，成为我们班家庭中的一员！\n
                 希望这个集体能为您的学修带来力量，同时您的每次练习也是对其他同学的一次激励和加持。\n
                 让我们携手同行，共同成长！
             </view>
         </view>
     </view>
 
-    <view class="wechat {{!admin ? 'no-admin' : ''}}" wx:if="{{!noWechat}}">
-        <block wx:if="{{qrCodeUrl}}">
+    <view class="wechat {{!admin ? 'no-admin' : ''}}" wx:if="{{detail.isSupportAdd}}">
+        <block wx:if="{{detail.qrCodeUrl}}">
             <text>你可以长按识别二维码加群</text>
-            <image class="qrcode" src="{{qrCodeUrl}}"></image>
+            <image class="qrcode" src="{{detail.qrCodeUrl}}"></image>
         </block>
-        <block wx:if="{{admin}}">
-            <text wx:if="{{qrCodeUrl}}">你也可添加班委微信号：{{admin}}，请求加群</text>
-            <text wx:else>你可添加班委微信号：{{admin}}，请求加群</text>
+        <block wx:if="{{detail.committee}}">
+            <text wx:if="{{detail.qrCodeUrl}}">你也可添加班委微信号：{{detail.committee}}，请求加群</text>
+            <text wx:else>你可添加班委微信号：{{detail.committee}}，请求加群</text>
         </block>
     </view>
 
     <view class="btn-box">
-        <navigator class="w-1-2 btn-primary">返回首页</navigator>
-        <navigator class="w-1-2 btn-secondary">查看班级信息</navigator>
+        <navigator class="w-1-2 btn-primary" open-type="switchTab" url="/pages/class/index">返回首页</navigator>
+        <navigator class="w-1-2 btn-secondary" url="/pages/class/detail?id={{detail.id}}">查看班级信息</navigator>
     </view>
 </template>
 
@@ -143,9 +143,9 @@
 
 <script>
     import wepy from "wepy";
-    import {ajax} from "./../../components/ajax";
-    import getUserInfo from "../../mixins/getUserInfo";
     import ready from "../../mixins/ready";
+    import classInfo from "../../mixins/classInfo";
+    import getUserInfo from "../../mixins/getUserInfo";
 
     export default class extends wepy.page {
         config = {
@@ -153,21 +153,12 @@
             navigationBarTitleText: "欢迎加入班级"
         };
 
-        data = {
-            qrCodeUrl: "/images/qrcode.png",
-            admin: "Admin"
-        };
+        mixins = [ready, classInfo, getUserInfo];
 
-        mixins = [getUserInfo, ready];
-
-        computed = {
-            noWechat () {
-                return !this.qrCodeUrl && !this.admin;
-            }
-        };
-
-//        async onShow() {
-//            await this.runReadyCallbacks();
-//        }
+        async onShow() {
+            //this.addReadyCallback(this.getUserInfo());
+            this.addReadyCallback(this.getClassDetail());
+            await this.runReadyCallbacks();
+        }
     }
 </script>

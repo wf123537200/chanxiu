@@ -3,11 +3,10 @@
  */
 
 import ajax2promise from "../components/ajax2promise";
+import getGlobalData from "../components/getGlobalData";
 import "moment";
 
 export async function getOpenClasses () {
-    await this.getUserInfo();
-
     this.openedClasses = await ajax2promise({
         ins: this,
         url: "/class/opens"
@@ -17,8 +16,6 @@ export async function getOpenClasses () {
 }
 
 export async function getMyClasses() {
-    await this.getUserInfo();
-
     this.myClasses = await ajax2promise({
         ins: this,
         url: "/class/myadds"
@@ -28,8 +25,6 @@ export async function getMyClasses() {
 }
 
 export async function createClass(params = {}) {
-    await this.getUserInfo();
-
     const result = await ajax2promise({
         ins: this,
         method: "POST",
@@ -42,9 +37,7 @@ export async function createClass(params = {}) {
 }
 
 export async function getClassDetail() {
-    await this.getUserInfo();
-
-    this.detail = await ajax2promise({
+    const detail = await ajax2promise({
         ins: this,
         url: "/class/brief",
         params: {
@@ -52,12 +45,23 @@ export async function getClassDetail() {
         }
     });
 
+    const global = getGlobalData(this);
+    const {ajaxPerfix} = global.data;
+
+    if (detail.qrCodeUrl) {
+        detail.qrCodeUrl = `${ajaxPerfix}${detail.qrCodeUrl}`;
+    }
+
+    if (detail.logo) {
+        detail.logo = `${ajaxPerfix}${detail.logo}`;
+    }
+
+    this.detail = detail;
+
     this.$apply();
 }
 
 export async function joinClass() {
-    await this.getUserInfo();
-
     const result = await ajax2promise({
         ins: this,
         method: "POST",
@@ -72,8 +76,6 @@ export async function joinClass() {
 }
 
 export async function applyClass(params = {}) {
-    await this.getUserInfo();
-
     params = Object.assign({
         classId: this.classId,
         pages: "/pages/class/detail?id=" + this.classId
@@ -90,8 +92,6 @@ export async function applyClass(params = {}) {
 }
 
 export async function exitClass() {
-    await this.getUserInfo();
-
     const result = await ajax2promise({
         ins: this,
         method: "POST",
@@ -103,6 +103,20 @@ export async function exitClass() {
 
     this.$apply();
     return result;
+}
+
+// 解散
+export async function spaceClass() {
+    await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/space",
+        params: {
+            id: this.classId
+        }
+    });
+
+    this.$apply();
 }
 
 // 训练名单
@@ -155,8 +169,6 @@ export async function getInterrupts () {
 
 // 提醒
 export async function remind (params = {}) {
-    await this.getUserInfo();
-
     params = Object.assign({
         classId: this.classId,
         pages: "/pages/class/detail?id=" + this.classId

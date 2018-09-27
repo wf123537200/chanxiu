@@ -55,7 +55,9 @@
 }
 
 .btn-primary,
-.btn-secondary {
+.btn-secondary,
+.btn-warning,
+.btn-disabled {
     display: inline-block;
     vertical-align: middle;
     width: 358rpx;
@@ -97,16 +99,28 @@
     }
 
     &.btn-plain {
-        border: 1px solid #b0976e;
+        border: 2rpx solid #b0976e;
         background-color: transparent;
         color: #b0976e;
     }
 }
 
 .btn-secondary {
-    border: 1px solid #b0976e;
+    border: 2rpx solid #b0976e;
     background-color: #fff;
     color: #b0976e;
+}
+
+.btn-warning {
+    border: 2rpx solid #e70606;
+    background-color: #e70606;
+    color: #fff;
+}
+
+.btn-disabled {
+    border: 2rpx solid #c9c9c9;
+    background-color: #c9c9c9;
+    color: #fff;
 }
 
 // tab

@@ -1,6 +1,6 @@
 import wepy from "wepy";
-import getGlobalData from "../components/getGlobalData";
-import {getClassDetail, joinClass, exitClass, applyClass} from "../modules/Classes";
+//import getGlobalData from "../components/getGlobalData";
+import {getClassDetail, joinClass, exitClass, applyClass, spaceClass} from "../modules/Classes";
 
 export default class extends wepy.mixin {
     data = {
@@ -9,30 +9,6 @@ export default class extends wepy.mixin {
     };
 
     computed = {
-        classLogo () {
-            const logo = this.detail.logo;
-
-            if (logo) {
-                const global = getGlobalData(this);
-                const {ajaxPerfix} = global.data;
-
-                return `${ajaxPerfix}${logo}`;
-            }
-
-            return logo;
-        },
-        classQrCodeUrl () {
-            const qrCodeUrl = this.detail.qrCodeUrl;
-
-            if (qrCodeUrl) {
-                const global = getGlobalData(this);
-                const {ajaxPerfix} = global.data;
-
-                return `${ajaxPerfix}${qrCodeUrl}`;
-            }
-
-            return qrCodeUrl;
-        },
         isMonitor () {
             const role = this.detail.role;
 
@@ -62,11 +38,7 @@ export default class extends wepy.mixin {
                 this.$invoke("applyPopup", "show");
             }
             else {
-                const result = await this.joinClass().catch(() => {
-                    wx.showToast({
-                        title: "加入失败"
-                    });
-                });
+                await this.joinClass();
 
                 wx.showToast({
                     title: "加入成功",
@@ -78,11 +50,7 @@ export default class extends wepy.mixin {
             }
         },
         async exitClass () {
-            const result = await this.exitClass().catch(() => {
-                wx.showToast({
-                    title: "退出失败"
-                });
-            });
+            await this.exitClass();
 
             wx.showToast({
                 title: "退出成功",
@@ -91,16 +59,58 @@ export default class extends wepy.mixin {
                     this.$apply();
                 }
             });
+        },
+        async spaceClass () {
+            await this.spaceClass().catch(() => {
+                wx.showToast({
+                    title: "操作失败"
+                });
+
+                throw "班级解散失败";
+            });
+
+            wx.showToast({
+                title: "班级已解散",
+                complete: () => {
+                    wx.switchTab({
+                        url: "/pages/class/index"
+                    });
+                }
+            });
         }
     };
 
-    getClassDetail = getClassDetail;
+    async getClassDetail () {
+        await this.getUserInfo();
+        await getClassDetail.bind(this)();
+        this.$apply();
+    };
 
-    joinClass = joinClass;
+    async joinClass () {
+        await this.getUserInfo();
+        await joinClass.bind(this)();
+        wx.navigateTo({
+            url: "/pages/class/welcome?id=" + this.classId
+        });
+    };
 
-    applyClass = applyClass;
+    async applyClass () {
+        await this.getUserInfo();
+        await applyClass.bind(this)();
+        this.$apply();
+    };
 
-    exitClass = exitClass;
+    async exitClass () {
+        await this.getUserInfo();
+        await exitClass.bind(this)();
+        this.$apply();
+    };
+
+    async spaceClass () {
+        await this.getUserInfo();
+        await spaceClass.bind(this)();
+        this.$apply();
+    };
 
     onLoad(options) {
         if (options) {

@@ -44,8 +44,12 @@
                         <view class="new-student-actions">
                             <text wx:if="{{item.statusText}}">{{item.statusText}}</text>
                             <block wx:elif="{{isMonitor || isViceMonitor}}">
-                                <button class="btn-secondary" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="refuseStudent">拒绝</button>
-                                <button class="btn-primary" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="agreeStudent">通过</button>
+                                <form @submit="refuseStudent">
+                                    <button class="btn-secondary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">拒绝</button>
+                                </form>
+                                <form @submit="agreeStudent">
+                                    <button class="btn-primary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">通过</button>
+                                </form>
                             </block>
                         </view>
                     </view>
@@ -59,6 +63,10 @@
                     </view>
                 </view>
             </view>
+        </view>
+
+        <view class="btn-box fixed to-bottom" wx:if="{{isMyClass}}">
+            <button class="btn-primary" open-type="share">邀请</button>
         </view>
     </view>
 </template>
@@ -193,8 +201,8 @@
                 }
 
                 .confirm {
-                    background-color: #ff0d21;
-                    border-color: #ff0d21;
+                    background-color: #e70606;
+                    border-color: #e70606;
                     color: #fff;
                 }
 
@@ -212,6 +220,7 @@
     import classInfo from "../../mixins/classInfo";
     import getUserInfo from "../../mixins/getUserInfo";
     import {getStudents, getNewStudents, studentOperate} from "../../modules/Classes";
+    import {collectFormId} from "../../modules/Common";
     import ready from "../../mixins/ready";
     import env from "../../mixins/env";
 
@@ -250,9 +259,6 @@
         };
 
         mixins = [ready, getUserInfo, classInfo, env];
-
-        computed = {
-        };
 
         watch = {
             async currentTab (value, oldValue) {
@@ -375,7 +381,14 @@
             this.$apply();
         }
 
+        onShareAppMessage () {
+            wx.showShareMenu({
+                withShareTicket: true
+            });
+        }
+
         async onShow() {
+            //this.addReadyCallback(this.getUserInfo());
             this.addReadyCallback(this.getClassDetail());
             this.addReadyCallback(this.getStudents());
             this.runReadyCallbacks();

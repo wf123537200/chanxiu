@@ -309,13 +309,13 @@
                 });
             },
             async submit (e) {
-                await this.createClass(e.detail.value);
+                const id = await this.createClass(e.detail.value);
 
                 wx.showToast({
                     title: "创建成功",
                     complete () {
                         wx.navigateTo({
-                            url: "/pages/class/detail?id=" + result
+                            url: "/pages/class/detail?id=" + id
                         });
                     }
                 });
