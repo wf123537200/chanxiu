@@ -29,6 +29,9 @@
     font-size: 12px;
     color: $gray-darker;
   }
+  .w155 {
+    width: 155px
+  }
   .user-mark:after {
     content: " ";
     position: absolute;
@@ -81,7 +84,7 @@
 <template>
   <view class="container">
     <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
-    <view class="user-mark">
+    <view class="user-mark {{!exTime ? 'w155' : ''}}">
       <view>{{text}}</view>
       <view>感觉被舒服的身体包围。</view>
     </view>
@@ -153,9 +156,16 @@
           url: '/train/summary',
           params: {},
           success: (d) => {
-            console.log(d)
-            that.continuousNum = d.trainInfo.continuousNum || 0
-            that.text = `【${that.exList}${that.exTime}分钟，连续${that.continuousNum}天】`
+            let text = ''
+            const trainInfo = d.trainInfo
+            that.continuousNum = trainInfo.continuousNum || 0
+            if (that.exTime) {
+              text = `【${that.exList}${that.exTime}分钟，连续${that.continuousNum}天】`
+            } else {
+              text = `今日练习${trainInfo.todayTrainCount}次，共${trainInfo.todayDuration}分钟`
+            }
+            that.text = text
+
             that.$apply()
           }
         })

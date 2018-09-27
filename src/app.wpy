@@ -148,7 +148,14 @@ export default class extends wepy.app {
       'pages/ex-briefing',
       'pages/ex-diary',
       'pages/ex-diary-add',
-      'pages/ex-text-mark'
+      'pages/ex-text-mark',
+      'pages/class/index',
+      'pages/class/create',
+      'pages/class/detail',
+      'pages/class/news',
+      'pages/class/welcome',
+      'pages/class/fail',
+      'pages/class/qr',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -167,6 +174,12 @@ export default class extends wepy.app {
         iconPath: './images/ex-bar.png',
         text: '练习',
         selectText: '练习',
+      }, {
+        pagePath: 'pages/class/index',
+        selectedIconPath: './images/class-bar-active.png',
+        iconPath: './images/ex-bar.png',
+        text: '班级',
+        selectText: '班级'
       }, {
         pagePath: 'pages/my',
         selectedIconPath: './images/my-bar-active.png',

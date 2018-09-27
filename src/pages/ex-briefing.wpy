@@ -672,7 +672,7 @@
           this.todayInfo.todayDuration = trainInfo.todayDuration || '0'
           this.todayInfo.continuousNum = trainInfo.continuousNum || '0'
           this.todayInfo.maxContinuousNum = trainInfo.maxContinuousNum || '0'
-        }
+        } else
         console.log(this.todayInfo)
         this.$apply()
       }
@@ -705,6 +705,8 @@
               timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
               if (timeDesc.indexOf('seconds ago') >= 0) {
                 timeDesc = '刚刚'
+              } else if (timeDesc.indexOf('minute ago') >= 0) {
+                timeDesc = '一分钟前'
               } else {
                 timeDesc = timeDesc.replace('minutes ago', '分钟前')
               }
@@ -836,9 +838,9 @@
         }
 
         return {
-          title: this.userInfo.nickName + `今天练习${this.todayInfo.todayTrainCount}次${this.todayInfo.todayDuration}分钟，连续练习${this.todayInfo.continuousNum}天，最大练习${this.todayInfo.maxContinuousNum}天`,
+          title: this.userInfo.nickName + `今天练习${this.todayInfo.todayTrainCount}次，共${this.todayInfo.todayDuration}分钟`,
           path: '/pages/setex',
-          // imageUrl: imageUrl,
+          imageUrl: imageUrl,
           complete: (e) => {
             console.log(e)
           }
@@ -861,6 +863,14 @@
 
         setTimeout(_ => {
           const {id, title, content} = that.dynamic
+          if (!content) {
+            return wx.showToast({
+              title: '请录入练习状态',
+              icon: 'error',
+              duration: 2000,
+              mask:true
+            })
+          }
           dynamicSave.apply(that, [id, title, content])
         }, 200)
       },
