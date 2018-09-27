@@ -705,6 +705,8 @@
               timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
               if (timeDesc.indexOf('seconds ago') >= 0) {
                 timeDesc = '刚刚'
+              } else if (timeDesc.indexOf('minute ago') >= 0) {
+                timeDesc = '一分钟前'
               } else {
                 timeDesc = timeDesc.replace('minutes ago', '分钟前')
               }
