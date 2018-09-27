@@ -99,7 +99,7 @@
     }
   }
 
-  const TIME = 1000;
+  const TIME = 10;
   function getMinusTime(d) {
     const dx = this._d = new Date(d.setSeconds(d.getSeconds() - 1))
     return {hour: dx.getHours(), minute: d.getMinutes(), second: d.getSeconds()}
@@ -158,13 +158,19 @@
       success: (res) => {
         const networkType = res.networkType
         if(networkType === 'none' || networkType === 'unkonwn') {
-          wx.setStorage({
-            key: 'exTimeOffline',
-            data: submitData,
-            success: function(res){
-              console.log('本地存储 exTimeOffline 成功')
-            }
-          })
+          const etoaArr = wx.getStorageSync('exTimeOfflineArray') || []
+          const extentObj = etoaArr.find(e => e.timeSet == submitData.timeSet && e.trainMethodIds == submitData.trainMethodIds)
+          if (!extentObj) {
+            etoaArr.push(submitData)
+
+            wx.setStorage({
+              key: 'exTimeOfflineArray',
+              data: etoaArr,
+              success: function(res){
+                console.log('本地存储 exTimeOfflineArray 成功')
+              }
+            })
+          }
         }
       }
     })
@@ -191,6 +197,12 @@
     am.title = title || src
     am.src = src
   }
+  const onTapStop = function() {
+    this.isPause = true
+    clearInterval(this.timer)
+    this.timer = ''
+    wx.pauseBackgroundAudio()
+  }
 
   const d = new Date()
   export default class Tag extends wepy.page {
@@ -208,6 +220,9 @@
         hour: 0,
         minute: 0
       }
+    }
+    onHide() {
+      // onTapStop.call(this)
     }
     onLoad(params) {
       wx.setKeepScreenOn({
@@ -244,10 +259,7 @@
     }
     methods = {
       onTapStop() {
-        this.isPause = true
-        clearInterval(this.timer)
-        this.timer = ''
-        wx.pauseBackgroundAudio()
+        onTapStop.call(this)
       },
       onGoon() {
         if(this.timer) return
@@ -255,7 +267,8 @@
         wx.playBackgroundAudio()
 
         const timer = setInterval(() => {
-          this._d = new Date([d.getFullYear(), d.getMonth(), d.getDate()].join('/') + ' ' + ((hour > 0 || this.isFinite) ? this.showTime : ('00:' + this.showTime)))
+          let dVal = [d.getFullYear(), d.getMonth(), d.getDate()].join('/') + ' ' + ((this.showTime.length > 5 || this.isFinite) ? this.showTime : ('00:' + this.showTime))
+          this._d = new Date(dVal)
           const minusTime = this.curTime = this.isFinite ? getPlusTime.call(this, this._d) : getMinusTime.call(this, this._d)
           // 如果都是0结束
           if(minusTime.hour === 0 && minusTime.minute === 0 && minusTime.second === 0) {
@@ -267,7 +280,7 @@
           this.$apply()
         }, TIME)
 
-        this.timer = timer
+       this.timer = timer
         this.isPause = false
       },
       onEnd() {

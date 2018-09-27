@@ -1,0 +1,69 @@
+<style lang='scss' scoped>
+  @import '../zanui/common';
+
+  .container {
+    align-items: start;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  page {
+    background: #fff;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .ex-diary-title {
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: 16px;
+    color: $gray-darker;
+  }
+  .ex-diary-content {
+    font-size: 13px;
+    color: $gray-dark;
+    line-height: 1.5;
+    box-sizing: border-box;
+    text-align: justify;
+    text-indent: 20px;
+  }
+</style>
+
+<template>
+  <view class="container">
+    <view class="ex-diary-title">{{title}}-{{strCreateTime}}</view>
+    <view class="ex-diary-content">{{content}}</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import {ajax} from '../components/ajax.js'
+
+  export default class Tag extends wepy.page {
+    config = {
+      disableScroll: false,
+      navigationBarTitleText: '练习日记'
+    }
+    components = {
+    }
+    data = {
+      title: '',
+      strCreateTime: '',
+      content: ''
+    }
+    onGotUserInfo(e) {
+    }
+    methods = {
+    }
+    onLoad() {
+      this.title = this.$parent.globalData.diaryTitle
+      this.content = this.$parent.globalData.diaryContent
+
+      const strCreateTime = this.$parent.globalData.diaryStrCreateTime
+      if (strCreateTime.split(' ') && strCreateTime.split(' ').length >= 2) {
+        this.strCreateTime = strCreateTime.split(' ')[0]
+      }
+    }
+  }
+</script>
