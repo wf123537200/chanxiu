@@ -1,0 +1,1012 @@
+<style lang='scss'>
+  @import '../zanui/common';
+
+  page {
+    background: #eee;
+  }
+
+  .header-wrap {
+    position:relative;
+    height:69px;
+    width:100%;
+    color:#333;
+    font-size:14px;
+    background:#fff;
+    border-bottom:1px solid #ddd;
+  }
+  .pr {
+    position:relative;
+  }
+  .userinfo-avatar {
+    position: absolute;
+    top: 12px;
+    left: 20px;
+    width:44px;
+    height:44px;
+  }
+  .nickname {
+    position: absolute;
+    top: 17px;
+    left: 86px;
+  }
+  .desc {
+    position: absolute;
+    top: 40px;
+    left: 85px;
+    color: $gray-dark;
+  }
+
+  .header-pannel {
+    position: relative;
+    width: 100%;
+    align-self: start;
+    font-size: 13px;
+    height: 35px;
+    line-height: 35px;
+    color: #ccc;
+    box-sizing: border-box;
+  }
+  .add-flag {
+    position: absolute;
+    right: 20px;
+    top: 9px;
+    font-size: 14px;
+    color: #fff;
+    background-color: $text-color;
+    border-radius: 20px;
+    width: 16px;
+    height: 16px;
+    line-height: 14px;
+    text-align: center;
+  }
+  .ex-data-pannel {
+    display: flex;
+    background-color: #fff;
+    width: 100%;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.5;
+  }
+  .ex-data {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .cur-times {
+    color: $light-orange;
+    font-size: 14px;
+  }
+  .ex-desc {
+    color: $gray-dark;
+    font-size: 12px;
+  }
+  .gray-button {
+    border: 1px solid $light-orange;
+    color: $light-orange;
+    border-radius: 50rem;
+    padding: 0 15px;
+    font-size: 14px;
+    height:25px;
+    line-height:25px;
+    box-sizing: border-box;
+  }
+  .mr-20 {
+    margin-right: 20px;
+  }
+  .mr-40 {
+    margin-right: 40px;
+  }
+  .pl-20 {
+    padding-left: 20px;
+  }
+  .pl-40 {
+    padding-left: 40px;
+  }
+
+  .wrap {
+    width: 100%;
+    background-color: #fff;
+    padding: 15px 0 5px 0;
+  }
+  .pr {
+    position:relative;
+  }
+  .header-banner-wrap {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top:5px;
+    font-size: 0.8rem
+  }
+  .header-cols {
+    position: relative;
+    width: 33%;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 4px 0;
+    box-sizing: border-box;
+  }
+  .hry {
+    position: absolute;
+    right: -20px;
+    top: 35px;
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: #444;
+    transform: rotate(90deg);
+    opacity: .2;
+  }
+  .header-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 5px;
+    color: #707070;
+    text-align: center;
+    font-size: 16px;
+  }
+  .num {
+    font-size: 30px;
+    margin-right: 10rpx;
+    font-weight: bold;
+    line-height: 1;
+  }
+  .unit {
+    font-size: 16px;
+    color: $light-orange;
+  }
+  .flex-r-center {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .ex {
+    color: #B0976E;
+    font-size: 0.8rem;
+  }
+  .condition-pannel {
+    display: flex;
+    align-items: start;
+    margin-bottom: 20px;
+  }
+  .default-btn {
+    background-color: #fff;
+    color: $border-color;
+    font-size: 12px;
+    padding: 2px 5px;
+    margin-right: 10px;
+    border-radius: 3px;
+    border: 1px solid $border-color;
+  }
+  .condition-btn {
+    background-color: $light-orange;
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 5px;
+    margin-right: 10px;
+    border-radius: 3px;
+  }
+
+  .ex-list-pannel {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    background-color: #fff;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .ex-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0 20px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    font-size: 13px;
+    color: $gray-dark;
+  }
+  .flex-r {
+    display: flex;
+    width: 100%;
+  }
+  .diary-wait-edit {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+  }
+  .ex-title {
+    flex: 1;
+    color: $gray-darker;
+    line-height: 15px;
+  }
+  .ex-date {
+    color: $gray-dark;
+  }
+  .line-2 {
+    line-height: 2;
+  }
+  .line-3-content {
+    height:68px;
+    overflow:hidden;
+  }
+  .ex-process-pannel {
+    display: flex;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .m-l-20 {
+    margin-left: 20px;
+    box-sizing: border-box;
+  }
+  .read-all {
+    flex: 1;
+    font-size: 12px;
+    color: $light-orange;
+  }
+  .process-btns {
+
+  }
+  .share-briefing-btn:after,.share-briefing-btn:before {
+    outline: 0;
+    border: 0;
+  }
+  .share-briefing-btn {
+    display: inline-block;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+  }
+  .process-btn {
+    width: 16px;
+    height: 16px;
+    margin-left: 30px;
+  }
+
+  .popup-headerr {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: $gray-darker;
+  }
+  .flex-1 {
+    flex: 1;
+  }
+  .close-icon {
+    width: 15px;
+    height: 15px;
+  }
+  .popup-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+  }
+  .mr-20 {
+    margin-right: 20px;
+  }
+  .cancel-btn {
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    background-color: $gray-dark;
+  }
+  .confirm-btn {
+    background-color: $light-orange;
+  }
+  .zan-popup .edit-content {
+    display: none;
+  }
+  .zan-popup--show .edit-content {
+    display: block;
+  }
+  .edit-content {
+    height: 180px;
+    background-color: #fff;
+    border: 1px solid $border-color;
+    margin: 0 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    width: auto;
+    line-height: 1.5;
+    font-size: 12px;
+  }
+  .delete-ex-desc {
+    margin: 10px 15px;
+    color: $text-color;
+    font-size: 16px;
+  }
+
+  .fixed-pannel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .7);
+    z-index: 2;
+  }
+  .features-list {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+  }
+  .features-item {
+    line-height: 50px;
+    height: 50px;
+    width: 100%;
+    text-align: center;
+  }
+  .b-border {
+    border-bottom: 1px solid $border-color;
+  }
+
+  .share-wrap-fixed {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+  }
+  .share-wrap {
+    display: flex;
+    flex-direction: column;
+    position:fixed;
+    background:#fff;
+    width:100%;
+    height:140px;
+    bottom:0;
+    z-index: 10000
+  }
+  .share-image {
+    width:40px;
+    height:40px;
+  }
+  .share-line {
+    border-bottom:1px solid #ccc;
+    margin-top:10px;
+    z-index:1000;
+    width:70%;
+    height:1px;
+    margin-left:15%;
+  }
+  .share-title {
+    text-align:center;
+    font-size:0.6rem;
+    padding:5px;
+    color:#ccc;
+    z-index:10000;
+    background:#fff;
+    text-align: center;
+  }
+  .share-btn-wrap {
+    display: flex;
+    flex:1;
+    justify-content:center;
+    align-items:center;
+  }
+  .share-btn {
+    background:#fff;
+    border:2px solid #fff;
+    font-size:0.6rem;
+    color:#ccc;
+    line-height:1.8;
+  }
+  .share-btn::after {
+    border: 0;
+  }
+
+  .imagex {
+    position: fixed;
+    width:80%;
+    top:100rpx;
+    z-index: 10000;
+    min-height:75%;
+  }
+  .close {
+    position:fixed;
+    bottom:80rpx;
+    left:35%;
+    z-index: 10000;
+  }
+  .download {
+    position:fixed;
+    bottom:80rpx;
+    right:35%;
+    z-index: 10000;
+  }
+  .imagex-i {
+    width: 32px;
+    height: 32px;
+  }
+  .zIndex10 {
+    z-index: 10;
+  }
+  .mask {
+    position:fixed;
+    background:rgba(0,0,0,0.9);
+    height:100%;
+    width:100%;
+    z-index:9999;
+    user-select:none;
+  }
+</style>
+
+<template>
+  <view class="container">
+    <image class="imagex {{isShowImage ? '': 'hide'}}" @tap.stop="onStop" mode="aspectFit" src="{{ picUrl }}"/>
+    <view class="mask {{isShowImage ? '' : 'hide'}}" @tap.stop="onStop"></view>
+    <view class="close" @tap.stop="onHideImage">
+      <image class="{{isShowImage ? 'imagex-i' : 'hide'}}" src="/images/close.png"></image>
+    </view>
+    <view class="download" @tap.stop="onSave">
+      <image class="{{isShowImage ? 'imagex-i' : 'hide'}}" src="/images/download.png"></image>
+    </view>
+
+    <!-- user -->
+    <view class="header-wrap">
+      <view class="pr">
+        <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
+        <view class="nickname">{{userInfo.nickName || '未授权'}}</view>
+        <view class="desc">{{userInfo.city || ''}}{{'    '}}{{userInfo.province || ''}}</view>
+      </view>
+    </view>
+
+    <view class="header-pannel pl-20">
+      练习数据
+    </view>
+    <view class="pl-40 ex-data-pannel">
+      <view class="ex-data">
+        <view class="cur-times">今天练习{{todayInfo.todayTrainCount}}次{{todayInfo.todayDuration}}分钟</view>
+        <view class="ex-desc">连续练习{{todayInfo.continuousNum}}天，最大练习{{todayInfo.maxContinuousNum}}天</view>
+      </view>
+      <view class="gray-button mr-40" @tap.stop="onShowShare">去打卡</view>
+    </view>
+
+    <!-- 数据 -->
+    <view class="wrap ex">
+      <view class="condition-pannel pl-20">
+        <view class="default-btn {{timeType == 1 ? 'condition-btn' : ''}}" @tap="timeTypeChange(1)">本周</view>
+        <view class="default-btn {{timeType == 2 ? 'condition-btn' : ''}}" @tap="timeTypeChange(2)">本月</view>
+        <view class="default-btn {{timeType == 3 ? 'condition-btn' : ''}}"  @tap="timeTypeChange(3)">全部</view>
+      </view>
+      <view class="header-banner-wrap">
+        <view class="header-cols">
+          <view class="header-banner">总天数</view>
+          <view class="flex-r-center">
+            <view class="inline num">{{totalTrainDay}}</view><view class="inline unit">天</view>
+          </view>
+          <hr class="hry"/>
+        </view>
+        <view class="header-cols">
+          <view class="header-banner">日均时长</view>
+          <view class="flex-r-center">
+            <view class="inline num">{{averageDayTime}}</view><view class="inline unit">分钟</view>
+          </view>
+          <hr class="hry"/>
+        </view>
+        <view class="header-cols">
+          <view class="header-banner">总次数</view>
+          <view class="flex-r-center">
+            <view class="inline num">{{totalCount}}</view><view class="inline unit">次</view>
+          </view>
+        </view>
+        <view class="header-cols">
+          <view class="header-banner">平均每次</view>
+          <view class="flex-r-center">
+            <view class="inline num">{{averageEveryTime}}</view><view class="inline unit">分钟</view>
+          </view>
+          <hr class="hry"/>
+        </view>
+        <view class="header-cols">
+          <view class="header-banner">单次最多</view>
+          <view class="flex-r-center">
+            <view class="inline num">{{singleMostDuration}}</view><view class="inline unit">分钟</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <!-- 数据 end -->
+
+    <view class="header-pannel pl-20">
+      练习记录
+      <view class="add-flag" @tap="processShow()">+</view>
+    </view>
+    <view class="ex-list-pannel">
+      <view class="condition-pannel pl-20">
+        <view class="default-btn {{dynamicTimeType == 1 ? 'condition-btn' : ''}}" @tap="dynamicTimeTypeChange(1)">所有</view>
+        <view class="default-btn {{dynamicTimeType == 2 ? 'condition-btn' : ''}}" @tap="dynamicTimeTypeChange(2)">状态记录</view>
+        <view class="default-btn {{dynamicTimeType == 3 ? 'condition-btn' : ''}}" @tap="dynamicTimeTypeChange(3)">练习日记</view>
+      </view>
+      <repeat for="{{dynamicList}}" key="index" index="index" item="item">
+        <view class="ex-content">
+          <view class="flex-r">
+            <image src="../images/record.png" class="diary-wait-edit  {{!item.content ? '' : 'hide'}}" />
+            <image src="../images/log.png" class="diary-wait-edit  {{item.content ? '' : 'hide'}}" />
+            <view class="ex-title">{{item.title}}</view>
+            <view class="ex-date">{{item.strCreateTimeStr}}</view>
+          </view>
+          <view class="flex-r m-l-20 line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">
+            {{item.content}}
+          </view>
+          <view class="ex-process-pannel">
+            <view class="read-all" @tap="readAllContent({{item}}, {{index}})">
+              {{item.content.length > 63 && !item.readAll ? '查看全文' : ''}}
+            </view>
+            <view class="process-btns">
+              <image class="process-btn" @tap="edit({{item}})" src="/images/edit.png"/>
+              <image class="process-btn {{item.content ? '' : 'hide'}}" @tap="deleteEx({{item}})" src="/images/delete.png"/>
+              <button class="process-btn share-briefing-btn {{item.content ? '' : 'hide'}}" open-type="share" style="background-image: url('/images/send.png')">
+              </button>
+            </view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+
+    <editEx style="width: 100%" class="pr">
+      <view class="popup-headerr">
+        <view class="flex-1">
+          记录练习状态
+        </view>
+        <image class="close-icon" src="/images/close-icon.png" @tap="editExCancel"/>
+      </view>
+      <textarea class="edit-content" bindblur="contentBlur" value="{{dynamic.content}}" placeholder="请输入练习状态" />
+      <view class="popup-footer">
+        <view class="cancel-btn mr-20" @tap="editExCancel">取消</view>
+        <view class="cancel-btn confirm-btn" @tap="editInfoSave">保存</view>
+      </view>
+    </editEx>
+    <deleteEx>
+      <view class="popup-headerr">
+        <view class="flex-1">
+          删除练习状态确认
+        </view>
+        <image class="close-icon" src="/images/close-icon.png" @tap="deleteExCancel"/>
+      </view>
+      <view class="delete-ex-desc">确定删除这条练习状态吗？</view>
+      <view class="popup-footer">
+        <view class="cancel-btn mr-20" @tap="deleteExCancel">取消</view>
+        <view class="cancel-btn confirm-btn" @tap="deleteComfirm">删除</view>
+      </view>
+    </deleteEx>
+
+    <view class="fixed-pannel" wx:if="{{showFeaturesList}}" @tap.stop="processHide">
+      <view class="features-list">
+        <view class="features-item b-border" @tap.stop="toExDiary">日记</view>
+        <view class="features-item" @tap.stop="toExDiaryAdd">补录</view>
+      </view>
+    </view>
+
+
+    <!-- 打卡 -->
+    <view class="share-wrap-fixed {{isShowShare ? '' : 'hide'}}" @tap.stop="onTapStop">
+      <view class="share-wrap">
+        <view>
+          <view class="share-line"></view>
+          <view class="share-title">分享</view>
+        </view>
+        <view class="share-btn-wrap">
+          <button class="share-btn" @tap="onShowImage">
+            <image class="share-image" src="/images/firend.png"></image>
+            <view>朋友圈</view>
+          </button>
+          <button class="share-btn" open-type="share">
+            <image class="share-image" src="/images/weixin.png"></image>
+            <view>微信</view>
+          </button>
+          <button class="share-btn" bindtap="textMark">
+            <image class="share-image" src="/images/text.png"></image>
+            <view>文字信息打卡</view>
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import {ajax} from '../components/ajax.js'
+  import zanPop from '../components/zan-popup'
+  import moment from 'moment'
+  /**
+   * 获取历史练习数据
+   */
+  const briefHistoryInfo = function () {
+    ajax({
+      ins: this,
+      url: '/brief/history/info',
+      params: {
+        // timeType/分类/整型 1=查询本周，2=查询本月，3=查询全
+        timeType: this.timeType
+      },
+      success: (d) => {
+        const trainInfo = d.trainInfo || {}
+
+        this.totalTrainDay = trainInfo.totalTrainDay || 0
+        this.averageDayTime = trainInfo.averageDayTime || 0
+        this.totalCount = trainInfo.totalCount || 0
+        this.averageEveryTime = trainInfo.averageEveryTime || 0
+        this.singleMostDuration = trainInfo.singleMostDuration || 0
+        Object.assign(this, d.trainInfo)
+        console.log(d)
+        this.$apply()
+      }
+    })
+  }
+
+  /**
+   * 获取今日练习数据
+   */
+  const getTodayInfo = function () {
+    ajax({
+      ins: this,
+      url: '/brief/today/info',
+      success: (d) => {
+        const trainInfo = d.trainInfo || {}
+        if (trainInfo) {
+          this.todayInfo.todayTrainCount = trainInfo.todayTrainCount || '0'
+          this.todayInfo.todayDuration = trainInfo.todayDuration || '0'
+          this.todayInfo.continuousNum = trainInfo.continuousNum || '0'
+          this.todayInfo.maxContinuousNum = trainInfo.maxContinuousNum || '0'
+        }
+        console.log(this.todayInfo)
+        this.$apply()
+      }
+    })
+  }
+
+  /**
+   * 获取动态练习记录
+   */
+  const dynamicFind = function () {
+    const page = 1
+    const pageSize = 10
+
+    ajax({
+      ins: this,
+      url: '/dynamic/find',
+      method: 'POST',
+      params: {
+        // findType/查询类型/整型, 1=查询所有，2=查询状态记录，3=查询练习日记
+        findType: this.dynamicTimeType,
+        offset: (page - 1) * 10,
+        count: pageSize
+      },
+      success: (data) => {
+        if (data) {
+          for (let d of data) {
+            let timeDesc = ''
+            // 一个小时内
+            if (Date.now() - d.createTime < (1000 * 60 * 60)) {
+              timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
+              if (timeDesc.indexOf('seconds ago') >= 0) {
+                timeDesc = '刚刚'
+              } else {
+                timeDesc = timeDesc.replace('minutes ago', '分钟前')
+              }
+            } else if (Date.now() - d.createTime < (1000 * 60 * 60 * 24)) {
+              // 一天内
+              timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('hour').fromNow()
+              console.log(timeDesc)
+              timeDesc = timeDesc.replace('hours ago', '小时前')
+            } else {
+              timeDesc = moment(d.strCreateTime).format('YYYY-MM-DD HH:mm')
+            }
+            d.strCreateTimeStr = timeDesc
+
+            d.readAll = false
+          }
+          this.dynamicList = data
+        } else {
+          this.dynamicList = []
+        }
+        console.log(this.dynamicList)
+        this.$apply()
+      }
+    })
+  }
+
+  const dynamicSave = function (id, title, content) {
+    let url = '/dynamic/add'
+    let params = {
+      title, content
+    }
+
+    if (id) {
+      params.id = id
+      url = '/diary/update'
+    }
+
+    ajax({
+      ins: this,
+      url,
+      params,
+      method: 'POST',
+      success: (d) => {
+        console.log(d)
+        this.$invoke('editEx', 'togglePopup')
+        dynamicFind.call(this)
+        this.$apply()
+      }
+    })
+  }
+
+
+  /**
+   * 删除日记
+   */
+  const dynamicDel = function (id) {
+    ajax({
+      ins: this,
+      url: '/diary/del',
+      method: 'POST',
+      params: {
+        id
+      },
+      success: (d) => {
+        console.log(d)
+        dynamicFind.call(this)
+      }
+    })
+  }
+
+  export default class Tag extends wepy.page {
+    config = {
+      disableScroll: false,
+      navigationBarTitleText: '练习简报'
+    }
+    components = {
+      deleteEx: zanPop,
+      editEx: zanPop
+    }
+    data = {
+      dynamic: {},
+      dynamicList: [],
+      totalTrainDay: 0,
+      averageDayTime: 0,
+      totalCount: 0,
+      averageEveryTime: 0,
+      singleMostDuration: 0,
+      continuousNum: 0,
+      showFeaturesList: false,
+      userInfo: {},
+      timeType: 1,
+      dynamicTimeType: 1,
+      todayInfo: {
+        // 今日练习次数
+        todayTrainCount: 0, //整型
+        // 今日练习总时长（分钟）
+        todayDuration: 0,
+        // 最新连续练习记录中的连续天数
+        continuousNum: 0,
+        // 最大连续练习天数
+        maxContinuousNum: 0
+      },
+      picUrl: '',
+      isShowShare: false,
+      isShowImage: false
+    }
+    onGotUserInfo(e) {
+    }
+    methods = {
+      timeTypeChange(timeType) {
+        console.log(timeType)
+        this.timeType = timeType
+
+        // 获取历史练习数据
+        briefHistoryInfo.call(this)
+      },
+      dynamicTimeTypeChange(dynamicTimeType) {
+        console.log(dynamicTimeType)
+        this.dynamicTimeType = dynamicTimeType
+
+        // 获取历史练习数据
+        dynamicFind.call(this)
+      },
+      onShareAppMessage (res) {
+        console.log('分享图片路径为： ' + this.resPerfix + this.shareUrl)
+
+        let imageUrl = ''
+        if (this.shareUrl) {
+          imageUrl = this.resPerfix + this.shareUrl + '?' + Date.now()
+        }
+
+        return {
+          title: this.userInfo.nickName + `今天练习${this.todayInfo.todayTrainCount}次${this.todayInfo.todayDuration}分钟，连续练习${this.todayInfo.continuousNum}天，最大练习${this.todayInfo.maxContinuousNum}天`,
+          path: '/pages/setex',
+          // imageUrl: imageUrl,
+          complete: (e) => {
+            console.log(e)
+          }
+        }
+      },
+      contentBlur(e) {
+        console.log(e.detail.value)
+        this.dynamic.content = e.detail.value
+      },
+      edit(item) {
+        console.log(item)
+        this.dynamic = item
+        this.$invoke('editEx', 'togglePopup')
+      },
+      editExCancel() {
+        this.$invoke('editEx', 'togglePopup')
+      },
+      editInfoSave() {
+        const that = this
+
+        setTimeout(_ => {
+          const {id, title, content} = that.dynamic
+          dynamicSave.apply(that, [id, title, content])
+        }, 200)
+      },
+      deleteEx(item) {
+        this.dynamic = item
+        this.$invoke('deleteEx', 'togglePopup')
+      },
+      deleteExCancel() {
+        this.$invoke('deleteEx', 'togglePopup')
+      },
+      deleteComfirm() {
+        dynamicDel.apply(this, [this.dynamic.id])
+        this.$invoke('deleteEx', 'togglePopup')
+      },
+      processShow(item) {
+        if (item) {
+          this.dynamic = item
+        }
+
+        this.showFeaturesList = true
+      },
+      processHide() {
+        this.showFeaturesList = false
+      },
+      toExDiary() {
+        this.$parent.globalData.diaryTitle = this.dynamic.title
+        this.$parent.globalData.diaryContent = this.dynamic.content
+        this.$parent.globalData.diaryStrCreateTime = this.dynamic.strCreateTime
+
+        this.$navigate('./ex-diary')
+        this.showFeaturesList = false
+      },
+      toExDiaryAdd() {
+        this.$navigate('./ex-diary-add')
+        this.showFeaturesList = false
+      },
+      readAllContent(item, index) {
+        this.dynamicList[index].readAll = true
+      },
+      onTapStop() {
+        this.isShowShare = false
+      },
+      onHideImage() {
+        console.log('onHideImage')
+        this.isShowImage = false
+      },
+      onShowShare() {
+        console.log('onShowShare')
+        // 获取分享地址
+        ajax({
+          ins: this,
+          url: '/train/punch/image',
+          params: {},
+          success: (d) => {
+            this.shareUrl = d
+            this.isShowShare = true
+            this.$apply()
+          },
+          fail: () => {
+            wx.showToast({
+              title: '获取分享图片失败',
+              icon: 'error',
+              duration: 2000,
+              mask:true
+            })
+          }
+        })
+      },
+      onShowImage() {
+        ajax({
+          ins: this,
+          url: '/train/poster/image',
+          params: {},
+          success: (d) => {
+            this.picUrl = this.$parent.globalData.resPerfix + d
+            this.isShowImage = true
+            this.$apply()
+          }
+        })
+      },
+      onSave() {
+        //文件下载
+        wx.downloadFile({
+          url: this.picUrl,
+          success: (res) => {
+            wx.saveImageToPhotosAlbum({
+              filePath: res.tempFilePath,
+              success: (data) => {
+                wx.showToast({
+                  title: '保存成功',
+                  duration: 2000,
+                  mask:true
+                })
+                this.isShowImage = false
+                this.$apply()
+                console.log(data);
+              },
+              fail: (err) => {
+                wx.showToast({
+                  title: err,
+                  icon: 'error',
+                  duration: 2000,
+                  mask:true
+                })
+                this.isShowImage = false
+                this.$apply()
+
+                if (err.errMsg === "saveImageToPhotosAlbum:fail auth deny") {
+                  wx.openSetting({
+                    success(settingdata) {
+                      console.log(settingdata)
+                      if (settingdata.authSetting['scope.writePhotosAlbum']) {
+                        console.log('获取权限成功，给出再次点击图片保存到相册的提示。')
+                      }else {
+                        console.log('获取权限失败，给出不给权限就无法正常使用的提示')
+                      }
+                    }
+                  })
+                }
+              }
+            })
+          }
+        })
+      },
+      // 文字信息打卡
+      textMark() {
+        this.$navigate('./ex-text-mark');
+      }
+    }
+    onLoad() {
+      this.backgroundImage = this.$parent.globalData.endImage;
+      this.resPerfix = this.$parent.globalData.resPerfix;
+      this.$parent.getUserInfo((userInfo) => {
+        if (userInfo) {
+          this.userInfo = userInfo
+        }
+
+        this.$apply()
+      })
+
+      // 获取历史练习数据
+      briefHistoryInfo.call(this)
+      // 获取今日练习数据
+      getTodayInfo.call(this)
+      // 获取动态练习记录
+      dynamicFind.call(this)
+    }
+  }
+</script>
