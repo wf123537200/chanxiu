@@ -8,11 +8,18 @@
             <intro :detail.sync="detail"></intro>
         </view>
 
-        <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
-            <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass">加入班级</button>
-        </view>
-
-        <block wx:else>
+        <block wx:if="{{!isMyClass}}">
+            <view class="btn-box fixed to-bottom join-class">
+                <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass" wx:if="{{detail.remainingQuota > 0}}">加入班级</button>
+                <button class="btn-disabled" wx:else>已满员</button>
+            </view>
+        </block>
+        <block wx:elif="{{isMonitor}}">
+            <view class="btn-box fixed to-bottom">
+                <button class="btn-warning" open-type="getUserInfo" @getuserinfo="spaceClass">解散班级</button>
+            </view>
+        </block>
+        <block wx:elif="{{!isMonitor}}">
             <view class="btn-box fixed to-bottom">
                 <button class="btn-primary" open-type="getUserInfo" @getuserinfo="exitClass">退出班级</button>
             </view>
@@ -50,7 +57,6 @@
 
 <script>
     import wepy from "wepy";
-    import {ajax} from './../../components/ajax';
     import getUserInfo from "../../mixins/getUserInfo";
     import ready from "../../mixins/ready";
     import classInfo from "../../mixins/classInfo";
@@ -75,13 +81,19 @@
         };
 
         data = {
-            userInfo: {}
+            //userInfo: {}
         };
 
         mixins = [ready, getUserInfo, classInfo, env];
 
+        onShareAppMessage () {
+            wx.showShareMenu({
+                withShareTicket: true
+            });
+        }
+
         async onShow() {
-            this.addReadyCallback(this.getUserInfo());
+            //this.addReadyCallback(this.getUserInfo());
             this.addReadyCallback(this.getClassDetail());
             await this.runReadyCallbacks();
             wx.setNavigationBarTitle({

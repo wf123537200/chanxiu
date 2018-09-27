@@ -1,13 +1,13 @@
 <template>
     <view class="info-box">
         <view class="base">
-            <image class="logo" src="{{classLogo}}" mode="aspectFill"/>
+            <image class="logo" src="{{detail.logo}}" mode="aspectFill"/>
             <text class="name text-nowrap text-ellipsis">{{detail.name}}</text>
             <text class="desc">{{detail.brief}}</text>
-            <button class="btn-invite btn-secondary mini auto-width" open-type="getUserInfo" wx:if="{{isMyClass}}">邀请</button>
+            <button class="btn-invite btn-secondary mini auto-width" open-type="share" wx:if="{{isMyClass}}">邀请</button>
         </view>
 
-        <navigator url="/pages/class/qr?id={{id}}" class="field" wx:if="{{classQrCodeUrl}}">
+        <navigator url="/pages/class/qr?id={{id}}" class="field" wx:if="{{detail.qrCodeUrl}}">
             <text class="label">班级二维码</text>
             <view class="content">
                 <image class="qr" src="/images/qr.png"></image>

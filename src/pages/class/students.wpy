@@ -1,0 +1,397 @@
+<template>
+    <view class="full-height flex-v" wx:if="{{ready}}" @tap="hideStudentsActions">
+        <nav :id.sync="classId" nav="students"></nav>
+
+        <view class="tab">
+            <view data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
+                <text>{{item.text}}</text>
+            </view>
+        </view>
+
+        <view class="tab-body flex-v flex-1 {{currentTab}}">
+            <view class="students" wx:if="{{currentTab==='all'}}">
+                <view class="student" wx:for="{{students}}" wx:key="{{index}}">
+                    <image class="avatar" src="{{item.avatarUrl}}"></image>
+                    <view class="row">
+                        <text class="nick-name">{{item.nickName}}</text>
+                        <text class="role">{{item.roleText}}</text>
+                    </view>
+                    <view class="row">
+                        <text class="train" wx:if="{{item.everyTrainDuration}}">{{item.everyTrainDuration}}</text>
+                        <text class="join-time">{{item.strCreateTime}}加入</text>
+                    </view>
+
+                    <image src="/images/classes/trigger.png" class="trigger" data-id="{{item.id}}" @tap.stop="showStudentsActions" wx:if="{{currentStudentId !== item.id && ((isMonitor && item.role === 0) || (isMonitor && item.role !== 0) || ((isMonitor && item.role !== 1) || (isViceMonitor && item.role === 0)) || (isMonitor || (isViceMonitor && item.role === 0)))}}"></image>
+
+                    <view class="actions" @tap.stop="ghost" wx:if="{{currentStudentId === item.id}}">
+                        <view class="box">
+                            <view class="confirm" data-id="{{item.id}}" wx:if="{{confirm.studentId === item.id}}" @tap="sure">{{confirm.text}}</view>
+                            <block wx:else>
+                                <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="promoteStudent" wx:if="{{isMonitor && item.role === 0}}">设为班干部</button>
+                                <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="cancelStudent" wx:if="{{isMonitor && item.role !== 0}}">取消班干部</button>
+                                <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="replaceStudent" wx:if="{{(isMonitor && item.role !== 1) || (isViceMonitor && item.role === 0)}}">接任我</button>
+                                <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="deleteStudent" class="del" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">删除</button>
+                            </block>
+                        </view>
+                    </view>
+                </view>
+            </view>
+            <view class="students" wx:if="{{currentTab==='new'}}">
+                <view class="student" wx:for="{{newStudents}}" wx:key="{{index}}">
+                    <image class="avatar" src="{{item.avatarUrl}}"></image>
+                    <view class="row">
+                        <text class="nick-name">{{item.nickName}}</text>
+                        <view class="new-student-actions">
+                            <text wx:if="{{item.statusText}}">{{item.statusText}}</text>
+                            <block wx:elif="{{isMonitor || isViceMonitor}}">
+                                <form @submit="refuseStudent">
+                                    <button class="btn-secondary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">拒绝</button>
+                                </form>
+                                <form @submit="agreeStudent">
+                                    <button class="btn-primary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">通过</button>
+                                </form>
+                            </block>
+                        </view>
+                    </view>
+                    <view class="row">
+                        <view class="row">
+                            <text class="train" wx:if="{{item.everyTrainDuration}}">{{item.everyTrainDuration}}</text>
+                            <text class="join-time">{{item.strCreateTime}}</text>
+                        </view>
+
+                        <view class="row intro">{{item.introduction}}</view>
+                    </view>
+                </view>
+            </view>
+        </view>
+
+        <view class="btn-box fixed to-bottom" wx:if="{{isMyClass}}">
+            <button class="btn-primary" open-type="share">邀请</button>
+        </view>
+    </view>
+</template>
+
+<style lang="less">
+    @import (reference) "../../static/less/utility";
+
+    page {
+        .full-height;
+        background-color: #fff;
+    }
+
+    .tab {
+        border-top: 2rpx solid #eee;
+    }
+
+    .students {
+        padding: 30rpx 40rpx;
+    }
+
+    .student {
+        position: relative;
+        padding: 30rpx 0;
+        overflow: hidden;
+
+        .row {
+            overflow: hidden;
+        }
+
+        .avatar {
+            float: left;
+            width: 90rpx;
+            height: 90rpx;
+            margin-right: 20rpx;
+            border: 2rpx solid #b0976e;
+        }
+
+        .nick-name {
+            display: inline-block;
+            vertical-align: top;
+            line-height: 56rpx;
+            font-size: 28rpx;
+            color: #333;
+        }
+
+        .role {
+            display: inline-block;
+            vertical-align: top;
+            padding: 0 12rpx;
+            margin-left: 5rpx;
+            font-size: 20rpx;
+            line-height: 30rpx;
+            background-color: #b0976e;
+            color: #fff;
+            border-radius: 20rpx;
+        }
+
+        .new-student-actions {
+            float: right;
+
+            text {
+                color: #333;
+                line-height: 56rpx;
+                font-size: 28rpx;
+            }
+
+            button {
+                width: auto;
+                height: 52rpx;
+                line-height: 52rpx;
+
+                &:not(:first-child){
+                    margin-left: 30rpx;
+                }
+            }
+        }
+
+        .train,
+        .join-time,
+        .intro {
+            display: block;
+            float: left;
+            margin-top: 5rpx;
+            font-size: 24rpx;
+            line-height: 30rpx;
+            color: #aaa;
+        }
+
+        .join-time {
+            float: right;
+        }
+
+        .intro {
+            float: none;
+            margin-top: 15rpx;
+            word-break: break-all;
+        }
+
+        .trigger {
+            position: absolute;
+            padding: 20rpx;
+            top: 10rpx;
+            right: -10rpx;
+            width: 35rpx;
+            height: 28rpx;
+            z-index: 2;
+        }
+
+        .actions {
+            position: absolute;
+            top: 30rpx;
+            bottom: 30rpx;
+            z-index: 3;
+            right: 0;
+
+            .box {
+                display: table;
+                height: 100%;
+                background-color: #fff;
+                border-collapse: collapse;
+
+                button,
+                .confirm {
+                    display: table-cell;
+                    vertical-align: middle;
+                    padding: 0 30rpx;
+                    border: 2rpx solid #b0976e;
+                    background-color: transparent;
+                    border-radius: 0;
+                    font-size: 28rpx;
+                    color: #b0976e;
+                }
+
+                .confirm {
+                    background-color: #e70606;
+                    border-color: #e70606;
+                    color: #fff;
+                }
+
+                .del {
+                    background-color: #b0976e;
+                    color: #fff;
+                }
+            }
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import classInfo from "../../mixins/classInfo";
+    import getUserInfo from "../../mixins/getUserInfo";
+    import {getStudents, getNewStudents, studentOperate} from "../../modules/Classes";
+    import {collectFormId} from "../../modules/Common";
+    import ready from "../../mixins/ready";
+    import env from "../../mixins/env";
+
+    import nav from "./detail/navigator";
+
+    export default class extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "班级"
+        };
+
+        components = {
+            nav
+        };
+
+        data = {
+            currentTab: "all",
+            tab: [
+                {
+                    id: "all",
+                    text: "所有"
+                },
+                {
+                    id: "new",
+                    text: "新同学"
+                }
+            ],
+            students: [],
+            newStudents: [],
+            currentStudentId: "",
+            confirm: {
+                text: "",
+                studentId: "",
+                type: ""
+            }
+        };
+
+        mixins = [ready, getUserInfo, classInfo, env];
+
+        watch = {
+            async currentTab (value, oldValue) {
+                if (value === "new") {
+                    this.clearConfirmInfo();
+                    this.clearCurrentStudentId();
+
+                    if (oldValue !== "new") {
+                        this.getNewStudents();
+                    }
+                }
+                else {
+                    if (oldValue !== "all") {
+                        this.getStudents();
+                    }
+                }
+            }
+        };
+
+        methods = {
+            switchTab (e) {
+                this.currentTab = e.currentTarget.dataset.tab;
+            },
+            showStudentsActions (e) {
+                this.clearConfirmInfo();
+                this.currentStudentId = e.currentTarget.dataset.id;
+            },
+            hideStudentsActions () {
+                this.clearConfirmInfo();
+                this.clearCurrentStudentId();
+            },
+            async promoteStudent (e) {
+                await this.getUserInfo();
+                this.confirm.studentId = e.currentTarget.dataset.id;
+                this.confirm.text = "确定设置TA为副班长";
+                this.confirm.type = 3;
+                this.$apply();
+            },
+            async cancelStudent (e) {
+                await this.getUserInfo();
+                this.confirm.studentId = e.currentTarget.dataset.id;
+                this.confirm.text = "确定取消班干部";
+                this.confirm.type = 2;
+                this.$apply();
+            },
+            async replaceStudent (e) {
+                await this.getUserInfo();
+                this.confirm.studentId = e.currentTarget.dataset.id;
+                this.confirm.text = "确定TA接任我的职务";
+                this.confirm.type = 1;
+                this.$apply();
+            },
+            async deleteStudent (e) {
+                await this.getUserInfo();
+                this.confirm.studentId = e.currentTarget.dataset.id;
+                this.confirm.text = "确定删除";
+                this.confirm.type = 0;
+                this.$apply();
+            },
+            async sure (e) {
+                const clear = () => {
+                    this.clearConfirmInfo();
+                    this.$apply();
+                };
+
+                await studentOperate.bind(this)({
+                    studentId: this.confirm.studentId,
+                    type: this.confirm.type
+                });
+
+                wx.showToast({
+                    title: "操作成功"
+                });
+
+                clear();
+                this.getStudents();
+            },
+            async refuseStudent (e) {
+                let id = e.currentTarget.dataset.id;
+                let type = 4;
+
+                await this.getUserInfo();
+                await studentOperate.bind(this)({
+                    studentId: id,
+                    type
+                });
+                this.getNewStudents();
+            },
+            async agreeStudent (e) {
+                let id = e.currentTarget.dataset.id;
+                let type = 5;
+
+                await this.getUserInfo();
+                await studentOperate.bind(this)({
+                    studentId: id,
+                    type
+                });
+                this.getNewStudents();
+            },
+            ghost () {
+
+            }
+        };
+
+        clearConfirmInfo () {
+            this.confirm.studentId = "";
+        }
+
+        clearCurrentStudentId () {
+            this.currentStudentId = "";
+        }
+
+        async getStudents () {
+            this.students = await getStudents.bind(this)();
+            this.$apply();
+        }
+
+        async getNewStudents () {
+            this.newStudents = await getNewStudents.bind(this)();
+            this.$apply();
+        }
+
+        onShareAppMessage () {
+            wx.showShareMenu({
+                withShareTicket: true
+            });
+        }
+
+        async onShow() {
+            //this.addReadyCallback(this.getUserInfo());
+            this.addReadyCallback(this.getClassDetail());
+            this.addReadyCallback(this.getStudents());
+            this.runReadyCallbacks();
+        }
+    }
+</script>

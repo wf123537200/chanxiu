@@ -36,8 +36,7 @@
         methods = {
             async submit (e) {
                 await this.applyClass({
-                    introduction: this.reason,
-                    formId: e.detail.formId
+                    introduction: this.reason
                 });
                 this.$emit("onSubmit");
                 wx.showToast({
