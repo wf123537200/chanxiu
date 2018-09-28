@@ -81,7 +81,7 @@ export default class extends wepy.mixin {
     };
 
     async getClassDetail () {
-        await this.getUserInfo();
+        //await this.getUserInfo();
         await getClassDetail.bind(this)();
         this.$apply();
     };

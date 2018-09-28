@@ -107,33 +107,174 @@
 //            resPerfix: 'http://120.79.228.118/',
             backgroundImage,
             endImage
-        }
+        };
 
         constructor() {
-            super()
-            this.use('requestfix')
+            super();
+            this.use('requestfix');
             this.use('promisify');
         }
 
-        async onLaunch(options) {
-            const getTokenPromise = () => {
-                return new Promise((resolve, reject) => {
-                    this.getUserInfo((userinfo) => {
-                        this.globalData.userInfo = userinfo;
-                        resolve();
+        // async onLaunch(options) {
+        //     const getTokenPromise = () => {
+        //         return new Promise((resolve, reject) => {
+        //             // this.getUserInfo((userinfo) => {
+        //             //     this.globalData.userInfo = userinfo;
+        //             // });
+        //
+        //             resolve();
+        //         });
+        //     };
+        //
+        //     this.getTokenPromise = getTokenPromise();
+        //
+        //     this.globalData.scene = options.scene;
+        //
+        //     this.getTokenPromise.then(() => {
+        //         this.additionRecord();
+        //     });
+        // }
+
+        onLaunch() {
+            this.getUserInfo((userinfo) => {
+                this.globalData.userInfo = userinfo
+            })
+        }
+
+        getUserInfo(cb) {
+            const that = this
+            const d = wx.getStorageSync('token')
+            if (this.globalData.userInfo && d && d.accessToken) {
+                cb && cb(this.globalData.userInfo)
+                return this.globalData.userInfo
+            }
+
+            wx.login({
+                success (data) {
+                    console.log('登录成功, %o', data)
+                    wx.getUserInfo({
+                        success (userinfo) {
+                            if(d && d.accessToken) {
+                                Object.assign(that, d)
+                                that.globalData.authInfo = userinfo
+                                that.globalData.userInfo = userinfo.userInfo
+                                cb && cb(userinfo.userInfo);
+                                console.log('正在使用token： ' + d.accessToken)
+                            } else {
+                                ajax({
+                                    ins: that,
+                                    url: '/weixin/token',
+                                    params: {
+                                        authCode: data.code,
+                                        nickName: userinfo.userInfo.nickName,
+                                        avatarUrl: userinfo.userInfo.avatarUrl,
+                                    },
+                                    method: 'POST',
+                                    success: (d) => {
+                                        Object.assign(that, d)
+                                        that.globalData.authInfo = userinfo
+                                        that.globalData.userInfo = userinfo.userInfo
+                                        cb && cb(userinfo.userInfo);
+                                        console.log('授权成功 %o, token ok', userinfo.userInfo)
+                                        wx.setStorage({
+                                            key: 'token',
+                                            data: d,
+                                            success: function(res){
+                                                console.log('本地存储 token 成功')
+                                            }
+                                        })
+                                    },
+                                    fail: () => {
+                                        ajax({
+                                            ins: that,
+                                            url: '/weixin/token/refresh',
+                                            params: {
+                                                authCode: data.code,
+                                                nickName: userinfo.userInfo.nickName,
+                                                avatarUrl: userinfo.userInfo.avatarUrl,
+                                            },
+                                            method: 'POST',
+                                            success: (d) => {
+                                                Object.assign(that, d)
+                                                that.globalData.authInfo = userinfo
+                                                that.globalData.userInfo = userinfo.userInfo
+                                                cb && cb(userinfo.userInfo);
+                                                console.log('授权成功 %o, token ok', userinfo.userInfo)
+                                            },
+                                            fail: () => {
+                                                console.log('多次授权失败')
+                                            }
+                                        })
+                                    }
+                                })
+                            }
+                        },
+                        fail: function() {
+                            console.log(arguments)
+                        }
                     });
-                });
-            };
+                }
+            });
 
-            this.getTokenPromise = getTokenPromise();
+            wx.getNetworkType({
+                success: (res) => {
+                    const d = wx.getStorageSync('exTimeOffline')
+                    if(!d || (d && d.timeSet)) return
 
-            this.globalData.scene = options.scene;
+                    const networkType = res.networkType
+                    if(networkType !== 'none' && networkType !== 'unkonwn') {
+                        ajax({
+                            ins: this,
+                            url: '/train/submit',
+                            params: d,
+                            method: 'POST',
+                            success: () => {
+                                console.log('补充提交练习时间成功')
+                                wx.setStorage({
+                                    key: 'exTimeOffline',
+                                    data: {},
+                                    success: function(){
+                                        console.log('清除 补充提交练习')
+                                    }
+                                })
+                            },
+                            fail: () => {
+                                console.log('提交练习时间失败')
+                            }
+                        })
+                    }
+                }
+            })
         }
 
         getTokenPromise = null;
 
         async getToken (data, userinfo, cb) {
             const that = this;
+            const auth_token = wx.getStorageSync('auth_token');
+
+            if (auth_token.ok) {
+                return Promise.resolve(cb(userinfo.userInfo));
+            }
+
+            function setAuthToken () {
+                wx.setStorage({
+                    key: 'auth_token',
+                    data: {
+                        ok: true
+                    }
+                });
+            }
+
+            function setToken (d) {
+                wx.setStorage({
+                    key: 'token',
+                    data: d,
+                    success: function (res) {
+                        console.log('本地存储 token 成功')
+                    }
+                });
+            }
 
             await ajax2promise({
                 ins: that,
@@ -148,16 +289,11 @@
                     Object.assign(that, d);
                     that.globalData.authInfo = userinfo
                     that.globalData.userInfo = userinfo.userInfo
-                    cb && cb(userinfo.userInfo);
                     console.log('授权成功 %o, token ok', userinfo.userInfo);
                     console.log('token: %o', d);
-                    wx.setStorage({
-                        key: 'token',
-                        data: d,
-                        success: function (res) {
-                            console.log('本地存储 token 成功')
-                        }
-                    });
+                    setAuthToken();
+                    setToken();
+                    cb && cb(userinfo.userInfo);
                 }
             })
             .catch(async () => {
@@ -174,6 +310,8 @@
                         Object.assign(that, d)
                         that.globalData.authInfo = userinfo
                         that.globalData.userInfo = userinfo.userInfo
+                        setAuthToken();
+                        setToken();
                         cb && cb(userinfo.userInfo);
                         console.log('授权成功 %o, token ok', userinfo.userInfo)
                     },
@@ -184,48 +322,49 @@
             });
         }
 
-        async getUserInfo(cb) {
-            const that = this;
-            const d = wx.getStorageSync('token');
+        getUserInfo2 () {
 
-            if (this.globalData.userInfo && d && d.accessToken) {
-                cb && cb(this.globalData.userInfo);
-                return this.globalData.userInfo;
-            }
+        }
 
-            const wxLoginPromise = function () {
-                return new Promise((resolve, reject) => {
-                    wx.login({
-                        success (data) {
-                            console.log('登录成功, %o', data);
-                            wx.getUserInfo({
-                                success (userinfo) {
-                                    if (d && d.accessToken) {
-                                        Object.assign(that, d)
-                                        that.globalData.authInfo = userinfo
-                                        that.globalData.userInfo = userinfo.userInfo
-                                        cb && cb(userinfo.userInfo);
-                                        console.log('正在使用token： ' + d.accessToken);
-                                        resolve({
-                                            state: "cache"
-                                        });
-                                    } else {
-                                        resolve(that.getToken(data, userinfo, cb));
-                                    }
-                                },
-                                fail: function (error) {
-                                    resolve(that.getToken(data, {
-                                        userInfo: {}
-                                    }, cb));
-                                }
-                            });
-                        }
-                    });
-                });
-            };
+        // getUserInfo(cb) {
+        //     const that = this;
+        //     const d = wx.getStorageSync('token');
+        //
+        //     if (this.globalData.userInfo && d && d.accessToken) {
+        //         cb && cb(this.globalData.userInfo);
+        //         return this.globalData.userInfo;
+        //     }
+        //
+        //     //const getUserInfoPromise = new Promise((resolve, reject) => {
+        //         wx.login({
+        //             success (data) {
+        //                 console.log('登录成功, %o', data);
+        //                 wx.getUserInfo({
+        //                     success (userinfo) {
+        //                         if (d && d.accessToken) {
+        //                             Object.assign(that, d);
+        //                             that.globalData.authInfo = userinfo;
+        //                             that.globalData.userInfo = userinfo.userInfo;
+        //                             cb && cb(userinfo.userInfo);
+        //                             console.log('正在使用token： ' + d.accessToken);
+        //                             //resolve(userinfo);
+        //                         } else {
+        //                             that.getToken(data, userinfo, cb);
+        //                             //resolve(userinfo);
+        //                         }
+        //                     },
+        //                     fail: function (error) {
+        //                         console.log("授权失败");
+        //                         //reject();
+        //                     }
+        //                 });
+        //             }
+        //         });
+        //     //});
+        // }
 
-            await wxLoginPromise();
-
+        // 补录
+        additionRecord () {
             wx.getNetworkType({
                 success: (res) => {
                     const d = wx.getStorageSync('exTimeOffline');

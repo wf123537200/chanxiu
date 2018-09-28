@@ -5,10 +5,17 @@ export default class extends wepy.mixin {
         userInfo: {}
     };
 
-    getUserInfo(cb) {
+    onGetUserInfo (e) {
+        if (e.detail.userInfo) {
+
+        }
+    }
+
+    async getUserInfo(cb) {
+        //const
         return new Promise((resolve, reject) => {
-            this.$parent.getUserInfo((userInfo) => {
-                this.userInfo = userInfo;
+            this.$parent.getUserInfo((userInfo = {}) => {
+                this.userInfo = Object.assign({}, userInfo);
                 this.$apply();
 
                 if (typeof cb === "function") {
