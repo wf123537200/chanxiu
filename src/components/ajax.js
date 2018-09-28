@@ -40,7 +40,6 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
                 console.log('本地存储 ' + ajaxPerfix + url + '成功')
               }
             })
-
             success && success(data.data.data)
           } else {
             fail && fail()

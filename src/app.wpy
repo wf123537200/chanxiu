@@ -137,57 +137,62 @@ const getUserInfoByCache = function (cb, userinfo) {
 
 export default class extends wepy.app {
   config = {
-    pages: [
-      'pages/setex',
-      'pages/class',
-      'pages/end',
-      'pages/out',
-      'pages/ex',
-      'pages/aboutme',
-      'pages/my',
-      'pages/ex-briefing',
-      'pages/ex-diary',
-      'pages/ex-diary-add',
-      'pages/ex-text-mark',
-      'pages/class/index',
-      'pages/class/create',
-      'pages/class/detail',
-      'pages/class/news',
-      'pages/class/welcome',
-      'pages/class/fail',
-      'pages/class/qr',
-    ],
-    window: {
-      backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#b0976e',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'white'
-    },
-    tabBar: {
-      color: '#cecbb7',
-      selectedColor: '#fff',
-      borderStyle: '#B0976E',
-      backgroundColor: '#B0976E',
-      list: [{
-        pagePath: 'pages/setex',
-        selectedIconPath: './images/ex-bar-active.png',
-        iconPath: './images/ex-bar.png',
-        text: '练习',
-        selectText: '练习',
-      }, {
-        pagePath: 'pages/class/index',
-        selectedIconPath: './images/class-bar-active.png',
-        iconPath: './images/ex-bar.png',
-        text: '班级',
-        selectText: '班级'
-      }, {
-        pagePath: 'pages/my',
-        selectedIconPath: './images/my-bar-active.png',
-        iconPath: './images/my-bar.png',
-        text: '我',
-        selectText: '我',
-      }]
-    }
+      pages: [
+          'pages/setex',
+          'pages/class',
+          'pages/end',
+          'pages/out',
+          'pages/ex',
+          'pages/aboutme',
+          'pages/my',
+          'pages/ex-briefing',
+          'pages/ex-diary',
+          'pages/ex-diary-add',
+          'pages/ex-text-mark',
+          'pages/class/create',
+          'pages/class/index',
+          'pages/class/detail',
+          'pages/class/news',
+          'pages/class/students',
+          'pages/class/welcome',
+          'pages/class/fail',
+          'pages/class/qr'
+      ],
+      window: {
+          backgroundTextStyle: 'light',
+          navigationBarBackgroundColor: '#b0976e',
+          navigationBarTitleText: 'WeChat',
+          navigationBarTextStyle: 'white'
+      },
+      tabBar: {
+          color: '#cecbb7',
+          selectedColor: '#fff',
+          borderStyle: '#B0976E',
+          backgroundColor: '#B0976E',
+          list: [
+              {
+                  pagePath: 'pages/setex',
+                  selectedIconPath: './images/ex-bar-active.png',
+                  iconPath: './images/ex-bar.png',
+                  text: '练习',
+                  selectText: '练习',
+              },
+              {
+                  pagePath: 'pages/class/index',
+                  selectedIconPath: './images/class-bar-active.png',
+                  iconPath: './images/ex-bar.png',
+                  text: '班级',
+                  selectText: '班级'
+              },
+              {
+                  pagePath: 'pages/my',
+                  selectedIconPath: './images/my-bar-active.png',
+                  iconPath: './images/my-bar.png',
+                  text: '我',
+                  selectText: '我',
+              }
+          ]
+      }
   }
 
   onShow = () => {

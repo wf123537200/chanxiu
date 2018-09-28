@@ -3,6 +3,8 @@
  */
 
 import ajax2promise from "../components/ajax2promise";
+import getGlobalData from "../components/getGlobalData";
+import "moment";
 
 export async function getOpenClasses () {
     this.openedClasses = await ajax2promise({
@@ -35,13 +37,26 @@ export async function createClass(params = {}) {
 }
 
 export async function getClassDetail() {
-    this.detail = await ajax2promise({
+    const detail = await ajax2promise({
         ins: this,
         url: "/class/brief",
         params: {
             id: this.classId
         }
     });
+
+    const global = getGlobalData(this);
+    const {ajaxPerfix} = global.data;
+
+    if (detail.qrCodeUrl) {
+        detail.qrCodeUrl = `${ajaxPerfix}${detail.qrCodeUrl}`;
+    }
+
+    if (detail.logo) {
+        detail.logo = `${ajaxPerfix}${detail.logo}`;
+    }
+
+    this.detail = detail;
 
     this.$apply();
 }
@@ -88,6 +103,20 @@ export async function exitClass() {
 
     this.$apply();
     return result;
+}
+
+// 解散
+export async function spaceClass() {
+    await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/space",
+        params: {
+            id: this.classId
+        }
+    });
+
+    this.$apply();
 }
 
 // 训练名单
@@ -138,6 +167,7 @@ export async function getInterrupts () {
     return result;
 }
 
+// 提醒
 export async function remind (params = {}) {
     params = Object.assign({
         classId: this.classId,
@@ -173,4 +203,92 @@ export async function getTrainRecords (params = {}) {
     this.trainRecordRequestCount++;
     this.$apply();
     return result;
+}
+
+export async function getStudents() {
+    let result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/students",
+        params: {
+            classId: this.classId
+        }
+    });
+
+    result = result.map(n => {
+        let m = Object.assign({}, n);
+        let role = parseInt(m.role);
+
+        if (role === 1) {
+            m.roleText = "班长";
+        }
+        else if (role === 2) {
+            m.roleText = "副班长";
+        }
+
+        m.strCreateTime = m.strCreateTime.substring(0, 10);
+
+        return m;
+    });
+
+    this.$apply();
+    return result;
+}
+
+export async function getNewStudents () {
+    let result = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/new/students",
+        params: {
+            classId: this.classId
+        }
+    });
+
+    let now = new Date();
+    let y = now.getFullYear();
+    let m = now.getMonth() + 1;
+    let d = now.getDate();
+
+    result = result.map(n => {
+        let m = Object.assign({}, n);
+        let _key = m.strCreateTime.substring(0, 10).split("-");
+        let _y = _key[0] - 0;
+        let _m = _key[1] - 0;
+        let _d = _key[2] - 0;
+
+        if (_y === y && _m === m && _d === d) {
+            m.strCreateTime = m.strCreateTime.substring(11);
+        }
+
+        if (m.status === 1) {
+            m.statusText = "已通过";
+        }
+        else if (m.status === 2) {
+            m.statusText = "已拒绝";
+        }
+        else {
+            m.statusText = "";
+        }
+
+        return m;
+    });
+
+    this.$apply();
+    return result;
+}
+
+export async function studentOperate(params = {}) {
+    params = Object.assign({
+        classId: this.classId
+    }, params);
+
+    await ajax2promise({
+        ins: this,
+        method: "POST",
+        url: "/class/student/operate",
+        params
+    });
+
+    this.$apply();
 }

@@ -309,17 +309,13 @@
                 });
             },
             async submit (e) {
-                const result = await this.createClass(e.detail.value).catch(() => {
-                    wx.showToast({
-                        title: "创建失败"
-                    });
-                });
+                const id = await this.createClass(e.detail.value);
 
                 wx.showToast({
                     title: "创建成功",
                     complete () {
                         wx.navigateTo({
-                            url: "/pages/class/detail?id=" + result
+                            url: "/pages/class/detail?id=" + id
                         });
                     }
                 });
@@ -327,9 +323,5 @@
         };
 
         createClass = createClass;
-
-//        async onShow() {
-//            await this.runReadyCallbacks();
-//        }
     }
 </script>

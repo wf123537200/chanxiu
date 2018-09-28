@@ -2,7 +2,7 @@
     <view wx:if="{{ready}}">
         <view class="content-box">
             <view class="base">
-                <image class="icon" src="{{detail.icon}}" mode="aspectFill"/>
+                <image class="icon" src="{{detail.logo}}" mode="aspectFill"/>
                 <text class="name text-nowrap text-ellipsis">{{detail.name}}</text>
                 <text class="desc">{{detail.brief}}</text>
             </view>
@@ -100,9 +100,9 @@
 
 <script>
     import wepy from "wepy";
-    import {ajax} from "./../../components/ajax";
     import ready from "../../mixins/ready";
     import classInfo from "../../mixins/classInfo";
+    import getUserInfo from "../../mixins/getUserInfo";
 
     export default class extends wepy.page {
         config = {
@@ -112,7 +112,7 @@
 
         data = {};
 
-        mixins = [ready, classInfo];
+        mixins = [ready, classInfo, getUserInfo];
 
         computed = {
             remainingQuota () {
@@ -127,19 +127,26 @@
 
         saveImage () {
             if (this.detail.qrCodeUrl) {
-                wx.saveImageToPhotosAlbum({
-                    filePath: this.detail.qrCodeUrl,
-                    success () {
-                        wx.showToast({
-                            title: "保存成功",
-                            icon: "success"
-                        });
-                    },
-                    fail () {
-                        wx.showToast({
-                            title: "保存失败",
-                            icon: "fail"
-                        });
+                wx.downloadFile({
+                    url: this.detail.qrCodeUrl,
+                    success: (res) => {
+                        if (res.statusCode === 200) {
+                            wx.saveImageToPhotosAlbum({
+                                filePath: res.tempFilePath,
+                                success () {
+                                    wx.showToast({
+                                        title: "保存成功",
+                                        icon: "success"
+                                    });
+                                },
+                                fail () {
+                                    wx.showToast({
+                                        title: "保存失败",
+                                        icon: "fail"
+                                    });
+                                }
+                            });
+                        }
                     }
                 });
             }

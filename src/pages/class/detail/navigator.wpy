@@ -6,14 +6,14 @@
             <text>动态</text>
         </navigator>
 
-        <navigator url="/pages/class/detail?id={{id}}" class="item {{nav==='knowledge' ? 'on' : ''}}">
-            <image src="/images/classes/m2-active.png" wx:if="{{nav==='knowledge'}}"></image>
-            <image src="/images/classes/m2.png" wx:else></image>
-            <text>知识</text>
-        </navigator>
+        <!--<navigator hide url="/pages/class/detail?id={{id}}" class="item {{nav==='knowledge' ? 'on' : ''}}">-->
+            <!--<image src="/images/classes/m2-active.png" wx:if="{{nav==='knowledge'}}"></image>-->
+            <!--<image src="/images/classes/m2.png" wx:else></image>-->
+            <!--<text>知识</text>-->
+        <!--</navigator>-->
 
-        <navigator url="/pages/class/detail?id={{id}}" class="item {{nav==='classmate' ? 'on' : ''}}">
-            <image src="/images/classes/m3-active.png" wx:if="{{nav==='classmate'}}"></image>
+        <navigator url="/pages/class/students?id={{id}}" class="item {{nav==='students' ? 'on' : ''}}">
+            <image src="/images/classes/m3-active.png" wx:if="{{nav==='students'}}"></image>
             <image src="/images/classes/m3.png" wx:else></image>
             <text>同学</text>
         </navigator>
@@ -28,13 +28,13 @@
 
 <style lang="less">
     .nav-box {
+        display: flex;
         height: 140rpx;
+        flex-direction: row;
         background-color: #fff;
 
         .item {
-            float: left;
-            display: block;
-            width: 25%;
+            flex: 1;
             height: 100%;
             padding-top: 15rpx;
             box-sizing: border-box;
