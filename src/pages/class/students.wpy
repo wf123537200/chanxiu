@@ -1,4 +1,6 @@
 <template>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
+
     <view class="full-height flex-v" wx:if="{{ready}}" @tap="hideStudentsActions">
         <nav :id.sync="classId" nav="students"></nav>
 
@@ -218,13 +220,13 @@
 <script>
     import wepy from "wepy";
     import classInfo from "../../mixins/classInfo";
-    import getUserInfo from "../../mixins/getUserInfo";
     import {getStudents, getNewStudents, studentOperate} from "../../modules/Classes";
     import {collectFormId} from "../../modules/Common";
     import ready from "../../mixins/ready";
     import env from "../../mixins/env";
 
     import nav from "./detail/navigator";
+    import login from "../../components/login";
 
     export default class extends wepy.page {
         config = {
@@ -233,7 +235,8 @@
         };
 
         components = {
-            nav
+            nav,
+            login
         };
 
         data = {
@@ -255,10 +258,11 @@
                 text: "",
                 studentId: "",
                 type: ""
-            }
+            },
+            userInfo: {}
         };
 
-        mixins = [ready, getUserInfo, classInfo, env];
+        mixins = [ready, classInfo, env];
 
         watch = {
             async currentTab (value, oldValue) {
@@ -279,6 +283,14 @@
         };
 
         methods = {
+            login (e) {
+                wx.setStorageSync("token", {});
+
+                this.$parent.getUserInfo((userInfo = {}) => {
+                    this.userInfo = Object.assign({}, userInfo);
+                    this.$apply();
+                }, e.detail);
+            },
             switchTab (e) {
                 this.currentTab = e.currentTarget.dataset.tab;
             },
@@ -291,28 +303,24 @@
                 this.clearCurrentStudentId();
             },
             async promoteStudent (e) {
-                await this.getUserInfo();
                 this.confirm.studentId = e.currentTarget.dataset.id;
                 this.confirm.text = "确定设置TA为副班长";
                 this.confirm.type = 3;
                 this.$apply();
             },
             async cancelStudent (e) {
-                await this.getUserInfo();
                 this.confirm.studentId = e.currentTarget.dataset.id;
                 this.confirm.text = "确定取消班干部";
                 this.confirm.type = 2;
                 this.$apply();
             },
             async replaceStudent (e) {
-                await this.getUserInfo();
                 this.confirm.studentId = e.currentTarget.dataset.id;
                 this.confirm.text = "确定TA接任我的职务";
                 this.confirm.type = 1;
                 this.$apply();
             },
             async deleteStudent (e) {
-                await this.getUserInfo();
                 this.confirm.studentId = e.currentTarget.dataset.id;
                 this.confirm.text = "确定删除";
                 this.confirm.type = 0;
@@ -340,7 +348,6 @@
                 let id = e.currentTarget.dataset.id;
                 let type = 4;
 
-                await this.getUserInfo();
                 await studentOperate.bind(this)({
                     studentId: id,
                     type
@@ -351,7 +358,6 @@
                 let id = e.currentTarget.dataset.id;
                 let type = 5;
 
-                await this.getUserInfo();
                 await studentOperate.bind(this)({
                     studentId: id,
                     type
@@ -387,11 +393,15 @@
             });
         }
 
-        async onShow() {
-            //this.addReadyCallback(this.getUserInfo());
-            this.addReadyCallback(this.getClassDetail());
-            this.addReadyCallback(this.getStudents());
-            this.runReadyCallbacks();
+        onShow() {
+            this.$parent.getUserInfo((userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.$apply();
+
+                this.addReadyCallback(this.getClassDetail());
+                this.addReadyCallback(this.getStudents());
+                this.runReadyCallbacks();
+            });
         }
     }
 </script>

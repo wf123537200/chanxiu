@@ -1,4 +1,6 @@
 <template>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
+
     <view class="classes">
         <openedClasses :classes.sync="openedClasses" />
 
@@ -46,12 +48,11 @@
 
 <script>
     import wepy from "wepy";
-    import {ajax} from './../../components/ajax';
-    import getUserInfo from "../../mixins/getUserInfo";
     import ready from "../../mixins/ready";
     import {getOpenClasses, getMyClasses} from "../../modules/Classes";
 
     import Classes from "./index/classes";
+    import login from "../../components/login";
 
     export default class extends wepy.page {
         config = {
@@ -60,7 +61,8 @@
 
         components = {
             openedClasses: Classes,
-            myClasses: Classes
+            myClasses: Classes,
+            login
         };
 
         data = {
@@ -69,14 +71,20 @@
             userInfo: {}
         };
 
-        mixins = [getUserInfo, ready];
+        mixins = [ready];
 
-        events = {};
+        methods = {
+            login (e) {
+                wx.setStorageSync("token", {});
 
-        computed = {};
+                this.$parent.getUserInfo((userInfo = {}) => {
+                    this.userInfo = Object.assign({}, userInfo);
+                    this.$apply();
+                }, e.detail);
+            }
+        };
 
         async create() {
-            await this.getUserInfo();
             wx.navigateTo({
                 url: "/pages/class/create"
             });
@@ -87,10 +95,14 @@
         getMyClasses = getMyClasses;
 
         async onShow() {
-            //this.addReadyCallback(this.getUserInfo());
-            this.addReadyCallback(this.getOpenClasses());
-            this.addReadyCallback(this.getMyClasses());
-            await this.runReadyCallbacks();
+            this.$parent.getUserInfo((userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.$apply();
+
+                this.addReadyCallback(this.getOpenClasses());
+                this.addReadyCallback(this.getMyClasses());
+                this.runReadyCallbacks();
+            });
         }
     }
 </script>

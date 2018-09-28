@@ -1,4 +1,6 @@
 <template>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
+
     <block wx:if="{{ready}}">
         <nav :id.sync="classId" nav="intro"></nav>
 
@@ -57,12 +59,12 @@
 
 <script>
     import wepy from "wepy";
-    import getUserInfo from "../../mixins/getUserInfo";
     import ready from "../../mixins/ready";
     import classInfo from "../../mixins/classInfo";
     import env from "../../mixins/env";
 
     import applyPopup from "./detail/apply-popup";
+    import login from "../../components/login";
     import nav from "./detail/navigator";
     import info from "./detail/info";
     import intro from "./detail/intro";
@@ -77,14 +79,26 @@
             nav,
             info,
             intro,
-            applyPopup
+            applyPopup,
+            login
         };
 
         data = {
-            //userInfo: {}
+            userInfo: {}
         };
 
-        mixins = [ready, getUserInfo, classInfo, env];
+        mixins = [ready, classInfo, env];
+
+        methods = {
+            login (e) {
+                wx.setStorageSync("token", {});
+
+                this.$parent.getUserInfo((userInfo = {}) => {
+                    this.userInfo = Object.assign({}, userInfo);
+                    this.$apply();
+                }, e.detail);
+            }
+        };
 
         onShareAppMessage () {
             wx.showShareMenu({
@@ -92,12 +106,17 @@
             });
         }
 
-        async onShow() {
+        onShow() {
             //this.addReadyCallback(this.getUserInfo());
-            this.addReadyCallback(this.getClassDetail());
-            await this.runReadyCallbacks();
-            wx.setNavigationBarTitle({
-                title: this.detail.name
+            this.$parent.getUserInfo(async (userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.$apply();
+
+                this.addReadyCallback(this.getClassDetail());
+                await this.runReadyCallbacks();
+                wx.setNavigationBarTitle({
+                    title: this.detail.name
+                });
             });
         }
     }

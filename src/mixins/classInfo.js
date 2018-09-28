@@ -81,13 +81,13 @@ export default class extends wepy.mixin {
     };
 
     async getClassDetail () {
-        await this.getUserInfo();
+        //await this.getUserInfo();
         await getClassDetail.bind(this)();
         this.$apply();
     };
 
     async joinClass () {
-        await this.getUserInfo();
+        //await this.getUserInfo();
         await joinClass.bind(this)();
         wx.navigateTo({
             url: "/pages/class/welcome?id=" + this.classId
@@ -95,19 +95,19 @@ export default class extends wepy.mixin {
     };
 
     async applyClass () {
-        await this.getUserInfo();
+        //await this.getUserInfo();
         await applyClass.bind(this)();
         this.$apply();
     };
 
     async exitClass () {
-        await this.getUserInfo();
+        //await this.getUserInfo();
         await exitClass.bind(this)();
         this.$apply();
     };
 
     async spaceClass () {
-        await this.getUserInfo();
+        //await this.getUserInfo();
         await spaceClass.bind(this)();
         this.$apply();
     };

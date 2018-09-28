@@ -1,4 +1,6 @@
 <template>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
+
     <view class="full-height flex-v" @tap="hideTrainTimeTypeDrop" wx:if="{{ready}}">
         <nav :id.sync="classId" nav="news"></nav>
 
@@ -348,13 +350,12 @@
     import wepy from "wepy";
     import moment from "moment";
     import classInfo from "../../mixins/classInfo";
-    import getUserInfo from "../../mixins/getUserInfo";
     import {getTrainList, getTrainRanks, getInterrupts, getTrainRecords} from "../../modules/Classes";
     import ready from "../../mixins/ready";
     import env from "../../mixins/env";
-    import "moment";
 
     import nav from "./detail/navigator";
+    import login from "../../components/login";
     import applyPopup from "./detail/apply-popup";
     import remindPopup from "./detail/remind-popup";
 
@@ -367,10 +368,12 @@
         components = {
             nav,
             applyPopup,
-            remindPopup
+            remindPopup,
+            login
         };
 
         data = {
+            userInfo: {},
             currentTab: "brief",
             tab: [
                 {
@@ -415,11 +418,10 @@
             ],
             trainTimeTypeDropVisible: false,
             hasInitContentHeight: {},
-            contentVisibleInfo: {},
-            userInfo: {}
+            contentVisibleInfo: {}
         };
 
-        mixins = [ready, getUserInfo, classInfo, env];
+        mixins = [ready, classInfo, env];
 
         computed = {
             trainTimeTypeText () {
@@ -531,6 +533,14 @@
         };
 
         methods = {
+            login (e) {
+                wx.setStorageSync("token", {});
+
+                this.$parent.getUserInfo((userInfo = {}) => {
+                    this.userInfo = Object.assign({}, userInfo);
+                    this.$apply();
+                }, e.detail);
+            },
             switchTab (e) {
                 this.currentTab = e.currentTarget.dataset.tab;
             },
@@ -647,12 +657,16 @@
             this.contentHeights = {};
         }
 
-        async onShow() {
-            //this.nav = options.nav;
-            this.init();
-            this.addReadyCallback(this.getClassDetail());
-            this.addReadyCallback(this.getTrainList());
-            this.runReadyCallbacks();
+        onShow() {
+            this.$parent.getUserInfo((userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.$apply();
+
+                this.init();
+                this.addReadyCallback(this.getClassDetail());
+                this.addReadyCallback(this.getTrainList());
+                this.runReadyCallbacks();
+            });
         }
     }
 </script>

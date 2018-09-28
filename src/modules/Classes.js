@@ -4,7 +4,6 @@
 
 import ajax2promise from "../components/ajax2promise";
 import getGlobalData from "../components/getGlobalData";
-import "moment";
 
 export async function getOpenClasses () {
     this.openedClasses = await ajax2promise({
