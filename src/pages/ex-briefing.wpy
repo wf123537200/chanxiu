@@ -46,10 +46,17 @@
     color: #ccc;
     box-sizing: border-box;
   }
-  .add-flag {
+  .add-flag-pannel {
     position: absolute;
     right: 20px;
-    top: 9px;
+    top: 0;
+    height: 35px;
+    width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .add-flag {
     font-size: 14px;
     color: #fff;
     background-color: $text-color;
@@ -153,7 +160,7 @@
     font-size: 16px;
   }
   .num {
-    font-size: 30px;
+    font-size: 26px;
     margin-right: 10rpx;
     font-weight: bold;
     line-height: 1;
@@ -532,7 +539,9 @@
 
     <view class="header-pannel pl-20">
       练习记录
-      <view class="add-flag" @tap="processShow()">+</view>
+      <view class="add-flag-pannel" @tap="processShow()">
+        <view class="add-flag">+</view>
+      </view>
     </view>
     <view class="ex-list-pannel">
       <view class="condition-pannel pl-20">

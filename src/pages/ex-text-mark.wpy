@@ -160,9 +160,9 @@
             const trainInfo = d.trainInfo
             that.continuousNum = trainInfo.continuousNum || 0
             if (that.exTime) {
-              text = `【${that.exList}${that.exTime}分钟，连续${that.continuousNum}天】`
+              text = `【${that.exList || ''}${that.exTime || 0}分钟，连续${that.continuousNum || 0}天】`
             } else {
-              text = `今日练习${trainInfo.todayTrainCount}次，共${trainInfo.todayDuration}分钟`
+              text = `今日练习${trainInfo.todayTrainCount || 0}次，共${trainInfo.todayDuration || 0}分钟`
             }
             that.text = text
 
