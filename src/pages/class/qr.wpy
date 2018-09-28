@@ -1,4 +1,6 @@
 <template>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
+
     <view wx:if="{{ready}}">
         <view class="content-box">
             <view class="base">
@@ -102,7 +104,8 @@
     import wepy from "wepy";
     import ready from "../../mixins/ready";
     import classInfo from "../../mixins/classInfo";
-    import getUserInfo from "../../mixins/getUserInfo";
+
+    import login from "../../components/login";
 
     export default class extends wepy.page {
         config = {
@@ -110,9 +113,15 @@
             navigationBarTitleText: ""
         };
 
-        data = {};
+        components = {
+            login
+        };
 
-        mixins = [ready, classInfo, getUserInfo];
+        data = {
+            userInfo: {}
+        };
+
+        mixins = [ready, classInfo];
 
         computed = {
             remainingQuota () {
@@ -152,9 +161,14 @@
             }
         }
 
-        async onShow() {
-            this.addReadyCallback(this.getClassDetail());
-            this.runReadyCallbacks();
+        onShow() {
+            this.$parent.getUserInfo((userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.$apply();
+
+                this.addReadyCallback(this.getClassDetail());
+                this.runReadyCallbacks();
+            });
         }
     }
 </script>

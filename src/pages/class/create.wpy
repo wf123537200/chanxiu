@@ -1,4 +1,6 @@
 <template>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
+
     <form @submit="submit">
         <view class="section">
             <view class="section-title">基本信息</view>
@@ -237,11 +239,11 @@
 
 <script>
     import wepy from "wepy";
-    import {ajax} from "./../../components/ajax";
-    import getUserInfo from "../../mixins/getUserInfo";
     import ready from "../../mixins/ready";
     import {createClass} from "../../modules/Classes";
     import getGlobalData from "../../components/getGlobalData";
+
+    import login from "../../components/login";
 
     const STUDENTS = [150];
     const defaultCheckedStudent = 0;
@@ -252,9 +254,14 @@
             navigationBarTitleText: "创建班级"
         };
 
-        mixins = [getUserInfo, ready];
+        components = {
+            login
+        };
+
+        mixins = [ready];
 
         data = {
+            userInfo: {},
             addType: 0,
             studentSupported: STUDENTS,
             defaultCheckedStudent,
@@ -267,6 +274,14 @@
         };
 
         methods = {
+            login (e) {
+                wx.setStorageSync("token", {});
+
+                this.$parent.getUserInfo((userInfo = {}) => {
+                    this.userInfo = Object.assign({}, userInfo);
+                    this.$apply();
+                }, e.detail);
+            },
             onAddTypeChanged (e) {
                 this.addType = e.detail.value;
             },
@@ -323,5 +338,12 @@
         };
 
         createClass = createClass;
+
+        onShow () {
+            this.$parent.getUserInfo((userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.$apply();
+            });
+        }
     }
 </script>

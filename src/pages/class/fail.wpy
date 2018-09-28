@@ -1,4 +1,6 @@
 <template>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
+
     <block wx:if="{{ready}}">
         <view class="header">你的申请未通过！</view>
         <view class="feedback">你发送的加入“{{detail.name}}”的申请未通过。</view>
@@ -53,12 +55,11 @@
 
 <script>
     import wepy from "wepy";
-    import {ajax} from "./../../components/ajax";
-    import getUserInfo from "../../mixins/getUserInfo";
     import classInfo from "../../mixins/classInfo";
     import ready from "../../mixins/ready";
 
     import applyPopup from "./detail/apply-popup";
+    import login from "../../components/login";
 
     export default class extends wepy.page {
         config = {
@@ -66,22 +67,39 @@
             navigationBarTitleText: "加入班级申请失败"
         };
 
-        components = {
-            applyPopup
+        data = {
+            userInfo: {}
         };
 
-        mixins = [ready, getUserInfo, classInfo];
+        components = {
+            applyPopup,
+            login
+        };
+
+        mixins = [ready, classInfo];
 
         methods = {
+            login (e) {
+                wx.setStorageSync("token", {});
+
+                this.$parent.getUserInfo((userInfo = {}) => {
+                    this.userInfo = Object.assign({}, userInfo);
+                    this.$apply();
+                }, e.detail);
+            },
             showApplyPopup () {
                 this.$invoke("applyPopup", "show");
             }
         };
 
-        async onShow () {
-            //this.addReadyCallback(this.getUserInfo());
-            this.addReadyCallback(this.getClassDetail());
-            await this.runReadyCallbacks();
+        onShow () {
+            this.$parent.getUserInfo((userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.$apply();
+
+                this.addReadyCallback(this.getClassDetail());
+                this.runReadyCallbacks();
+            });
         }
     }
 </script>

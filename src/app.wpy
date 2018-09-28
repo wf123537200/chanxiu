@@ -1,4 +1,6 @@
 <style lang="less">
+    @import "static/less/utility.less";
+
     .container {
         position: relative;
         height: 100%;
@@ -246,6 +248,7 @@
                     cb && cb(this.globalData.userInfo)
                     return this.globalData.userInfo
                 }
+
                 wx.login({
                     success (data) {
                         console.log('登录成功, %o', data)
@@ -271,8 +274,8 @@
                                     url: '/weixin/token',
                                     params: {
                                         authCode: data.code,
-                                        nickName: userinfo.userInfo.nickName,
-                                        avatarUrl: userinfo.userInfo.avatarUrl,
+                                        nickName: userinfo.userInfo && userinfo.userInfo.nickName,
+                                        avatarUrl: userinfo.userInfo && userinfo.userInfo.avatarUrl,
                                     },
                                     method: 'POST',
                                     success: (d) => {

@@ -6,7 +6,7 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
   const {ajaxPerfix, resPerfix} = globalData;
 
   const d = wx.getStorageSync('token')
-  const token = url !== '/weixin/token' ? ins.accessToken || (ins.$parent ? ins.$parent.accessToken || d.accessToken || '' : '') : ''
+  const token = url !== '/weixin/token' ? ins.accessToken || (ins.$parent ? ins.$parent.accessToken || d.accessToken || '' : '') : '';
 
   wx.getNetworkType({
     success: (res) => {
