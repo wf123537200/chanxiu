@@ -14,7 +14,9 @@
     text-align: center;
     padding: 10px;
   }
-
+  .t-85 {
+    top: 85px;
+  }
   .header-wrap {
     position:relative;
     height:69px;
@@ -23,7 +25,6 @@
     font-size:14px;
     background:#fff;
     border-bottom:1px solid #ddd;
-
   }
   .userinfo-avatar {
     position: absolute;
@@ -37,8 +38,13 @@
   }
   .nickname {
     position:absolute;
-    top:7px;
-    left:86px;
+    top: 17px;
+    left: 86px;
+    color:#333;
+    font-size:14px;
+    background:#fff;
+    display: inline-block;
+    outline: 0;
   }
   .stars {
     position:absolute;
@@ -70,10 +76,11 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    width:80%;
-    margin-left: 10%;
-    margin-top:5px;
-    font-size: 0.8rem
+    width:100%;
+    padding: 0 8% 0 10%;
+    box-sizing: border-box;
+    text-align: center;
+    margin-top: 45rpx;
   }
   .header-cols {
     border-right:1px solid #ccc;
@@ -82,16 +89,26 @@
   .header-banner {
     margin-bottom:10px;
   }
+  .header-arrow {
+    position: relative;
+    height:18px;
+    justify-self: right;
+    align-self:center;
+    transform: translateY(-50%);
+    color: #B0976E;
+    font-size:0.9rem;
+  }
   .num {
     font-size: 1.6rem;
     margin-right: 10rpx;
     font-weight: bold;
   }
   .continue-time {
-    display:flex;
+    display: flex;
     justify-content:center;
-    padding-top:16px;
-    color:#ccc;
+    padding-top: 10px;
+    font-size: 16px;
+    line-height: 1;
   }
   .ex {
     color: #B0976E;
@@ -115,22 +132,44 @@
     padding:5px 0;
     font-size:0.9rem;
   }
+  .reset-button {
+    background-color: #fff;
+    font-size:0.9rem;
+  }
+  .suggest {
+    line-height: 1.4;
+    color:#B0976E;
+  }
 </style>
 
 <template>
   <view class="container">
+    <view class="login-fixed-wrap {{!userInfo.nickName ? '' : 'hide'}}">
+      <view class="login-pannel">
+        <view class="login-title">请先登录</view>
+
+        <button class="login-button" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo">
+          <image class="weixin-blue-icon" src="/images/weixin_blue.svg"></image>
+          <view>微信快捷登录</view>
+        </button>
+      </view>
+    </view>
     <!-- user -->
     <view class="header-wrap">
       <view class="pr">
         <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
-        <view class="nickname">{{userInfo.nickName || '未授权'}}</view>
-        <view class="desc">练习{{totalTrainDay}}天，今日{{exTime}}分钟</view>
+        <view class="nickname button">
+          {{userInfo.nickName || '未登录'}}
+        </view>
+        <view class="desc">
+          {{(userInfo.province || '') + ' ' + (userInfo.city || '')}}
+        </view>
       </view>
     </view>
 
     <!-- 数据 -->
     <view class="wrap ex" style="height: 120px">
-      <view class="header-banner-wrap">
+      <view class="header-banner-wrap" @tap="toBriefing">
         <view class="header-cols">
           <view class="header-banner">总天数</view>
           <view class="inline num">{{totalTrainDay}}</view><view class="inline">天</view>
@@ -140,12 +179,15 @@
           <view class="inline num">{{averageDayTime}}</view><view class="inline">分钟</view>
         </view>
         <view>
-          <view class="header-banner">总次数</view>
-          <view class="inline num">{{totalCount}}</view><view class="inline">次</view>
+          <view class="header-banner">单次最多</view>
+          <view class="inline num">{{singleMostDuration}}</view><view class="inline">分钟</view>
         </view>
+        <view class="header-arrow">></view>
       </view>
 
-      <view class="continue-time">已连续练习{{continuousNum}}天</view>
+      <view class="continue-time">
+        已连续练习{{continuousNum}}天
+      </view>
     </view>
     <!-- 数据 end -->
 
@@ -156,6 +198,13 @@
         <view class="arrow">></view>
       </view>
     </view>
+
+    <view class="wrap" style="height: 80%;font-size: 0.8rem;margin-top: 10px;padding:0;color: #B0976E;">
+      <button class="reset-button m10 pr about-me" style="position: relative;" open-type="contact">
+        <view class="ml10p suggest">反馈我的建议</view>
+        <view class="arrow">></view>
+      </button>
+    </view>
     <!-- 操作 end -->
   </view>
 </template>
@@ -164,6 +213,22 @@
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
 
+  const initPage = function () {
+    // my info
+    ajax({
+      ins: this,
+      url: '/me/info',
+      params: {},
+      success: (d) => {
+        if (d && d.trainInfo) {
+          Object.assign(this, d.trainInfo)
+          this.exTime = d.trainInfo.todayDuration || 0
+          this.$apply()
+        }
+      }
+    })
+  }
+
   export default class Tag extends wepy.page {
     config = {
       disableScroll: true,
@@ -171,17 +236,39 @@
     }
     components = {}
     data = {
-      userInfo: {},
+      userInfo: {
+        nickName: ''
+      },
       starList: [1,1,1],
       totalTrainDay: 0,
       averageDayTime: 0,
-      totalCount: 0,
+      singleMostDuration: 0,
       continuousNum: 0,
       exTime: 0
+    }
+    getUserInfo(e) {
+      const that = this
+
+      that.$parent.getUserInfo(userInfo => {
+        if (userInfo) {
+          that.userInfo = userInfo
+          initPage.call(that)
+          that.$apply()
+        }
+      }, e.detail)
+    }
+    onShow() {
+      initPage.call(this)
+
+      const userInfo = this.$parent.globalData.userInfo || {}
+      this.userInfo = userInfo
     }
     methods = {
       onGoAboutMe() {
         this.$navigate('./aboutme', {hour: this.hour, minute: this.minute});
+      },
+      toBriefing() {
+        this.$navigate('./ex-briefing');
       }
     }
     onLoad() {
@@ -194,7 +281,6 @@
             url: '/me/info',
             params: {},
             success: (d) => {
-              console.log(d);
               Object.assign(this, d.trainInfo)
               this.exTime = d.trainInfo.todayDuration || 0
               this.$apply()

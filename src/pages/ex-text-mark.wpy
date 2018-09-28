@@ -1,0 +1,177 @@
+<style lang='scss'>
+  @import '../zanui/common';
+
+  page {
+    position: relative;
+    background: #eee;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .userinfo-avatar {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+  }
+  .user-mark {
+    position: absolute;
+    top: 15px;
+    right: 60px;
+    width: 201px;
+    height: auto;
+    line-height: 1.5;
+    padding: 10px;
+    background-color: #fff;
+    box-sizing: border-box;
+    font-size: 12px;
+    color: $gray-darker;
+  }
+  .w155 {
+    width: 155px
+  }
+  .user-mark:after {
+    content: " ";
+    position: absolute;
+    right: -5px;
+    top: 10px;
+    width: 10px;
+    height: 10px;
+    background-color: #fff;
+    z-index: 2;
+    transform: rotate(45deg);
+  }
+
+  .cancel-btn {
+    color: #fff;
+    border-radius: 20px;
+    width: 120px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    font-size: 13px;
+    background-color: $gray-dark;
+  }
+  .confirm-btn {
+    background-color: $light-orange;
+  }
+  .copy-btn {
+    position: absolute;
+    left: 50%;
+    bottom: 25px;
+    margin-left: -60px;
+  }
+  .user-mark-pannel {
+    position: absolute;
+    left: 0;
+    bottom: 84px;
+    width: 100%;
+    min-height: 100px;
+    border-top: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
+    padding: 10px 10px 15px 10px;
+    box-sizing: border-box;
+    text-align: left;
+    line-height: 1.5;
+    font-size: 12px;
+    color: $text-color;
+    background-color: #fff;
+  }
+</style>
+
+<template>
+  <view class="container">
+    <image class="userinfo-avatar" src="{{ userInfo.avatarUrl || '/images/aboutme-logo.png'}}" background-size="contain"/>
+    <view class="user-mark {{!exTime ? 'w155' : ''}}">
+      <view>{{text}}</view>
+      <view>感觉被舒服的身体包围。</view>
+    </view>
+
+    <view class="user-mark-pannel">
+      <view>
+        {{text}}
+      </view>
+      <view>感觉被舒服的身体包围。</view>
+    </view>
+
+    <view class="copy-btn cancel-btn confirm-btn" @tap="copy">
+      复制打卡信息
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import {ajax} from '../components/ajax.js'
+
+  export default class Tag extends wepy.page {
+    config = {
+      disableScroll: false,
+      navigationBarTitleText: '持一学院-精修1班'
+    }
+    components = {
+    }
+    data = {
+      userInfo: {},
+      exList: '',
+      exTime: 0,
+      continuousNum: 0,
+      text: ''
+    }
+    onGotUserInfo(e) {
+    }
+    methods = {
+      copy() {
+        wx.setClipboardData({
+          data: this.text + `\n感觉被舒服的身体包围。`,
+          success: function(res) {
+            wx.showToast({
+              title: '拷贝成功',
+              icon: 'error',
+              duration: 2000,
+              mask: true
+            })
+            setTimeout(_ => {
+              wx.navigateBack({ changed: true })
+            }, 1000)
+          }
+        })
+      }
+    }
+    onLoad() {
+      const that = this
+      const exTypeL = wx.getStorageSync('exType');
+      this.$parent.getUserInfo((userInfo) => {
+        if (userInfo) {
+          that.userInfo = userInfo
+        }
+        const exList = exTypeL.exList || ''
+        that.exList = exList.replace(' ', '-')
+        that.exTime = Math.abs(that.$parent.globalData['exTime']) || 0
+
+        ajax({
+          ins: that,
+          url: '/train/summary',
+          params: {},
+          success: (d) => {
+            let text = ''
+            const trainInfo = d.trainInfo
+            that.continuousNum = trainInfo.continuousNum || 0
+            if (that.exTime) {
+              text = `【${that.exList}${that.exTime}分钟，连续${that.continuousNum}天】`
+            } else {
+              text = `今日练习${trainInfo.todayTrainCount}次，共${trainInfo.todayDuration}分钟`
+            }
+            that.text = text
+
+            that.$apply()
+          }
+        })
+
+        this.$apply()
+      })
+    }
+  }
+</script>
