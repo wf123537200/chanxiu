@@ -1,12 +1,15 @@
-import wepy from 'wepy'
+import wepy from 'wepy';
+import getGlobalData from "./getGlobalData";
 
 export const ajax = function ({ins, url, params = {}, method = 'GET', success, fail}) {
   if(!ins) console.error('没有传入实体！');
-  let globalData = ins.globalData || ins.$parent.globalData;
+  let _global = getGlobalData(ins);
+  let globalData = _global.data;
   const {ajaxPerfix, resPerfix} = globalData;
 
   const d = wx.getStorageSync('token')
-  const token = url !== '/weixin/token' ? ins.accessToken || (ins.$parent ? ins.$parent.accessToken || d.accessToken || '' : '') : '';
+  //const token = url !== '/weixin/token' ? ins.accessToken || (ins.$parent ? ins.$parent.accessToken || d.accessToken || '' : '') : '';
+    const token = url !== '/weixin/token' ? _global.ins.accessToken || d.accessToken : "";
 
   wx.getNetworkType({
     success: (res) => {
