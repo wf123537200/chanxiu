@@ -28,7 +28,7 @@
                     </view>
 
                     <text class="total" wx:if="{{hasTrainInfo}}">共{{briefTrainInfo.trainNum}}人参与，人均{{briefTrainInfo.averageTime}}分钟</text>
-                    <text class="total" wx:else>暂无人参与禅修</text>
+                    <text class="total" wx:else>暂无人参与练习</text>
                 </view>
 
                 <view class="tab sub">
@@ -52,7 +52,7 @@
                             </view>
                         </view>
                     </block>
-                    <view class="no-records" wx:else>暂无人参与禅修</view>
+                    <view class="no-records" wx:else>暂无人参与练习</view>
                 </scroll-view>
 
                 <!--排行榜-->
@@ -70,12 +70,12 @@
                             </view>
                         </view>
                     </block>
-                    <view class="no-records" wx:else>暂无人参与禅修</view>
+                    <view class="no-records" wx:else>暂无人参与练习</view>
                 </scroll-view>
 
                 <!--中断榜-->
                 <scroll-view class="data-list flex-1" scroll-y wx:else="{{currentRankTab === 'break'}}">
-                    <block wx:if="{{hasTrainInfo}}">
+                    <block wx:if="{{brief.trainList3 && brief.trainList3.length > 0}}">
                         <view class="data-item" wx:key="index" wx:for="{{brief.trainList3}}">
                             <image class="avatar" src="{{item.avatarUrl}}"></image>
                             <view class="total">
@@ -88,36 +88,39 @@
                             </view>
                         </view>
                     </block>
-                    <view class="no-records" wx:else>暂无人参与禅修</view>
+                    <view class="no-records" wx:else>无人中断练习</view>
                 </scroll-view>
             </block>
 
             <!--记录-->
             <block wx:if="{{currentTab === 'record'}}">
                 <scroll-view class="data-list record flex-1" scroll-y @scrolltolower="getTrainRecords">
-                    <block wx:key="index" wx:for-index="index" wx:for-item="item" wx:for="{{trainRecords}}">
-                        <view class="date">
-                            <text>{{index}}</text>
-                        </view>
+                    <block wx:if="{{trainRecords && trainRecords.length > 0}}">
+                        <block wx:key="index" wx:for-index="index" wx:for-item="item" wx:for="{{trainRecords}}">
+                            <view class="date">
+                                <text>{{index}}</text>
+                            </view>
 
-                        <view class="data-item" wx:key="detailIndex" wx:for="{{item}}" wx:for-index="detailIndex" wx:for-item="detailItem">
-                            <image class="avatar" src="{{detailItem.avatarUrl}}"></image>
-                            <view class="total">
-                                <text class="nick-name">{{detailItem.nickName}}</text>
-                                <text class="acction">{{detailItem.title}}</text>
-                            </view>
-                            <view class="detail">
-                                <view class="time">{{detailItem.strCreateTime}}</view>
-                                <view class="every">{{detailItem.secondTitle}}</view>
-                            </view>
-                            <view class="diary {{contentVisibleInfo[detailItem.id] || (contentHeights[detailItem.id] && hasInitContentHeight[detailItem.id] && contentHeights[detailItem.id].boxHeight >= contentHeights[detailItem.id].textHeight) ? 'show' : ''}}" wx:if="{{detailItem.content}}">
-                                <view class="content-box {{hasInitContentHeight[detailItem.id] ? 'ready' : ''}}" data-id="{{detailItem.id}}">
-                                    <view class="text" data-id="{{detailItem.id}}">{{detailItem.content}}</view>
+                            <view class="data-item" wx:key="detailIndex" wx:for="{{item}}" wx:for-index="detailIndex" wx:for-item="detailItem">
+                                <image class="avatar" src="{{detailItem.avatarUrl}}"></image>
+                                <view class="total">
+                                    <text class="nick-name">{{detailItem.nickName}}</text>
+                                    <text class="acction">{{detailItem.title}}</text>
                                 </view>
-                                <text class="view-all" data-id="{{detailItem.id}}" @tap="showContent">查看全文</text>
+                                <view class="detail">
+                                    <view class="time">{{detailItem.strCreateTime}}</view>
+                                    <view class="every">{{detailItem.secondTitle}}</view>
+                                </view>
+                                <view class="diary {{contentVisibleInfo[detailItem.id] || (contentHeights[detailItem.id] && hasInitContentHeight[detailItem.id] && contentHeights[detailItem.id].boxHeight >= contentHeights[detailItem.id].textHeight) ? 'show' : ''}}" wx:if="{{detailItem.content}}">
+                                    <view class="content-box {{hasInitContentHeight[detailItem.id] ? 'ready' : ''}}" data-id="{{detailItem.id}}">
+                                        <view class="text" data-id="{{detailItem.id}}">{{detailItem.content}}</view>
+                                    </view>
+                                    <text class="view-all" data-id="{{detailItem.id}}" @tap="showContent">查看全文</text>
+                                </view>
                             </view>
-                        </view>
+                        </block>
                     </block>
+                    <view class="no-records" wx:else>暂无练习记录</view>
                 </scroll-view>
             </block>
         </view>
@@ -147,8 +150,8 @@
 
                 <block wx:elif="{{isAdministrator}}">
                     <view class="btn-box fixed to-bottom">
-                        <button class="btn-primary w-1-2" open-type="getUserInfo" @getuserinfo="exitClass">通报到群里</button>
-                        <button class="btn-secondary w-1-2" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind}}">提醒他们</button>
+                        <!--<button class="btn-primary w-1-2" open-type="getUserInfo" @getuserinfo="exitClass">通报到群里</button>-->
+                        <button class="btn-secondary" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind}}">提醒他们</button>
                     </view>
                 </block>
 

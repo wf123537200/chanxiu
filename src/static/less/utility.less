@@ -60,48 +60,61 @@
 .btn-disabled {
     display: inline-block;
     vertical-align: middle;
-    width: 358rpx;
-    height: 70rpx;
-    line-height: 70rpx;
-    box-sizing: border-box;
-    background-color: #b0976e;
-    color: #fff;
-    font-size: 27rpx;
     border-radius: 100rpx;
+    .btn-set;
+    overflow: hidden;
 
-    &.auto-width {
-        width: auto;
-        padding-left: 30rpx;
-        padding-right: 30rpx;
-    }
+    .btn-set() {
+        width: 358rpx;
+        height: 70rpx;
+        line-height: 70rpx;
+        box-sizing: border-box;
+        background-color: #b0976e;
+        color: #fff;
+        font-size: 27rpx;
 
-    &.w-1-2 {
-        width: 235rpx;
+        &.auto-width {
+            width: auto;
+            padding-left: 30rpx;
+            padding-right: 30rpx;
+        }
 
-        & + .btn-primary,
-        & + .btn-secondary {
-            margin-left: 40rpx;
+        &.w-1-2 {
+            width: 235rpx;
+
+            & + .btn-primary,
+            & + .btn-secondary {
+                margin-left: 40rpx;
+            }
+        }
+
+        &.small {
+            height: 56rpx;
+            line-height: 56rpx;
+            font-size: 24rpx;
+        }
+
+        &.mini {
+            height: 44rpx;
+            padding-left: 20rpx;
+            padding-right: 20rpx;
+            line-height: 44rpx;
+            font-size: 22rpx;
+        }
+
+        &.btn-plain {
+            border: 2rpx solid #b0976e;
+            background-color: transparent;
+            color: #b0976e;
         }
     }
 
-    &.small {
-        height: 56rpx;
-        line-height: 56rpx;
-        font-size: 24rpx;
-    }
-
-    &.mini {
-        height: 44rpx;
-        padding-left: 20rpx;
-        padding-right: 20rpx;
-        line-height: 44rpx;
-        font-size: 22rpx;
-    }
-
-    &.btn-plain {
-        border: 2rpx solid #b0976e;
-        background-color: transparent;
-        color: #b0976e;
+    button {
+        .btn-set;
+        width: 100% !important;
+        height: 100% !important;
+        border: none !important;
+        border-radius: 0 !important;
     }
 }
 

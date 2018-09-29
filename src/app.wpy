@@ -233,7 +233,8 @@
             this.use('promisify');
         }
 
-        onLaunch() {
+        onLaunch(options) {
+            this.globalData.scene = options.scene;
         }
 
         getUserInfo(cb, user) {

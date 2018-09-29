@@ -26,15 +26,15 @@
                     <image src="/images/classes/trigger.png" class="trigger" data-id="{{item.id}}" @tap.stop="showStudentsActions" wx:if="{{currentStudentId !== item.id && ((isMonitor && item.role === 0) || (isMonitor && item.role !== 0) || ((isMonitor && item.role !== 1) || (isViceMonitor && item.role === 0)) || (isMonitor || (isViceMonitor && item.role === 0)))}}"></image>
 
                     <view class="actions" @tap.stop="ghost" wx:if="{{currentStudentId === item.id}}">
-                        <view class="box">
-                            <view class="confirm" data-id="{{item.id}}" wx:if="{{confirm.studentId === item.id}}" @tap="sure">{{confirm.text}}</view>
-                            <block wx:else>
-                                <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="promoteStudent" wx:if="{{isMonitor && item.role === 0}}">设为班干部</button>
-                                <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="cancelStudent" wx:if="{{isMonitor && item.role !== 0}}">取消班干部</button>
-                                <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="replaceStudent" wx:if="{{(isMonitor && item.role !== 1) || (isViceMonitor && item.role === 0)}}">接任我</button>
-                                <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="deleteStudent" class="del" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">删除</button>
-                            </block>
-                        </view>
+                        <form class="confirm-box" data-id="{{item.id}}" wx:if="{{confirm.studentId === item.id}}" report-submit="true" @submit="confirmStudentOperate">
+                            <button class="confirm" form-type="submit">{{confirm.text}}</button>
+                        </form>
+                        <block wx:else>
+                            <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="promoteStudent" wx:if="{{isMonitor && item.role === 0}}">设为班干部</button>
+                            <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="cancelStudent" wx:if="{{isMonitor && item.role !== 0}}">取消班干部</button>
+                            <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="replaceStudent" wx:if="{{(isMonitor && item.role !== 1) || (isViceMonitor && item.role === 0)}}">接任我</button>
+                            <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="deleteStudent" class="del" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">删除</button>
+                        </block>
                     </view>
                 </view>
             </view>
@@ -46,10 +46,10 @@
                         <view class="new-student-actions">
                             <text wx:if="{{item.statusText}}">{{item.statusText}}</text>
                             <block wx:elif="{{isMonitor || isViceMonitor}}">
-                                <form @submit="refuseStudent">
+                                <form report-submit="true" @submit="refuseStudent">
                                     <button class="btn-secondary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">拒绝</button>
                                 </form>
-                                <form @submit="agreeStudent">
+                                <form report-submit="true" @submit="agreeStudent">
                                     <button class="btn-primary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">通过</button>
                                 </form>
                             </block>
@@ -178,40 +178,39 @@
         }
 
         .actions {
+            @height: 90rpx;
             position: absolute;
             top: 30rpx;
-            bottom: 30rpx;
-            z-index: 3;
             right: 0;
+            height: @height;
+            z-index: 3;
 
-            .box {
-                display: table;
-                height: 100%;
+            button,
+            .confirm {
+                float: left;
+                height: @height;
+                padding: 0 30rpx;
+                border: 2rpx solid #b0976e;
                 background-color: #fff;
-                border-collapse: collapse;
+                border-radius: 0;
+                line-height: @height;
+                font-size: 28rpx;
+                color: #b0976e;
+            }
 
-                button,
-                .confirm {
-                    display: table-cell;
-                    vertical-align: middle;
-                    padding: 0 30rpx;
-                    border: 2rpx solid #b0976e;
-                    background-color: transparent;
-                    border-radius: 0;
-                    font-size: 28rpx;
-                    color: #b0976e;
-                }
+            .confirm {
+                background-color: #e70606;
+                border-color: #e70606;
+                color: #fff;
+            }
 
-                .confirm {
-                    background-color: #e70606;
-                    border-color: #e70606;
-                    color: #fff;
-                }
+            .del {
+                background-color: #b0976e;
+                color: #fff;
+            }
 
-                .del {
-                    background-color: #b0976e;
-                    color: #fff;
-                }
+            button + button {
+                border-left: none;
             }
         }
     }
@@ -326,15 +325,41 @@
                 this.confirm.type = 0;
                 this.$apply();
             },
-            async sure (e) {
+            async confirmStudentOperate (e) {
                 const clear = () => {
                     this.clearConfirmInfo();
                     this.$apply();
                 };
 
+                let confirmType = this.confirm.type;
+                let msgType;
+
+                // 删除
+                if (confirmType === 0) {
+                    msgType = 9;
+                }
+                // 接任
+                else if (confirmType === 1) {
+                    msgType = 7;
+                }
+                // 取消班干部
+                else if (confirmType === 2) {
+                    msgType = 8;
+                }
+                // 设为班干部
+                else if (confirmType === 3) {
+                    msgType = 7;
+                }
+
+                await (collectFormId.bind(this)({
+                    formId: e.detail.formId,
+                    page: "/pages/class/students?id=" + this.classId,
+                    type: msgType
+                })).catch(() =>{});
+
                 await studentOperate.bind(this)({
                     studentId: this.confirm.studentId,
-                    type: this.confirm.type
+                    type: confirmType
                 });
 
                 wx.showToast({
@@ -347,6 +372,13 @@
             async refuseStudent (e) {
                 let id = e.currentTarget.dataset.id;
                 let type = 4;
+                let msgType = 3;
+
+                await (collectFormId.bind(this)({
+                    formId: e.detail.formId,
+                    page: "/pages/class/fail?id=" + this.classId,
+                    type: msgType
+                })).catch(() =>{});
 
                 await studentOperate.bind(this)({
                     studentId: id,
@@ -357,6 +389,13 @@
             async agreeStudent (e) {
                 let id = e.currentTarget.dataset.id;
                 let type = 5;
+                let msgType = 2;
+
+                await (collectFormId.bind(this)({
+                    formId: e.detail.formId,
+                    page: "/pages/class/welcome?id=" + this.classId,
+                    type: msgType
+                })).catch(() =>{});
 
                 await studentOperate.bind(this)({
                     studentId: id,
