@@ -1,5 +1,5 @@
 <template>
-  <repeat for="{{classes2}}" item="item">
+  <repeat for="{{classes}}" item="item">
     <navigator url="/pages/class/detail?id={{item.id}}" class="class" style="background-image: url({{bgImg}})">
       <text class="student-num">{{item.studentNum}}人</text>
 
@@ -79,7 +79,6 @@
 <script>
   import wepy from "wepy";
   import getGlobalData from "../../../components/getGlobalData";
-  //import bgImg from "../../../image-base64/class-item-bg";
 
   export default class extends wepy.component {
     props = {
@@ -89,22 +88,15 @@
       }
     };
 
-    computed = {
-        classes2 () {
-            const global = getGlobalData(this);
-            const {ajaxPerfix} = global.data;
-
-            return [...this.classes].map(n => {
-                n.logo = n.logo ? `${ajaxPerfix}${n.logo}` : "";
-                n.qrCodeUrl = n.qrCodeUrl ? `${ajaxPerfix}${n.qrCodeUrl}` : "";
-
-                return n;
-            });
-        }
-    };
-
     data = {
       bgImg: ""
     };
+
+    onLoad () {
+        const global = getGlobalData(this);
+        const {ajaxPerfix} = global.data;
+
+        this.bgImg = `${ajaxPerfix}/res/app/train.png`;
+    }
   }
 </script>

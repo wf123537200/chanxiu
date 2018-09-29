@@ -9,6 +9,10 @@ export default class extends wepy.mixin {
     };
 
     computed = {
+        // 待审核
+        isPending () {
+            return this.detail.status === 0;
+        },
         isMonitor () {
             const role = this.detail.role;
 
@@ -81,7 +85,7 @@ export default class extends wepy.mixin {
                 title: "班级已解散",
                 complete: () => {
                     wx.switchTab({
-                        url: "/pages/class/index"
+                        url: "/pages/class/list"
                     });
                 }
             });

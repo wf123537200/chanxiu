@@ -90,15 +90,17 @@
             });
         }
 
-        getOpenClasses = getOpenClasses;
+        async getOpenClasses() {
+            this.openedClasses = await getOpenClasses.bind(this)();
+        };
 
-        getMyClasses = getMyClasses;
+        async getMyClasses() {
+            this.myClasses = await getMyClasses.bind(this)();
+        };
 
         async onShow() {
             this.$parent.getUserInfo((userInfo) => {
                 this.userInfo = Object.assign({}, userInfo);
-                this.$apply();
-
                 this.addReadyCallback(this.getOpenClasses());
                 this.addReadyCallback(this.getMyClasses());
                 this.runReadyCallbacks();

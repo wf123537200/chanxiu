@@ -88,7 +88,7 @@
                             </view>
                         </view>
                     </block>
-                    <view class="no-records" wx:else>无人中断练习</view>
+                    <view class="no-records" wx:else>暂无人中断练习</view>
                 </scroll-view>
             </block>
 
@@ -120,48 +120,70 @@
                             </view>
                         </block>
                     </block>
-                    <view class="no-records" wx:else>暂无练习记录</view>
+                    <view class="no-records" wx:else>暂无人参与练习</view>
                 </scroll-view>
             </block>
         </view>
 
         <!--操作按钮-->
+        <!--简报-->
         <block wx:if="{{currentTab === 'brief'}}">
-            <block wx:if="{{currentRankTab === 'train'}}">
-                <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
-                    <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass">加入班级</button>
-                </view>
-
-                <block wx:else>
-                    <view class="btn-box fixed to-bottom">
-                        <button class="btn-primary" open-type="getUserInfo" @getuserinfo="exitClass">退出班级</button>
-                    </view>
-                </block>
-
-                <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
-                    <navigator url="/pages/class/index" open-type="switchTab">首页</navigator>
+            <block wx:if="{{isPending}}">
+                <view class="btn-box fixed to-bottom">
+                    <button class="btn-disabled">等待审核</button>
                 </view>
             </block>
-
-            <block wx:if="{{currentRankTab === 'break'}}">
-                <view class="btn-box fixed to-bottom join-class" wx:if="{{!isMyClass}}">
-                    <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass">加入班级</button>
+            <block wx:elif="{{!isMyClass}}">
+                <view class="btn-box fixed to-bottom join-class">
+                    <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass" wx:if="{{detail.remainingQuota > 0}}">加入班级</button>
+                    <button class="btn-disabled" wx:else>已满员</button>
                 </view>
-
-                <block wx:elif="{{isAdministrator}}">
-                    <view class="btn-box fixed to-bottom">
-                        <!--<button class="btn-primary w-1-2" open-type="getUserInfo" @getuserinfo="exitClass">通报到群里</button>-->
-                        <button class="btn-secondary" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind}}">提醒他们</button>
-                    </view>
-                </block>
-
-                <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
-                    <navigator url="/pages/class/index" open-type="switchTab">首页</navigator>
+            </block>
+            <block wx:elif="{{isMonitor || isViceMonitor}}">
+                <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
+                    <!--<button class="btn-primary w-1-2" open-type="getUserInfo">通报到群里</button>-->
+                    <button class="btn-secondary" open-type="share">邀请新同学</button>
+                </view>
+                <view class="btn-box fixed to-bottom" wx:elif="{{currentRankTab === 'rank'}}">
+                    <button class="btn-secondary" open-type="share">邀请新同学</button>
+                </view>
+                <view class="btn-box fixed to-bottom" wx:else>
+                    <!--<button class="btn-primary {{detail.isRemind ? '' : 'w-1-2'}}" open-type="getUserInfo">通报到群里</button>-->
+                    <button class="btn-secondary" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind}}">提醒他们</button>
+                </view>
+            </block>
+            <block wx:else>
+                <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
+                    <button class="btn-secondary" open-type="share">邀请新同学</button>
+                </view>
+            </block>
+        </block>
+        <!--记录-->
+        <block wx:else>
+            <block wx:if="{{isPending}}">
+                <view class="btn-box fixed to-bottom">
+                    <button class="btn-disabled">等待审核</button>
+                </view>
+            </block>
+            <block wx:elif="{{!isMyClass}}">
+                <view class="btn-box fixed to-bottom join-class">
+                    <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass" wx:if="{{detail.remainingQuota > 0}}">加入班级</button>
+                    <button class="btn-disabled" wx:else>已满员</button>
+                </view>
+            </block>
+            <block wx:else>
+                <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
+                    <button class="btn-secondary" open-type="share">邀请新同学</button>
                 </view>
             </block>
         </block>
 
-        <applyPopup :classId.sync="classId"></applyPopup>
+        <!--返回列表页-->
+        <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
+            <navigator url="/pages/class/list" open-type="switchTab">首页</navigator>
+        </view>
+
+        <applyPopup :classId.sync="classId" @onSubmit.user="onApply"></applyPopup>
         <remindPopup :classId.sync="classId" @onSubmit.user="markRemind"></remindPopup>
     </view>
 </template>
@@ -573,6 +595,10 @@
             },
             markRemind () {
                 this.detail.isRemind = true;
+            },
+            onApply () {
+                this.detail.status = 0;
+                this.$apply();
             }
         };
 
@@ -654,6 +680,12 @@
             });
         }
 
+        onShareAppMessage () {
+            wx.showShareMenu({
+                withShareTicket: true
+            });
+        }
+
         init () {
             this._trainRecords = [];
             this.trainRecordRequestCount = 0;
@@ -662,10 +694,8 @@
 
         onShow() {
             this.$parent.getUserInfo((userInfo) => {
-                this.userInfo = Object.assign({}, userInfo);
-                this.$apply();
-
                 this.init();
+                this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail());
                 this.addReadyCallback(this.getTrainList());
                 this.runReadyCallbacks();

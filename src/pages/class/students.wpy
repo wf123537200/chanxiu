@@ -11,6 +11,7 @@
         </view>
 
         <view class="tab-body flex-v flex-1 {{currentTab}}">
+            <!--所有同学-->
             <view class="students" wx:if="{{currentTab==='all'}}">
                 <view class="student" wx:for="{{students}}" wx:key="{{index}}">
                     <image class="avatar" src="{{item.avatarUrl}}"></image>
@@ -23,7 +24,7 @@
                         <text class="join-time">{{item.strCreateTime}}加入</text>
                     </view>
 
-                    <image src="/images/classes/trigger.png" class="trigger" data-id="{{item.id}}" @tap.stop="showStudentsActions" wx:if="{{currentStudentId !== item.id && ((isMonitor && item.role === 0) || (isMonitor && item.role !== 0) || ((isMonitor && item.role !== 1) || (isViceMonitor && item.role === 0)) || (isMonitor || (isViceMonitor && item.role === 0)))}}"></image>
+                    <image src="/images/classes/trigger.png" class="trigger" data-id="{{item.id}}" @tap.stop="showStudentsActions" wx:if="{{!item.isMe && currentStudentId !== item.id && ((isMonitor && item.role === 0) || (isMonitor && item.role !== 0) || (isMonitor || (isViceMonitor && item.role === 0)))}}"></image>
 
                     <view class="actions" @tap.stop="ghost" wx:if="{{currentStudentId === item.id}}">
                         <form class="confirm-box" data-id="{{item.id}}" wx:if="{{confirm.studentId === item.id}}" report-submit="true" @submit="confirmStudentOperate">
@@ -32,43 +33,52 @@
                         <block wx:else>
                             <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="promoteStudent" wx:if="{{isMonitor && item.role === 0}}">设为班干部</button>
                             <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="cancelStudent" wx:if="{{isMonitor && item.role !== 0}}">取消班干部</button>
-                            <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="replaceStudent" wx:if="{{(isMonitor && item.role !== 1) || (isViceMonitor && item.role === 0)}}">接任我</button>
+                            <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="replaceStudent" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">接任我</button>
                             <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="deleteStudent" class="del" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">删除</button>
                         </block>
                     </view>
                 </view>
             </view>
+            <!--新同学-->
             <view class="students" wx:if="{{currentTab==='new'}}">
-                <view class="student" wx:for="{{newStudents}}" wx:key="{{index}}">
-                    <image class="avatar" src="{{item.avatarUrl}}"></image>
-                    <view class="row">
-                        <text class="nick-name">{{item.nickName}}</text>
-                        <view class="new-student-actions">
-                            <text wx:if="{{item.statusText}}">{{item.statusText}}</text>
-                            <block wx:elif="{{isMonitor || isViceMonitor}}">
-                                <form report-submit="true" @submit="refuseStudent">
-                                    <button class="btn-secondary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">拒绝</button>
-                                </form>
-                                <form report-submit="true" @submit="agreeStudent">
-                                    <button class="btn-primary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">通过</button>
-                                </form>
-                            </block>
-                        </view>
-                    </view>
-                    <view class="row">
+                <block wx:if="{{newStudents.length > 0}}">
+                    <view class="student" wx:for="{{newStudents}}" wx:key="{{index}}">
+                        <image class="avatar" src="{{item.avatarUrl}}"></image>
                         <view class="row">
-                            <text class="train" wx:if="{{item.everyTrainDuration}}">{{item.everyTrainDuration}}</text>
-                            <text class="join-time">{{item.strCreateTime}}</text>
+                            <text class="nick-name">{{item.nickName}}</text>
+                            <view class="new-student-actions">
+                                <text wx:if="{{item.statusText}}">{{item.statusText}}</text>
+                                <block wx:elif="{{isMonitor || isViceMonitor}}">
+                                    <form report-submit="true" @submit="refuseStudent">
+                                        <button class="btn-secondary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">拒绝</button>
+                                    </form>
+                                    <form report-submit="true" @submit="agreeStudent">
+                                        <button class="btn-primary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">通过</button>
+                                    </form>
+                                </block>
+                            </view>
                         </view>
+                        <view class="row">
+                            <view class="row">
+                                <text class="train" wx:if="{{item.everyTrainDuration}}">{{item.everyTrainDuration}}</text>
+                                <text class="join-time">{{item.strCreateTime}}</text>
+                            </view>
 
-                        <view class="row intro">{{item.introduction}}</view>
+                            <view class="row intro">{{item.introduction}}</view>
+                        </view>
                     </view>
-                </view>
+                </block>
+                <view class="no-records" wx:else>暂无新同学</view>
             </view>
         </view>
 
+        <!--返回列表页-->
+        <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
+            <navigator url="/pages/class/list" open-type="switchTab">首页</navigator>
+        </view>
+
         <view class="btn-box fixed to-bottom" wx:if="{{isMyClass}}">
-            <button class="btn-primary" open-type="share">邀请</button>
+            <button class="btn-primary" open-type="share">邀请新同学</button>
         </view>
     </view>
 </template>
@@ -87,131 +97,138 @@
 
     .students {
         padding: 30rpx 40rpx;
-    }
 
-    .student {
-        position: relative;
-        padding: 30rpx 0;
-        overflow: hidden;
-
-        .row {
+        .student {
+            position: relative;
+            padding: 30rpx 0;
             overflow: hidden;
-        }
 
-        .avatar {
-            float: left;
-            width: 90rpx;
-            height: 90rpx;
-            margin-right: 20rpx;
-            border: 2rpx solid #b0976e;
-        }
-
-        .nick-name {
-            display: inline-block;
-            vertical-align: top;
-            line-height: 56rpx;
-            font-size: 28rpx;
-            color: #333;
-        }
-
-        .role {
-            display: inline-block;
-            vertical-align: top;
-            padding: 0 12rpx;
-            margin-left: 5rpx;
-            font-size: 20rpx;
-            line-height: 30rpx;
-            background-color: #b0976e;
-            color: #fff;
-            border-radius: 20rpx;
-        }
-
-        .new-student-actions {
-            float: right;
-
-            text {
-                color: #333;
-                line-height: 56rpx;
-                font-size: 28rpx;
+            .row {
+                overflow: hidden;
             }
 
-            button {
-                width: auto;
-                height: 52rpx;
-                line-height: 52rpx;
+            .avatar {
+                float: left;
+                width: 90rpx;
+                height: 90rpx;
+                margin-right: 20rpx;
+                border: 2rpx solid #b0976e;
+            }
 
-                &:not(:first-child){
-                    margin-left: 30rpx;
+            .nick-name {
+                display: inline-block;
+                vertical-align: top;
+                line-height: 56rpx;
+                font-size: 28rpx;
+                color: #333;
+            }
+
+            .role {
+                display: inline-block;
+                vertical-align: top;
+                padding: 0 12rpx;
+                margin-left: 5rpx;
+                font-size: 20rpx;
+                line-height: 30rpx;
+                background-color: #b0976e;
+                color: #fff;
+                border-radius: 20rpx;
+            }
+
+            .new-student-actions {
+                float: right;
+
+                text {
+                    color: #333;
+                    line-height: 56rpx;
+                    font-size: 28rpx;
+                }
+
+                button {
+                    width: auto;
+                    height: 52rpx;
+                    line-height: 52rpx;
+
+                    &:not(:first-child){
+                        margin-left: 30rpx;
+                    }
+                }
+            }
+
+            .train,
+            .join-time,
+            .intro {
+                display: block;
+                float: left;
+                margin-top: 5rpx;
+                font-size: 24rpx;
+                line-height: 30rpx;
+                color: #aaa;
+            }
+
+            .join-time {
+                float: right;
+            }
+
+            .intro {
+                float: none;
+                margin-top: 15rpx;
+                word-break: break-all;
+            }
+
+            .trigger {
+                position: absolute;
+                padding: 20rpx;
+                top: 10rpx;
+                right: -10rpx;
+                width: 35rpx;
+                height: 28rpx;
+                z-index: 2;
+            }
+
+            .actions {
+                @height: 90rpx;
+                position: absolute;
+                top: 30rpx;
+                right: 0;
+                height: @height;
+                z-index: 3;
+
+                button,
+                .confirm {
+                    float: left;
+                    height: @height;
+                    padding: 0 30rpx;
+                    border: 2rpx solid #b0976e;
+                    background-color: #fff;
+                    border-radius: 0;
+                    line-height: @height;
+                    font-size: 28rpx;
+                    color: #b0976e;
+                }
+
+                .confirm {
+                    background-color: #e70606;
+                    border-color: #e70606;
+                    color: #fff;
+                }
+
+                .del {
+                    background-color: #b0976e;
+                    color: #fff;
+                }
+
+                button + button {
+                    border-left: none;
                 }
             }
         }
 
-        .train,
-        .join-time,
-        .intro {
-            display: block;
-            float: left;
-            margin-top: 5rpx;
+        .no-records {
+            padding-top: 50rpx;
+            text-align: center;
             font-size: 24rpx;
-            line-height: 30rpx;
-            color: #aaa;
-        }
-
-        .join-time {
-            float: right;
-        }
-
-        .intro {
-            float: none;
-            margin-top: 15rpx;
-            word-break: break-all;
-        }
-
-        .trigger {
-            position: absolute;
-            padding: 20rpx;
-            top: 10rpx;
-            right: -10rpx;
-            width: 35rpx;
-            height: 28rpx;
-            z-index: 2;
-        }
-
-        .actions {
-            @height: 90rpx;
-            position: absolute;
-            top: 30rpx;
-            right: 0;
-            height: @height;
-            z-index: 3;
-
-            button,
-            .confirm {
-                float: left;
-                height: @height;
-                padding: 0 30rpx;
-                border: 2rpx solid #b0976e;
-                background-color: #fff;
-                border-radius: 0;
-                line-height: @height;
-                font-size: 28rpx;
-                color: #b0976e;
-            }
-
-            .confirm {
-                background-color: #e70606;
-                border-color: #e70606;
-                color: #fff;
-            }
-
-            .del {
-                background-color: #b0976e;
-                color: #fff;
-            }
-
-            button + button {
-                border-left: none;
-            }
+            color: #ccc;
         }
     }
 </style>
@@ -435,8 +452,6 @@
         onShow() {
             this.$parent.getUserInfo((userInfo) => {
                 this.userInfo = Object.assign({}, userInfo);
-                this.$apply();
-
                 this.addReadyCallback(this.getClassDetail());
                 this.addReadyCallback(this.getStudents());
                 this.runReadyCallbacks();

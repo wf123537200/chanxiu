@@ -152,7 +152,7 @@
                 'pages/ex-diary-add',
                 'pages/ex-text-mark',
                 'pages/class/create',
-                'pages/class/index',
+                'pages/class/list',
                 'pages/class/detail',
                 'pages/class/news',
                 'pages/class/students',
@@ -180,7 +180,7 @@
                         selectText: '练习',
                     },
                     {
-                        pagePath: 'pages/class/index',
+                        pagePath: 'pages/class/list',
                         selectedIconPath: './images/class-bar-active.png',
                         iconPath: './images/ex-bar.png',
                         text: '班级',

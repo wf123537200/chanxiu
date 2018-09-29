@@ -46,6 +46,7 @@
                 });
 
                 this.$emit("onSubmit");
+                this.$apply();
                 wx.showToast({
                     title: "提醒完成"
                 });
