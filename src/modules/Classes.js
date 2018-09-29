@@ -76,8 +76,7 @@ export async function joinClass() {
 
 export async function applyClass(params = {}) {
     params = Object.assign({
-        classId: this.classId,
-        pages: "/pages/class/detail?id=" + this.classId
+        classId: this.classId
     }, params);
 
     await ajax2promise({
@@ -109,7 +108,7 @@ export async function deleteClass() {
     await ajax2promise({
         ins: this,
         method: "POST",
-        url: "/class/space",
+        url: "/class/delete",
         params: {
             id: this.classId
         }

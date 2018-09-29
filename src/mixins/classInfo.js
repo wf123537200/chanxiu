@@ -60,8 +60,16 @@ export default class extends wepy.mixin {
                 }
             });
         },
-        async spaceClass () {
-            await this.spaceClass().catch(() => {
+        async deleteClass (e) {
+            let msgType = 10;
+
+            await (collectFormId.bind(this)({
+                formId: e.detail.formId,
+                page: "/pages/class/detail?id=" + this.classId,
+                type: msgType
+            })).catch(() =>{});
+
+            await this.deleteClass().catch(() => {
                 wx.showToast({
                     title: "操作失败"
                 });
@@ -102,15 +110,7 @@ export default class extends wepy.mixin {
         this.$apply();
     };
 
-    async deleteClass (e) {
-        let msgType = 10;
-
-        await (collectFormId.bind(this)({
-            formId: e.detail.formId,
-            page: "/pages/class/detail?id=" + this.classId,
-            type: msgType
-        })).catch(() =>{});
-
+    async deleteClass () {
         await deleteClass.bind(this)();
         this.$apply();
     };
