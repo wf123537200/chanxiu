@@ -6,7 +6,7 @@ export default class extends wepy.mixin {
             return this.$parent.globalData.scene;
         },
         bootFromMsg () {
-            return this.bootScene === 1007 || this.bootScene === 1008;
+            return this.bootScene === 1007 || this.bootScene === 1008 || this.bootScene === 1044;
         }
     };
 };

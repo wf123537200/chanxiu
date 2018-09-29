@@ -182,7 +182,7 @@
                     {
                         pagePath: 'pages/class/list',
                         selectedIconPath: './images/class-bar-active.png',
-                        iconPath: './images/ex-bar.png',
+                        iconPath: './images/class-bar.png',
                         text: '班级',
                         selectText: '班级'
                     },
@@ -235,6 +235,7 @@
 
         onLaunch(options) {
             this.globalData.scene = options.scene;
+            console.log("场景值：", this.globalData.scene);
         }
 
         getUserInfo(cb, user) {

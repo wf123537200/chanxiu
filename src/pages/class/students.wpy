@@ -77,9 +77,21 @@
             <navigator url="/pages/class/list" open-type="switchTab">首页</navigator>
         </view>
 
-        <view class="btn-box fixed to-bottom" wx:if="{{isMyClass}}">
+        <!--操作按钮-->
+        <block wx:if="{{isPending}}">
+            <view class="btn-box fixed to-bottom">
+                <button class="btn-disabled">等待审核</button>
+            </view>
+        </block>
+        <view class="btn-box fixed to-bottom" wx:elif="{{isMyClass}}">
             <button class="btn-primary" open-type="share">邀请新同学</button>
         </view>
+        <block wx:else>
+            <view class="btn-box fixed to-bottom join-class">
+                <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass" wx:if="{{detail.remainingQuota > 0}}">加入班级</button>
+                <button class="btn-disabled" wx:else>已满员</button>
+            </view>
+        </block>
     </view>
 </template>
 
