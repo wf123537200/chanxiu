@@ -456,6 +456,13 @@
         }
 
         onShareAppMessage () {
+            return {
+                title: `${this.userInfo.nickName}邀请你加入“${this.detail.name}”`,
+                path: "/pages/class/detail?id=" + this.classId
+            }
+        }
+
+        onLoad () {
             wx.showShareMenu({
                 withShareTicket: true
             });
