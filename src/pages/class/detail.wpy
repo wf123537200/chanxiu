@@ -17,9 +17,9 @@
             </view>
         </block>
         <block wx:elif="{{isMonitor}}">
-            <view class="btn-box fixed to-bottom">
-                <button class="btn-secondary" open-type="getUserInfo" @getuserinfo="spaceClass">解散班级</button>
-            </view>
+            <form class="btn-box fixed to-bottom" report-submit="true" @submit="deleteClass">
+                <button class="btn-secondary" open-type="getUserInfo" from-type="submit">解散班级</button>
+            </form>
         </block>
         <block wx:elif="{{!isMonitor}}">
             <view class="btn-box fixed to-bottom">

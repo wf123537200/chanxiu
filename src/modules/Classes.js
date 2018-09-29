@@ -105,7 +105,7 @@ export async function exitClass() {
 }
 
 // 解散
-export async function spaceClass() {
+export async function deleteClass() {
     await ajax2promise({
         ins: this,
         method: "POST",
