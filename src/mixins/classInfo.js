@@ -1,6 +1,6 @@
 import wepy from "wepy";
-//import getGlobalData from "../components/getGlobalData";
-import {getClassDetail, joinClass, exitClass, applyClass, spaceClass} from "../modules/Classes";
+import {collectFormId} from "../modules/Common";
+import {getClassDetail, joinClass, exitClass, applyClass, deleteClass} from "../modules/Classes";
 
 export default class extends wepy.mixin {
     data = {
@@ -60,8 +60,16 @@ export default class extends wepy.mixin {
                 }
             });
         },
-        async spaceClass () {
-            await this.spaceClass().catch(() => {
+        async deleteClass (e) {
+            let msgType = 10;
+
+            await (collectFormId.bind(this)({
+                formId: e.detail.formId,
+                page: "/pages/class/detail?id=" + this.classId,
+                type: msgType
+            })).catch(() =>{});
+
+            await this.deleteClass().catch(() => {
                 wx.showToast({
                     title: "操作失败"
                 });
@@ -81,13 +89,11 @@ export default class extends wepy.mixin {
     };
 
     async getClassDetail () {
-        //await this.getUserInfo();
         await getClassDetail.bind(this)();
         this.$apply();
     };
 
     async joinClass () {
-        //await this.getUserInfo();
         await joinClass.bind(this)();
         wx.navigateTo({
             url: "/pages/class/welcome?id=" + this.classId
@@ -95,20 +101,17 @@ export default class extends wepy.mixin {
     };
 
     async applyClass () {
-        //await this.getUserInfo();
         await applyClass.bind(this)();
         this.$apply();
     };
 
     async exitClass () {
-        //await this.getUserInfo();
         await exitClass.bind(this)();
         this.$apply();
     };
 
-    async spaceClass () {
-        //await this.getUserInfo();
-        await spaceClass.bind(this)();
+    async deleteClass () {
+        await deleteClass.bind(this)();
         this.$apply();
     };
 
