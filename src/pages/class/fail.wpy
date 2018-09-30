@@ -8,7 +8,7 @@
         <view class="encourage">请不要气馁，保持精进修习，可以让你找到合适的班级！</view>
 
         <view class="btn-box">
-            <navigator class="btn-primary w-1-2" open-type="switchTab" url="/pages/class/index">返回首页</navigator>
+            <navigator class="btn-primary w-1-2" open-type="switchTab" url="/pages/class/list">返回首页</navigator>
             <button class="btn-secondary w-1-2" @tap="joinClass">重新申请</button>
         </view>
 
@@ -95,8 +95,6 @@
         onShow () {
             this.$parent.getUserInfo((userInfo) => {
                 this.userInfo = Object.assign({}, userInfo);
-                this.$apply();
-
                 this.addReadyCallback(this.getClassDetail());
                 this.runReadyCallbacks();
             });

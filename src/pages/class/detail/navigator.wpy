@@ -1,24 +1,24 @@
 <template>
     <view class="nav-box">
-        <navigator url="/pages/class/news?id={{id}}" class="item {{nav==='news' ? 'on' : ''}}">
+        <navigator url="/pages/class/news?id={{id}}" open-type="redirect" class="item {{nav==='news' ? 'on' : ''}}">
             <image src="/images/classes/m1-active.png" wx:if="{{nav==='news'}}"></image>
             <image src="/images/classes/m1.png" wx:else></image>
             <text>动态</text>
         </navigator>
 
-        <!--<navigator hide url="/pages/class/detail?id={{id}}" class="item {{nav==='knowledge' ? 'on' : ''}}">-->
+        <!--<navigator hide url="/pages/class/detail?id={{id}}" open-type="redirect" class="item {{nav==='knowledge' ? 'on' : ''}}">-->
             <!--<image src="/images/classes/m2-active.png" wx:if="{{nav==='knowledge'}}"></image>-->
             <!--<image src="/images/classes/m2.png" wx:else></image>-->
             <!--<text>知识</text>-->
         <!--</navigator>-->
 
-        <navigator url="/pages/class/students?id={{id}}" class="item {{nav==='students' ? 'on' : ''}}">
+        <navigator url="/pages/class/students?id={{id}}" open-type="redirect" class="item {{nav==='students' ? 'on' : ''}}">
             <image src="/images/classes/m3-active.png" wx:if="{{nav==='students'}}"></image>
             <image src="/images/classes/m3.png" wx:else></image>
             <text>同学</text>
         </navigator>
 
-        <navigator url="/pages/class/detail?id={{id}}" class="item {{nav==='intro' ? 'on' : ''}}">
+        <navigator url="/pages/class/detail?id={{id}}" open-type="redirect" class="item {{nav==='intro' ? 'on' : ''}}">
             <image src="/images/classes/m4-active.png" wx:if="{{nav==='intro'}}"></image>
             <image src="/images/classes/m4.png" wx:else></image>
             <text>简介</text>

@@ -152,7 +152,7 @@
                 'pages/ex-diary-add',
                 'pages/ex-text-mark',
                 'pages/class/create',
-                'pages/class/index',
+                'pages/class/list',
                 'pages/class/detail',
                 'pages/class/news',
                 'pages/class/students',
@@ -180,9 +180,9 @@
                         selectText: '练习',
                     },
                     {
-                        pagePath: 'pages/class/index',
+                        pagePath: 'pages/class/list',
                         selectedIconPath: './images/class-bar-active.png',
-                        iconPath: './images/ex-bar.png',
+                        iconPath: './images/class-bar.png',
                         text: '班级',
                         selectText: '班级'
                     },
@@ -235,6 +235,7 @@
 
         onLaunch(options) {
             this.globalData.scene = options.scene;
+            console.log("场景值：", this.globalData.scene);
         }
 
         getUserInfo(cb, user) {

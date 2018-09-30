@@ -44,11 +44,11 @@
                     <view class="label required">加入条件</view>
                     <view class="content">
                         <radio-group name="addType" @change="onAddTypeChanged">
-                            <label class="radio {{addType === 0 ? 'checked' : ''}}">
+                            <label class="radio">
                                 <radio hidden value="0" checked="true" />
                                 <text>直接加入，无需确认</text>
                             </label>
-                            <label class="radio {{addType !== 0 ? 'checked' : ''}}">
+                            <label class="radio">
                                 <radio hidden value="1" />
                                 <text>邀请确认</text>
                             </label>
@@ -60,7 +60,7 @@
                     <view class="label">限额人数</view>
                     <view class="content">
                         <radio-group name="maxStudentNum" @change="onCountChanged">
-                            <label class="radio {{students === item ? 'checked' : ''}}" wx:for="{{studentSupported}}" wx:key="index">
+                            <label class="radio" wx:for="{{studentSupported}}" wx:key="index">
                                 <radio hidden value="{{item}}" checked="{{index === defaultCheckedStudent}}" />
                                 <text>{{item}}人</text>
                             </label>
@@ -220,7 +220,7 @@
                 color: #aaa;
             }
 
-            &.checked text {
+            radio[checked] + text {
                 border-color: #b0976e;
                 color: #b0976e;
             }
@@ -329,7 +329,7 @@
                 wx.showToast({
                     title: "创建成功",
                     complete () {
-                        wx.navigateTo({
+                        wx.redirectTo({
                             url: "/pages/class/detail?id=" + id
                         });
                     }

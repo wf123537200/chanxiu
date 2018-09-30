@@ -1,16 +1,19 @@
 <template>
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-    <view class="classes">
-        <openedClasses :classes.sync="openedClasses" />
-
-        <myClasses :classes.sync="myClasses" />
-    </view>
-
     <block wx:if="{{ready}}">
-        <view class="btn-create-class-box">
-            <button class="btn" plain="true" open-type="getUserInfo" @getuserinfo="create">创　　建</button>
+        <view class="classes">
+            <openedClasses :classes.sync="openedClasses" />
+            <myClasses :classes.sync="myClasses" />
         </view>
+
+        <view class="fixed to-bottom to-index-btn-box">
+            <navigator url="/pages/class/create" open-type="switchTab">创建</navigator>
+        </view>
+
+        <!--<view class="btn-create-class-box">-->
+            <!--<button class="btn" plain="true" open-type="getUserInfo" @getuserinfo="create">创　　建</button>-->
+        <!--</view>-->
     </block>
 </template>
 
@@ -90,15 +93,17 @@
             });
         }
 
-        getOpenClasses = getOpenClasses;
+        async getOpenClasses() {
+            this.openedClasses = await getOpenClasses.bind(this)();
+        };
 
-        getMyClasses = getMyClasses;
+        async getMyClasses() {
+            this.myClasses = await getMyClasses.bind(this)();
+        };
 
         async onShow() {
             this.$parent.getUserInfo((userInfo) => {
                 this.userInfo = Object.assign({}, userInfo);
-                this.$apply();
-
                 this.addReadyCallback(this.getOpenClasses());
                 this.addReadyCallback(this.getMyClasses());
                 this.runReadyCallbacks();

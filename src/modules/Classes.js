@@ -6,21 +6,43 @@ import ajax2promise from "../components/ajax2promise";
 import getGlobalData from "../components/getGlobalData";
 
 export async function getOpenClasses () {
-    this.openedClasses = await ajax2promise({
+    const global = getGlobalData(this);
+    const {ajaxPerfix} = global.data;
+
+    let classes = await ajax2promise({
         ins: this,
         url: "/class/opens"
     });
 
+    classes = classes.map((n) =>{
+        n.logo = n.logo ? `${ajaxPerfix}${n.logo}` : "";
+        n.qrCodeUrl = n.qrCodeUrl ? `${ajaxPerfix}${n.qrCodeUrl}` : "";
+
+        return n;
+    });
+
     this.$apply();
+    return classes;
 }
 
 export async function getMyClasses() {
-    this.myClasses = await ajax2promise({
+    const global = getGlobalData(this);
+    const {ajaxPerfix} = global.data;
+
+    let classes = await ajax2promise({
         ins: this,
         url: "/class/myadds"
     });
 
+    classes = classes.map((n) =>{
+        n.logo = n.logo ? `${ajaxPerfix}${n.logo}` : "";
+        n.qrCodeUrl = n.qrCodeUrl ? `${ajaxPerfix}${n.qrCodeUrl}` : "";
+
+        return n;
+    });
+
     this.$apply();
+    return classes;
 }
 
 export async function createClass(params = {}) {

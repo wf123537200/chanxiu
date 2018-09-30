@@ -110,7 +110,7 @@
     export default class extends wepy.page {
         config = {
             disableScroll: true,
-            navigationBarTitleText: ""
+            navigationBarTitleText: "班级二维码"
         };
 
         components = {
@@ -164,8 +164,6 @@
         onShow() {
             this.$parent.getUserInfo((userInfo) => {
                 this.userInfo = Object.assign({}, userInfo);
-                this.$apply();
-
                 this.addReadyCallback(this.getClassDetail());
                 this.runReadyCallbacks();
             });
