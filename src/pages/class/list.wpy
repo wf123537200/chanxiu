@@ -7,13 +7,9 @@
             <myClasses :classes.sync="myClasses" />
         </view>
 
-        <view class="fixed to-bottom to-index-btn-box">
-            <navigator url="/pages/class/create" open-type="switchTab">创建</navigator>
+        <view class="fixed to-bottom switch-page-btn-box">
+            <navigator url="/pages/class/create">创建</navigator>
         </view>
-
-        <!--<view class="btn-create-class-box">-->
-            <!--<button class="btn" plain="true" open-type="getUserInfo" @getuserinfo="create">创　　建</button>-->
-        <!--</view>-->
     </block>
 </template>
 

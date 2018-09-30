@@ -1,34 +1,55 @@
 <template>
     <view class="info-box">
-        <view class="base">
-            <image class="logo" src="{{detail.logo}}" mode="aspectFill"/>
-            <text class="name text-nowrap text-ellipsis">{{detail.name}}</text>
-            <text class="desc">{{detail.brief}}</text>
+        <view class="base {{isMonitor ? 'editable' : ''}}">
+            <navigator class="field" url="/pages/class/detail-base-info?id={{id}}" wx:if="{{isMonitor}}">
+                <image class="logo" src="{{detail.logo}}" mode="aspectFill"/>
+                <view class="content">
+                    <view class="name text-nowrap text-ellipsis">{{detail.name}}</view>
+                    <view class="desc">{{detail.brief}}</view>
+                </view>
+                <image class="more" src="/images/more-gray.png"></image>
+            </navigator>
+            <view class="field" wx:else>
+                <image class="logo" src="{{detail.logo}}" mode="aspectFill"/>
+                <view class="content">
+                    <view class="name text-nowrap text-ellipsis">{{detail.name}}</view>
+                    <view class="desc">{{detail.brief}}</view>
+                </view>
+            </view>
+
             <button class="btn-invite btn-secondary mini auto-width" open-type="share" wx:if="{{isMyClass}}">邀请</button>
         </view>
 
-        <navigator url="/pages/class/qr?id={{id}}" class="field" wx:if="{{detail.qrCodeUrl}}">
+        <navigator class="field" url="/pages/class/qr?id={{id}}">
             <text class="label">班级二维码</text>
             <view class="content">
                 <image class="qr" src="/images/qr.png"></image>
-                <image class="more" src="/images/more-gray.png"></image>
             </view>
+            <image class="more" src="/images/more-gray.png"></image>
+        </navigator>
+
+        <navigator class="field" url="/pages/class/update?id={{id}}&action=3" wx:if="{{isMonitor}}">
+            <text class="label">加入方式</text>
+            <view class="content">
+                <text>{{addTypeAndRemaining}}</text>
+            </view>
+            <image class="more" src="/images/more-gray.png"></image>
         </navigator>
         <view class="field" wx:else>
-            <text class="label">班级二维码</text>
-            <view class="content">
-                <text>无</text>
-            </view>
-        </view>
-
-        <view class="field">
             <text class="label">加入方式</text>
             <view class="content">
                 <text>{{addTypeAndRemaining}}</text>
             </view>
         </view>
 
-        <view class="field">
+        <navigator class="field" url="/pages/class/update?id={{id}}&action=4" wx:if="{{isMonitor}}">
+            <text class="label">是否支持加群</text>
+            <view class="content">
+                <text>{{isSupportAddText}}</text>
+            </view>
+            <image class="more" src="/images/more-gray.png"></image>
+        </navigator>
+        <view class="field" wx:else>
             <text class="label">是否支持加群</text>
             <view class="content">
                 <text>{{isSupportAddText}}</text>
@@ -41,53 +62,61 @@
     @import (reference) "../../../static/less/utility";
 
     .info-box {
-        padding: 40rpx 40rpx 0;
+        padding-top: 20rpx;
         background-color: #fff;
 
         .base {
             position: relative;
-            margin-bottom: 15rpx;
-            overflow: hidden;
 
-            .logo {
-                float: left;
-                width: 120rpx;
-                height: 120rpx;
-                margin-right: 30rpx;
-                border: 1px solid #666;
+            .content {
+                align-self: start;
+                text-align: left !important;
             }
 
-            .name {
-                display: block;
-                margin-right: 120rpx;
-                line-height: 46rpx;
-                font-size: 26rpx;
-                font-weight: bold;
-                color: #333;
-                overflow: hidden;
-            }
-
-            .desc {
-                display: block;
-                margin-top: 10rpx;
-                margin-right: 120rpx;
-                font-size: 24rpx;
-                line-height: 34rpx;
-                color: #aaa;
-                overflow: hidden;
-            }
-
-            .btn-invite {
-                position: absolute;
-                right: 0;
-                top: 0;
+            &.editable {
+                .btn-invite {
+                    right: 60rpx;
+                }
             }
         }
 
+        .logo {
+            width: 120rpx;
+            height: 120rpx;
+            margin-right: 30rpx;
+            border: 1px solid #666;
+        }
+
+        .name {
+            margin-right: 120rpx;
+            line-height: 46rpx;
+            font-size: 26rpx;
+            font-weight: bold;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .desc {
+            margin-top: 10rpx;
+            margin-right: 120rpx;
+            font-size: 24rpx;
+            line-height: 34rpx;
+            color: #aaa;
+            overflow: hidden;
+        }
+
+        .btn-invite {
+            position: absolute;
+            right: 40rpx;
+            top: 20rpx;
+        }
+
         .field {
-            .flex-h;
-            padding-top: 20rpx;
-            padding-bottom: 20rpx;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            align-content: center;
+            padding: 20rpx 40rpx;
             line-height: 40rpx;
 
             .label {
@@ -103,20 +132,21 @@
             }
         }
 
-        .qr, .more {
-            display: inline-block;
-            vertical-align: middle;
-        }
+        /*.qr, .more {*/
+            /*display: inline-block;*/
+            /*vertical-align: middle;*/
+        /*}*/
 
         .qr {
             width: 40rpx;
             height: 40rpx;
-            margin-right: 15rpx;
+            vertical-align: middle;
         }
 
         .more{
             width: 18rpx;
             height: 18rpx;
+            margin-left: 15rpx;
         }
     }
 </style>

@@ -179,8 +179,8 @@
         </block>
 
         <!--返回列表页-->
-        <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
-            <navigator url="/pages/class/list" open-type="switchTab">首页</navigator>
+        <view class="fixed to-bottom switch-page-btn-box" wx:if="{{bootFromMsg}}">
+            <button @tap="gotoClassListPage">首页</button>
         </view>
 
         <applyPopup :classId.sync="classId" @onSubmit.user="onApply"></applyPopup>
@@ -377,7 +377,7 @@
     import classInfo from "../../mixins/classInfo";
     import {getTrainList, getTrainRanks, getInterrupts, getTrainRecords} from "../../modules/Classes";
     import ready from "../../mixins/ready";
-    import env from "../../mixins/env";
+    import share from "../../mixins/boot";
 
     import nav from "./detail/navigator";
     import login from "../../components/login";
@@ -446,7 +446,7 @@
             contentVisibleInfo: {}
         };
 
-        mixins = [ready, classInfo, env];
+        mixins = [ready, classInfo, share];
 
         computed = {
             trainTimeTypeText () {
@@ -680,23 +680,17 @@
             });
         }
 
-        onShareAppMessage () {
-            return {
-                title: `${this.userInfo.nickName}邀请你加入“${this.detail.name}”`,
-                path: "/pages/class/detail?id=" + this.classId
-            }
-        }
-
-        onLoad () {
-            wx.showShareMenu({
-                withShareTicket: true
-            });
-        }
-
         init () {
             this._trainRecords = [];
             this.trainRecordRequestCount = 0;
             this.contentHeights = {};
+        }
+
+        onShareAppMessage () {
+            return {
+                title: `${this.userInfo.nickName}邀请你加入“${this.detail.name}”`,
+                path: "/pages/class/detail?_f=1&id=" + this.classId
+            }
         }
 
         onShow() {

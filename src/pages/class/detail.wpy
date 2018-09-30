@@ -7,7 +7,7 @@
         <info class="classInfo" :id.sync="classId" :detail.sync="detail"></info>
 
         <view class="intro">
-            <intro :detail.sync="detail"></intro>
+            <intro :detail.sync="detail" :isMonitor.sync="isMonitor"></intro>
         </view>
 
         <!--操作按钮-->
@@ -17,9 +17,9 @@
             </view>
         </block>
         <block wx:elif="{{isMonitor}}">
-            <form class="btn-box fixed to-bottom" report-submit="true" @submit="deleteClass">
-                <button class="btn-primary" open-type="getUserInfo" form-type="submit">解散班级</button>
-            </form>
+            <view class="btn-box fixed to-bottom">
+                <button class="btn-primary" open-type="getUserInfo" @getuserinfo="showDeleteClassPopup">解散班级</button>
+            </view>
         </block>
         <block wx:elif="{{isMyClass}}">
             <view class="btn-box fixed to-bottom">
@@ -34,12 +34,13 @@
         </block>
 
         <!--返回列表页-->
-        <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
-            <navigator url="/pages/class/list" open-type="switchTab">首页</navigator>
+        <view class="fixed to-bottom switch-page-btn-box" wx:if="{{bootFromMsg}}">
+            <button @tap="gotoClassListPage">首页</button>
         </view>
     </block>
 
     <applyPopup :classId.sync="classId" @onSubmit.user="onApply"></applyPopup>
+    <deleteClassPopup :classId.sync="classId"></deleteClassPopup>
 </template>
 
 <style lang="less">
@@ -68,10 +69,11 @@
     import wepy from "wepy";
     import ready from "../../mixins/ready";
     import classInfo from "../../mixins/classInfo";
-    import env from "../../mixins/env";
+    import boot from "../../mixins/boot";
 
-    import applyPopup from "./detail/apply-popup";
     import login from "../../components/login";
+    import applyPopup from "./detail/apply-popup";
+    import deleteClassPopup from "./detail/delete-class-popup";
     import nav from "./detail/navigator";
     import info from "./detail/info";
     import intro from "./detail/intro";
@@ -87,6 +89,7 @@
             info,
             intro,
             applyPopup,
+            deleteClassPopup,
             login
         };
 
@@ -94,7 +97,7 @@
             userInfo: {}
         };
 
-        mixins = [ready, classInfo, env];
+        mixins = [ready, classInfo, boot];
 
         methods = {
             onApply () {
@@ -114,14 +117,8 @@
         onShareAppMessage () {
             return {
                 title: `${this.userInfo.nickName}邀请你加入“${this.detail.name}”`,
-                path: "/pages/class/detail?id=" + this.classId
+                path: "/pages/class/detail?_f=1&id=" + this.classId
             }
-        }
-
-        onLoad () {
-            wx.showShareMenu({
-                withShareTicket: true
-            });
         }
 
         onShow() {

@@ -1,11 +1,11 @@
 <template>
-    <popup title="中断提醒" @onHide.user="clearFormData">
+    <popup title="确认解散班级">
         <form report-submit="true" @submit="submit" @reset="reset">
-            <textarea class="textarea" value="{{message}}" name="message" placeholder="跟TA说两句，激励一下TA。最多30字。" @input="updateMessage"></textarea>
+            <text>确定解散班级？</text>
 
             <view class="btn-box popup-btn-box">
                 <button class="btn-secondary" form-type="reset">取消</button>
-                <button class="btn-primary" form-type="submit">发送提醒</button>
+                <button class="btn-primary" form-type="submit">解散</button>
             </view>
         </form>
     </popup>
@@ -13,7 +13,7 @@
 
 <script>
     import wepy from "wepy";
-    import {remind} from "../../../modules/Classes";
+    import {deleteClass} from "../../../modules/Classes";
     import {collectFormId} from "../../../modules/Common";
 
     import popup from "../../../components/zan-popup-a";
@@ -28,39 +28,38 @@
         };
 
         data = {
-            message: ""
+            //message: ""
         };
 
         methods = {
             async submit (e) {
-                let msgType = 2;
+                let msgType = 10;
 
                 await (collectFormId.bind(this)({
                     formId: e.detail.formId,
-                    page: "/pages/class/students?_f=1&id=" + this.classId,
+                    page: "/pages/class/detail?id=" + this.classId,
                     type: msgType
                 })).catch(() =>{});
 
-                await this.remind({
-                    message: this.message
+                await deleteClass.bind(this)().catch(() => {
+                    wx.showToast({
+                        title: "操作失败"
+                    });
+
+                    throw "班级解散失败";
                 });
 
-                this.$emit("onSubmit");
-                this.$apply();
                 wx.showToast({
-                    title: "提醒完成"
+                    title: "班级已解散",
+                    complete: () => {
+                        wx.switchTab({
+                            url: "/pages/class/list"
+                        });
+                    }
                 });
-                this.hide();
             },
             reset () {
                 this.hide();
-                this.clearFormData();
-            },
-            updateMessage (e) {
-                this.message = e.detail.value;
-            },
-            clearFormData () {
-                this.clearFormData();
             },
             show () {
                 this.show();
@@ -70,10 +69,6 @@
             }
         };
 
-        clearFormData () {
-            this.message = "";
-        }
-
         show () {
             this.$invoke("popup", "show");
         }
@@ -81,7 +76,5 @@
         hide () {
             this.$invoke("popup", "hide");
         }
-
-        remind = remind;
     }
 </script>

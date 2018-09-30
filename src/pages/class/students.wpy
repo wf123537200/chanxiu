@@ -72,11 +72,6 @@
             </view>
         </view>
 
-        <!--返回列表页-->
-        <view class="fixed to-bottom to-index-btn-box" wx:if="{{bootFromMsg}}">
-            <navigator url="/pages/class/list" open-type="switchTab">首页</navigator>
-        </view>
-
         <!--操作按钮-->
         <block wx:if="{{isPending}}">
             <view class="btn-box fixed to-bottom">
@@ -92,6 +87,11 @@
                 <button class="btn-disabled" wx:else>已满员</button>
             </view>
         </block>
+
+        <!--返回列表页-->
+        <view class="fixed to-bottom switch-page-btn-box" wx:if="{{bootFromMsg}}">
+            <button @tap="gotoClassListPage">首页</button>
+        </view>
     </view>
 </template>
 
@@ -251,7 +251,7 @@
     import {getStudents, getNewStudents, studentOperate} from "../../modules/Classes";
     import {collectFormId} from "../../modules/Common";
     import ready from "../../mixins/ready";
-    import env from "../../mixins/env";
+    import boot from "../../mixins/boot";
 
     import nav from "./detail/navigator";
     import login from "../../components/login";
@@ -290,7 +290,7 @@
             userInfo: {}
         };
 
-        mixins = [ready, classInfo, env];
+        mixins = [ready, classInfo, boot];
 
         watch = {
             async currentTab (value, oldValue) {
@@ -382,7 +382,7 @@
 
                 await (collectFormId.bind(this)({
                     formId: e.detail.formId,
-                    page: "/pages/class/students?id=" + this.classId,
+                    page: "/pages/class/students?_f=1&id=" + this.classId,
                     type: msgType
                 })).catch(() =>{});
 
@@ -458,14 +458,8 @@
         onShareAppMessage () {
             return {
                 title: `${this.userInfo.nickName}邀请你加入“${this.detail.name}”`,
-                path: "/pages/class/detail?id=" + this.classId
+                path: "/pages/class/detail?_f=1&id=" + this.classId
             }
-        }
-
-        onLoad () {
-            wx.showShareMenu({
-                withShareTicket: true
-            });
         }
 
         onShow() {

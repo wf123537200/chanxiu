@@ -1,12 +1,18 @@
 <template>
     <view class="intro-box">
-        <text class="header">详细介绍</text>
+        <view class="edit-header" @tap="update" wx:if="{{isMonitor}}">
+            <text class="header">详细介绍</text>
+            <image class="more" src="/images/more-gray.png"></image>
+        </view>
+        <text class="header" wx:else>详细介绍</text>
 
         <scroll-view class="content" scroll-y="true">{{detail.detail || "暂无"}}</scroll-view>
     </view>
 </template>
 
 <style lang="less">
+    @import (reference) "../../../static/less/utility";
+
     .intro-box {
         position: relative;
         height: 100%;
@@ -20,6 +26,16 @@
             line-height: 2;
         }
 
+        .edit-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            .header {
+                .flex-1;
+            }
+        }
+
         .content {
             position: absolute;
             width: auto;
@@ -30,6 +46,12 @@
             font-size: 24rpx;
             line-height: 40rpx;
             color: #aaa;
+        }
+
+        .more{
+            width: 18rpx;
+            height: 18rpx;
+            margin-left: 15rpx;
         }
     }
 </style>
@@ -42,7 +64,19 @@
             detail: {
                 type: Object,
                 default: {}
+            },
+            isMonitor: {
+                type: Boolean,
+                default: false
             }
         };
+
+        methods = {
+            update () {
+                wx.navigateTo({
+                    url: `/pages/class/update?id=${this.detail.id}&action=5`
+                });
+            }
+        }
     }
 </script>
