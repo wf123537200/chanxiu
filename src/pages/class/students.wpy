@@ -49,11 +49,11 @@
                             <view class="new-student-actions">
                                 <text wx:if="{{item.statusText}}">{{item.statusText}}</text>
                                 <block wx:elif="{{isMonitor || isViceMonitor}}">
-                                    <form report-submit="true" @submit="refuseStudent">
-                                        <button class="btn-secondary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">拒绝</button>
+                                    <form report-submit="true" data-id="{{item.id}}" @submit="refuseStudent">
+                                        <button class="btn-secondary" open-type="getUserInfo" form-type="submit">拒绝</button>
                                     </form>
-                                    <form report-submit="true" @submit="agreeStudent">
-                                        <button class="btn-primary" data-id="{{item.id}}" open-type="getUserInfo" form-type="submit">通过</button>
+                                    <form report-submit="true" data-id="{{item.id}}" @submit="agreeStudent">
+                                        <button class="btn-primary" open-type="getUserInfo" form-type="submit">通过</button>
                                     </form>
                                 </block>
                             </view>
@@ -100,11 +100,15 @@
 
     page {
         .full-height;
-        background-color: #fff;
+        background-color: #eee;
     }
 
     .tab {
-        border-top: 2rpx solid #eee;
+        margin-top: 18rpx;
+    }
+
+    .tab-body {
+        background-color: #fff;
     }
 
     .students {
@@ -160,10 +164,10 @@
                     width: auto;
                     height: 52rpx;
                     line-height: 52rpx;
+                }
 
-                    &:not(:first-child){
-                        margin-left: 30rpx;
-                    }
+                form:not(:first-child){
+                    margin-left: 30rpx;
                 }
             }
 
@@ -356,6 +360,7 @@
             },
             async confirmStudentOperate (e) {
                 const clear = () => {
+                    this.clearCurrentStudentId();
                     this.clearConfirmInfo();
                     this.$apply();
                 };
@@ -396,6 +401,7 @@
                 });
 
                 clear();
+                this.getClassDetail();
                 this.getStudents();
             },
             async refuseStudent (e) {
@@ -463,11 +469,14 @@
         }
 
         onShow() {
-            this.$parent.getUserInfo((userInfo) => {
+            this.$parent.getUserInfo(async (userInfo) => {
                 this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail());
                 this.addReadyCallback(this.getStudents());
-                this.runReadyCallbacks();
+                await this.runReadyCallbacks();
+                wx.setNavigationBarTitle({
+                    title: this.detail.name
+                });
             });
         }
     }

@@ -7,7 +7,19 @@
         <info class="classInfo" :id.sync="classId" :detail.sync="detail"></info>
 
         <view class="intro">
-            <intro :detail.sync="detail" :isMonitor.sync="isMonitor"></intro>
+            <view class="intro-box">
+                <navigator url="/pages/class/update?id={{detail.id}}&action=5" class="header" wx:if="{{isMonitor}}">
+                    <text>详细介绍</text>
+                    <image class="more" src="/images/more-gray.png"></image>
+                </navigator>
+                <view class="header" wx:else>
+                    <text>详细介绍</text>
+                </view>
+
+                <scroll-view class="content" scroll-y="true">
+                    <text space="nbsp">{{detail.detail}}</text>
+                </scroll-view>
+            </view>
         </view>
 
         <!--操作按钮-->
@@ -18,7 +30,7 @@
         </block>
         <block wx:elif="{{isMonitor}}">
             <view class="btn-box fixed to-bottom">
-                <button class="btn-primary" open-type="getUserInfo" @getuserinfo="showDeleteClassPopup">解散班级</button>
+                <button class="btn-secondary" open-type="getUserInfo" @getuserinfo="showDeleteClassPopup">解散班级</button>
             </view>
         </block>
         <block wx:elif="{{isMyClass}}">
@@ -61,7 +73,43 @@
         margin-top: 20rpx;
     }
 
-    .join-class {
+    .intro-box {
+        position: relative;
+        height: 100%;
+        padding-top: 10rpx;
+        box-sizing: border-box;
+        background-color: #fff;
+
+        .header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 10rpx 40rpx;
+            font-size: 26rpx;
+            line-height: 2;
+
+            text {
+                .flex-1;
+            }
+        }
+
+        .content {
+            position: absolute;
+            width: auto;
+            top: 20rpx + 26rpx * 2 + 20rpx;
+            left: 40rpx;
+            right: 40rpx;
+            bottom: 30rpx;
+            font-size: 24rpx;
+            line-height: 40rpx;
+            color: #aaa;
+        }
+
+        .more{
+            width: 18rpx;
+            height: 18rpx;
+            margin-left: 15rpx;
+        }
     }
 </style>
 
@@ -76,7 +124,6 @@
     import deleteClassPopup from "./detail/delete-class-popup";
     import nav from "./detail/navigator";
     import info from "./detail/info";
-    import intro from "./detail/intro";
 
     export default class extends wepy.page {
         config = {
@@ -87,7 +134,6 @@
         components = {
             nav,
             info,
-            intro,
             applyPopup,
             deleteClassPopup,
             login

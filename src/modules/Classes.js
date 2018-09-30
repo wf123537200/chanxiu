@@ -119,6 +119,8 @@ export async function getClassDetail(fix = true) {
         }
     }
 
+    detail.detail = detail.detail.replace(/\n/g, "\n");
+
     this.detail = detail;
     this.$apply();
 }

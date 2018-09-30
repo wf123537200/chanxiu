@@ -149,7 +149,8 @@
                 </view>
                 <view class="btn-box fixed to-bottom" wx:else>
                     <!--<button class="btn-primary {{detail.isRemind ? '' : 'w-1-2'}}" open-type="getUserInfo">通报到群里</button>-->
-                    <button class="btn-secondary" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind}}">提醒他们</button>
+                    <button class="btn-secondary" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind && trainRecords && trainRecords.length > 0}}">提醒他们</button>
+                    <button class="btn-primary" open-type="share" wx:else>邀请新同学</button>
                 </view>
             </block>
             <block wx:else>
@@ -694,12 +695,15 @@
         }
 
         onShow() {
-            this.$parent.getUserInfo((userInfo) => {
+            this.$parent.getUserInfo(async (userInfo) => {
                 this.init();
                 this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail());
                 this.addReadyCallback(this.getTrainList());
-                this.runReadyCallbacks();
+                await this.runReadyCallbacks();
+                wx.setNavigationBarTitle({
+                    title: this.detail.name
+                });
             });
         }
     }

@@ -67,7 +67,18 @@
         data = {
             openedClasses: [],
             myClasses: [],
-            userInfo: {}
+            userInfo: {},
+            currentTab: "all",
+            tab: [
+                {
+                    id: "all",
+                    text: "所有开放班级"
+                },
+                {
+                    id: "my",
+                    text: "我加入的班级"
+                }
+            ]
         };
 
         mixins = [ready];

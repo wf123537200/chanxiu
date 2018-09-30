@@ -17,8 +17,8 @@
             <image class="more" src="/images/more-gray.png"></image>
         </navigator>
 
-        <view class="field desc" url="/pages/class/update?id={{detail.id}}&action=2">
-            <navigator class="header">
+        <view class="field desc">
+            <navigator class="header" url="/pages/class/update?id={{detail.id}}&action=2">
                 <text class="label">一句话介绍</text>
                 <image class="more" src="/images/more-gray.png"></image>
             </navigator>

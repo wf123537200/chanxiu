@@ -19,6 +19,7 @@ export default class extends wepy.mixin {
 
     async runReadyCallbacks() {
         wx.showLoading({
+            title: "加载中..",
             mask: true
         });
         await Promise.all(this.readyCallbacks);
