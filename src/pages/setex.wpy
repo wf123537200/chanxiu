@@ -620,6 +620,7 @@
 
 <script>
   import wepy from 'wepy'
+  import moment from 'moment'
   import zanPop from '../components/zan-popup'
   import {ajax} from '../components/ajax.js'
 
@@ -655,6 +656,10 @@
         url: '/train/summary',
         params: {},
         success: (d) => {
+          const strLastTime = d.trainInfo.strLastTime
+          if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
+            d.trainInfo.continuousNum = 0
+          }
           Object.assign(this, d.trainInfo)
           getCt.call(this)
           this.$parent.globalData.trainInfo = d.trainInfo
@@ -1024,12 +1029,16 @@
         this.minute = this.setTimes[index].value.minute
         this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
         this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+        this.$apply()
       },
       onChangeTimesetByHB({hour, minute}) {
+        this.hourIndex = [this.hours.findIndex(t => t == hour)]
+        this.minuteIndex = [this.minutes.findIndex(t => t == minute)]
+
         this.setTimes.forEach((t, ins) => {
           if(t.value.hour === hour && t.value.minute === minute) {
             this.methods.onChangeTimesets.call(this, ins)
-          } else{
+          } else {
             t.isChecked = false
           }
         })

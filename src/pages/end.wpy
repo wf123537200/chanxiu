@@ -78,18 +78,22 @@
   .bg-hide {
     background:transparent!important;
   }
+  .tips-btn-pannel {
+    position: absolute;
+    bottom: 12px;
+    right: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
   .tips-btn {
-    position:absolute;
-    bottom:22px;
-    right:15px;
-    width:35px;
-    height:20px;
-    font-size:10px;
-    border-radius:3px;
-    color:#fff;
-    text-align:center;
-    line-height:0.8;
-    background:#B0976E;
+    width: 35px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 3px;
+    font-size: 0.6rem;
+    color: #fff;
+    background: #B0976E;
   }
 
   .text-btn {
@@ -196,8 +200,10 @@
         <view class="desc {{exTime === 0 ? 'hide' : ''}}">{{extype}} {{exTime}} 分钟，连续第{{continuousNum}}天</view>
         <view class="desc {{exTime === 0 ? '' : 'hide'}}">练习不足1分钟，将不计入成绩统计。</view>
       </view>
-      <view class="tips-btn {{exTime === 0 ? 'hide' : ''}}">
-        <view style="margin-top:6px;font-size:0.6rem;" @tap.stop="onShowShare">打卡</view>
+      <view class="tips-btn-pannel {{exTime === 0 ? 'hide' : ''}}" @tap.stop="onShowShare">
+        <view class="tips-btn">
+          打卡
+        </view>
       </view>
     </view>
 
@@ -239,6 +245,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
 
@@ -309,6 +316,11 @@
         url: '/train/summary',
         params: {},
         success: (d) => {
+          const strLastTime = d.trainInfo.strLastTime
+          if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
+            d.trainInfo.continuousNum = 0
+          }
+
           this.continuousNum = d.trainInfo.continuousNum || 0
           this.exTimeX = d.trainInfo.todayDuration
           this.$apply()

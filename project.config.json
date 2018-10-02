@@ -10,7 +10,7 @@
 	"compileType": "miniprogram",
 	"appid": "wxe11f1717c391c594",
 	"projectname": "cx",
-	"miniprogramRoot": "./dist",
+	"miniprogramRoot": "dist/",
 	"condition": {
 		"search": {
 			"current": -1,
@@ -28,7 +28,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 3,
+			"current": 7,
 			"list": [
 				{
 					"id": -1,
@@ -51,7 +51,32 @@
 				{
 					"id": -1,
 					"name": "pages/end",
-					"pathName": "pages/end"
+					"pathName": "pages/end",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "pages/ex-diary-add",
+					"pathName": "pages/ex-diary-add",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "pages/ex-briefing",
+					"pathName": "pages/ex-briefing",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "日记",
+					"pathName": "pages/ex-diary",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "pages/end",
+					"pathName": "pages/end",
+					"query": ""
 				}
 			]
 		}

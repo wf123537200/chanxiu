@@ -2,13 +2,14 @@
   @import '../zanui/common';
 
   .container {
-    align-items: start;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     padding: 10px;
-    box-sizing: border-box;
-  }
-  page {
-    background: #fff;
-    padding: 20px;
     box-sizing: border-box;
   }
 
@@ -20,25 +21,84 @@
     color: $gray-darker;
   }
   .ex-diary-content {
+    flex: 1;
     font-size: 13px;
     color: $gray-dark;
+    width: 100%;
     line-height: 1.5;
     box-sizing: border-box;
     text-align: justify;
-    text-indent: 20px;
   }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 100%;
+  }
+  .cancel-btn {
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    background-color: $gray-dark;
+  }
+  .confirm-btn {
+    background-color: $light-orange;
+  }
+  .mr-20 {
+    margin-right: 20px;
+  }
+
 </style>
 
 <template>
-  <view class="container">
-    <view class="ex-diary-title">{{title}}-{{strCreateTime}}</view>
-    <view class="ex-diary-content">{{content}}</view>
+  <view>
+    <view class="container {{readOnly ? 'hide' : ''}}">
+      <input class="ex-diary-title" bindinput="timeSetInput" value="{{title}}"
+             maxlength="30" type="text" placeholder="请输入日记标题"/>
+      <textarea class="ex-diary-content" bindinput="experienceInput"
+                value="{{content}}" maxlength="3000" auto-focus placeholder="请输入日记内容" />
+
+      <view class="footer">
+        <view class="cancel-btn mr-20" @tap="cancelFn">取消</view>
+        <view class="cancel-btn confirm-btn" @tap="confirm">确定</view>
+      </view>
+    </view>
+    <view class="container {{readOnly ? '' : 'hide'}}">
+      <view class="ex-diary-title">
+        {{title}}
+      </view>
+      <view class="ex-diary-content">
+        {{content}}
+      </view>
+    </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
+  import moment from 'moment'
+
+  const confirmValid = function () {
+    const title = this.title
+    const content = this.content
+
+    if (!title) {
+      return '日记标题必录'
+    }
+
+    if (!content) {
+      return '日记内容必录'
+    }
+    if (content.replace(/[^\x00-\xff]/g, "00").length > 3000) {
+      return '内容长度过长'
+    }
+
+    return null
+  }
 
   export default class Tag extends wepy.page {
     config = {
@@ -48,22 +108,116 @@
     components = {
     }
     data = {
-      title: '',
+      title: '正念日记-' + moment(new Date).format('YYYYMMDD'),
       strCreateTime: '',
-      content: ''
+      content: '',
+      readOnly: false
     }
     onGotUserInfo(e) {
     }
     methods = {
+      timeSetInput: function(e) {
+        this.title = e.detail.value
+      },
+      experienceInput: function(e) {
+        this.content = e.detail.value
+      },
+      confirm: function() {
+        console.log('confirm')
+        const validResult = confirmValid.call(this)
+        if (validResult) {
+          wx.showToast({
+            title: validResult,
+            icon: 'error',
+            duration: 2000,
+            mask:true
+          })
+          return
+        }
+
+        const title = this.title
+        const content = this.content
+        const id = this.$parent.globalData.diaryId
+        let url = '/diary/add'
+
+        let params =  {
+          title, content
+        }
+
+        if (id) {
+          url = '/diary/update'
+          params.id = id
+        }
+
+        ajax({
+          ins: this,
+          url,
+          params,
+          method: 'POST',
+          success: (d) => {
+            this.$navigate('./ex-briefing');
+          }
+        })
+      },
+      cancelFn: function() {
+        this.$navigate('./ex-briefing');
+      }
     }
-    onLoad() {
-      this.title = this.$parent.globalData.diaryTitle
+    onShow() {
+      console.log('onShow')
+      this.title = this.$parent.globalData.diaryTitle || this.title
       this.content = this.$parent.globalData.diaryContent
+      this.readOnly = this.$parent.globalData.readOnly
+      console.log('onShow')
 
       const strCreateTime = this.$parent.globalData.diaryStrCreateTime
-      if (strCreateTime.split(' ') && strCreateTime.split(' ').length >= 2) {
+      if (strCreateTime && strCreateTime.split(' ') && strCreateTime.split(' ').length >= 2) {
         this.strCreateTime = strCreateTime.split(' ')[0]
       }
+
+      /*
+      ajax({
+        ins: this,
+        url: '/diary/add',
+        method: 'POST',
+        params: {
+          title: 'title',
+          content: 'content'
+        },
+        success: (data) => {
+          console.log('success')
+        }
+      })
+
+      ajax({
+        ins: this,
+        url: '/diary/del',
+        method: 'POST',
+        params: {
+          id: 3,
+        },
+        success: (data) => {
+          console.log('success')
+        }
+      })
+
+      */
+
+      /*
+      ajax({
+        ins: this,
+        url: '/diary/update',
+        method: 'POST',
+        params: {
+          id: 3,
+          title: 'title2',
+          content: 'content2'
+        },
+        success: (data) => {
+          console.log('success')
+        }
+      })
+      */
     }
   }
 </script>

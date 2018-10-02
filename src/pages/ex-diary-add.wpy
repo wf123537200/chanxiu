@@ -36,6 +36,7 @@
     font-size: 13px;
     color: $gray-dark;
     padding-left: 5px;
+    margin-right: 5px;
   }
   .w-100 {
     width: 100px;
@@ -96,31 +97,50 @@
   <view class="container">
     <view class="form-row">
       <view class="form-label ml-10">练习时长</view>
-      <input class="form-input w-100 ml-10" type="digit" placeholder="30"/>
+      <input class="form-input w-100 ml-10" bindinput="timeSetInput" value="{{timeSet}}" type="digit" placeholder=""/>
       <view>分钟</view>
     </view>
 
     <view class="form-row">
       <view class="form-label ml-10">练习方法</view>
-      <picker class="form-select" mode="multiSelector" bindchange="bindMultiPickerChange" bindcolumnchange="bindMultiPickerColumnChange" value="{{multiIndex}}" range="{{type1}}">
+      <picker class="form-select" mode="selector" range-key="name"
+              bindchange="typeList1Change"
+              value="{{type1}}" range="{{typeList1}}">
         <view class="picker">
-          禅坐
+          {{typeList1[type1].name}}
           <view class="triangle"></view>
         </view>
       </picker>
-      <view style="margin-left: 10px;">分钟</view>
+
+      <picker class="form-select {{typeList2.length ? '' : 'hide'}}" mode="selector" range-key="name"
+              bindchange="typeList2Change"
+              value="{{type2}}" range="{{typeList2}}">
+        <view class="picker">
+          {{typeList2[type2].name}}
+          <view class="triangle"></view>
+        </view>
+      </picker>
+
+      <picker class="form-select {{typeList3.length ? '' : 'hide'}}" mode="selector" range-key="name"
+              bindchange="typeList3Change"
+              value="{{type3}}" range="{{typeList3}}">
+        <view class="picker">
+          {{typeList3[type3].name}}
+          <view class="triangle"></view>
+        </view>
+      </picker>
     </view>
 
     <view class="form-row">
       <view class="form-label ml-10">大概完成时间</view>
-      <picker class="form-select ml-10" mode="date" value="{{date}}" start="2015-09-01" end="2017-09-01" bindchange="bindDateChange">
+      <picker class="form-select ml-10" mode="date" value="{{date}}" bindchange="bindDateChange">
         <view class="picker">
           {{date}}
           <view class="triangle"></view>
         </view>
       </picker>
 
-      <picker class="form-select" mode="time" value="{{time}}" start="09:01" end="21:01" bindchange="bindTimeChange">
+      <picker class="form-select" mode="time" value="{{time}}" bindchange="bindTimeChange">
         <view class="picker">
           {{time}}
           <view class="triangle"></view>
@@ -131,7 +151,7 @@
     <view class="form-title">
       练习状态
     </view>
-    <textarea class="edit-content" auto-focus placeholder="请输入练习简报" />
+    <textarea class="edit-content" bindinput="experienceInput"  value="{{experience}}" auto-focus placeholder="请输入练习简报" />
 
     <view class="footer">
       <view class="cancel-btn mr-20" @tap="cancelFn">取消</view>
@@ -143,6 +163,119 @@
 <script>
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
+  import moment from 'moment'
+
+  const getListByNameAncCode = function(arr, name, code) {
+    const res = []
+
+    arr.forEach(t => {
+      let newObj = {}
+      if(name && t[name]) newObj[name] = t[name]
+      if(code && t[code]) newObj[code] = t[code]
+      res.push(newObj)
+    })
+
+    return res
+  }
+  const setTypeList2 = function(type1Index = 0) {
+    let childList = this.typeListAll[type1Index].childList
+
+    this.type3 = this.type2 = ''
+    this.typeList2 = this.typeList3 = []
+
+    childList.forEach((c, index) => {
+      let childTypeList = []
+
+      if (c.childList && c.childList.length) {
+        childTypeList = childTypeList.concat(c.childList)
+      }
+      if (c.customList && c.customList.length) {
+        childTypeList = childTypeList.concat(c.customList)
+      }
+
+      console.log('typeList' + (index + 2))
+      this['typeList' + (index + 2)] = childTypeList
+      this['type' + (index + 2)] = 0
+    })
+  }
+  const initMethods = function () {
+    // 设置方法
+    ajax({
+      ins: this,
+      url: '/train/methods',
+      params: {},
+      success: (d) => {
+        this.typeListAll = d;
+        this.typeList1 = getListByNameAncCode(d, 'name', 'id')
+
+        setTypeList2.call(this, 0)
+        console.log(this.typeList)
+        this.$apply()
+      }
+    })
+  }
+  const confirmValid = function () {
+    const timeSet = this.timeSet
+    const experience = this.experience
+    const date = this.date
+    const time = this.time
+    const type1 = this.type1
+
+    if (!timeSet) {
+      return '练习时长必录'
+    }
+    else if (isNaN(timeSet)) {
+      return '练习时长有误'
+    }
+    else if (parseFloat(timeSet) < 1) {
+      return '练习时长太小'
+    }
+    else if (parseFloat(timeSet) > 60 * 24) {
+      return '练习时长太大'
+    }
+
+    if (!date) {
+      return '完成时间为空'
+    }
+    if (!time) {
+      return '练习完成为空'
+    }
+    if (!experience) {
+      return '练习状态为空'
+    }
+    if (isNaN(type1)) {
+      return '练习方法为空'
+    }
+
+    return null
+  }
+  const buildConfirmParam = function () {
+    const timeSet = this.timeSet
+    const experience = this.experience
+    const date = this.date
+    const time = this.time
+    const type1 = this.type1
+    const type2 = this.type2
+    const type3 = this.type3
+    let typeList = [type1, type2, type3].filter(t => (!!t || t === 0))
+    let trainMethodIds = []
+    typeList.forEach((t, index) => {
+      trainMethodIds.push(this['typeList' + (index + 1)][t].id)
+    })
+    const strEndTime = [date, time].join(' ')
+
+    return {
+      // 练习时长(秒)/整型
+      timeSet: parseFloat(timeSet) * 60,
+      // 练习方法/字符串， 多个以英文逗号,分隔
+      trainMethodIds: trainMethodIds.join(','),
+      // 用户没有输入秒用00补
+      strEndTime,
+      // /内容/练习状态内容
+      experience
+    }
+  }
+
 
   export default class Tag extends wepy.page {
     config = {
@@ -153,52 +286,84 @@
 
     }
     data = {
-      date: '2016-09-01',
-      time: '12:01',
-      type1: [
-        {
-          id: 0,
-          name: '静坐'
-        },
-        {
-          id: 1,
-          name: '打禅'
-        },
-        {
-          id: 2,
-          name: '老虎凳'
-        }
-      ]
+      timeSet: '',
+      experience: '',
+      date: moment(new Date).format('YYYY-MM-DD'),
+      time: '00:00',
+      type1: 0,
+      type2: '',
+      type3: '',
+      typeList1: [],
+      typeList2: [],
+      typeList3: [],
+      diary: {
+        // 练习时长(秒)/整型
+        timeSet: '',
+        // 练习方法/字符串， 多个以英文逗号,分隔
+        trainMethodIds: '2,8,13',
+        // 用户没有输入秒用00补
+        strEndTime: '2018-10-01 00:00:00',
+        // /内容/练习状态内容
+        experience: '哈哈哈哈哈'
+      }
     }
     onGotUserInfo(e) {
     }
     methods = {
-      bindMultiPickerChange: function (e) {
-        console.log('picker发送选择改变，携带值为', e.detail.value)
-        this.setData({
-          multiIndex: e.detail.value
-        })
+      typeList1Change: function (e) {
+        this.type1 = e.detail.value
+        setTypeList2.apply(this, [this.type1])
+        this.$apply()
+      },
+      typeList2Change: function (e) {
+        this.type2 = e.detail.value
+        this.$apply()
+      },
+      typeList3Change: function (e) {
+        this.type2 = e.detail.value
+        this.$apply()
+      },
+      timeSetInput: function(e) {
+        this.timeSet = e.detail.value
+      },
+      experienceInput: function(e) {
+        this.experience = e.detail.value
       },
       bindDateChange: function(e) {
-        console.log('picker发送选择改变，携带值为', e.detail.value)
-        this.setData({
-          date: e.detail.value
-        })
+        this.date = e.detail.value
       },
       bindTimeChange: function(e) {
-        console.log('picker发送选择改变，携带值为', e.detail.value)
-        this.setData({
-          time: e.detail.value
-        })
+        this.time = e.detail.value
       },
       confirm: function() {
-        this.$navigate('./ex-briefing');
+        const validResult = confirmValid.call(this)
+        if (validResult) {
+          wx.showToast({
+            title: validResult,
+            icon: 'error',
+            duration: 2000,
+            mask:true
+          })
+          return
+        }
+        const params = buildConfirmParam.call(this)
+
+        ajax({
+          ins: this,
+          url: '/train/resubmit',
+          method: 'POST',
+          params,
+          success: (d) => {
+            this.$navigate('./ex-briefing');
+          }
+        })
       },
       cancelFn: function() {
         this.$navigate('./ex-briefing');
       }
     }
     onLoad() {
+      initMethods.call(this)
     }
   }
 </script>

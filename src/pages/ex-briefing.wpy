@@ -95,10 +95,10 @@
     border: 1px solid $light-orange;
     color: $light-orange;
     border-radius: 50rem;
-    padding: 0 15px;
-    font-size: 14px;
-    height:25px;
-    line-height:25px;
+    padding: 0 10px;
+    font-size: 12px;
+    height: 22px;
+    line-height: 22px;
     box-sizing: border-box;
   }
   .mr-20 {
@@ -223,17 +223,27 @@
   }
   .flex-r {
     display: flex;
-    width: 100%;
   }
   .diary-wait-edit {
-    width: 15px;
-    height: 15px;
-    margin-right: 5px;
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
   }
-  .ex-title {
+
+  .diary-wait-supplement {
+    width: 25px;
+    height: 18px;
+  }
+  .ex-title-pannel {
+    display: flex;
     flex: 1;
     color: $gray-darker;
-    line-height: 15px;
+    line-height: 1.3;
+  }
+  .ex-title {
+    color: $gray-darker;
+    line-height: 1.3;
+    margin-right: 5px;
   }
   .ex-date {
     color: $gray-dark;
@@ -244,23 +254,30 @@
   .line-3-content {
     height:68px;
     overflow:hidden;
+    line-height: 1.7;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
   }
   .ex-process-pannel {
     display: flex;
     width: 100%;
     margin-top: 10px;
   }
-  .m-l-20 {
-    margin-left: 20px;
-    box-sizing: border-box;
+  .m-l-35 {
+    margin-left: 35px;
   }
   .read-all {
     flex: 1;
     font-size: 12px;
     color: $light-orange;
+    margin-left: 35px;
   }
   .process-btns {
-
+    display: flex;
+    align-items: end;
   }
   .share-briefing-btn:after,.share-briefing-btn:before {
     outline: 0;
@@ -279,11 +296,17 @@
     background-color: transparent;
   }
   .process-btn {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     margin-left: 30px;
+    background-size: 18px 18px;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 
+  .delete-btn {
+    background-size: 15px 18px;
+  }
   .popup-headerr {
     display: flex;
     align-items: center;
@@ -459,6 +482,9 @@
     z-index:9999;
     user-select:none;
   }
+  .hide {
+    display: none!important;
+  }
 </style>
 
 <template>
@@ -487,7 +513,7 @@
     <view class="pl-40 ex-data-pannel">
       <view class="ex-data">
         <view class="cur-times">今天练习{{todayInfo.todayTrainCount}}次{{todayInfo.todayDuration}}分钟</view>
-        <view class="ex-desc">连续练习{{todayInfo.continuousNum}}天，最大练习{{todayInfo.maxContinuousNum}}天</view>
+        <view class="ex-desc">连续练习{{todayInfo.continuousNum}}天，最大连续练习{{todayInfo.maxContinuousNum}}天</view>
       </view>
       <view class="gray-button mr-40" @tap.stop="onShowShare">去打卡</view>
     </view>
@@ -552,12 +578,14 @@
       <repeat for="{{dynamicList}}" key="index" index="index" item="item">
         <view class="ex-content">
           <view class="flex-r">
-            <image src="../images/record.png" class="diary-wait-edit  {{!item.content ? '' : 'hide'}}" />
-            <image src="../images/log.png" class="diary-wait-edit  {{item.content ? '' : 'hide'}}" />
-            <view class="ex-title">{{item.title}}</view>
+            <image src="../images/{{item.iconType}}.png" class="diary-wait-edit" />
+            <view class="ex-title-pannel">
+              <view class="ex-title">{{item.title}}</view>
+              <image src="../images/supplement.png" class="diary-wait-supplement {{item.afterRecord ? '' : 'hide'}}" />
+            </view>
             <view class="ex-date">{{item.strCreateTimeStr}}</view>
           </view>
-          <view class="flex-r m-l-20 line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">
+          <view class="flex-r m-l-35 line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">
             {{item.content}}
           </view>
           <view class="ex-process-pannel">
@@ -565,9 +593,9 @@
               {{item.content.length > 63 && !item.readAll ? '查看全文' : ''}}
             </view>
             <view class="process-btns">
-              <image class="process-btn" @tap="edit({{item}})" src="/images/edit.png"/>
-              <image class="process-btn {{item.content ? '' : 'hide'}}" @tap="deleteEx({{item}})" src="/images/delete.png"/>
-              <button class="process-btn share-briefing-btn {{item.content ? '' : 'hide'}}" open-type="share" style="background-image: url('/images/send.png')">
+              <view class="process-btn" @tap="edit({{item}})" style="background-image: url(/images/edit.png)"></view>
+              <view class="process-btn delete-btn {{item.content ? '' : 'hide'}}" @tap="deleteEx({{item}})" style="background-image: url(/images/delete.png)"></view>
+              <button class="process-btn share-briefing-btn" open-type="share" style="background-image: url('/images/send.png')">
               </button>
             </view>
           </view>
@@ -582,7 +610,7 @@
         </view>
         <image class="close-icon" src="/images/close-icon.png" @tap="editExCancel"/>
       </view>
-      <textarea class="edit-content" bindblur="contentBlur" value="{{dynamic.content}}" placeholder="请输入练习状态" />
+      <textarea class="edit-content" bindinput="contentInput" focus value="{{dynamic.content}}" placeholder="请输入练习状态" />
       <view class="popup-footer">
         <view class="cancel-btn mr-20" @tap="editExCancel">取消</view>
         <view class="cancel-btn confirm-btn" @tap="editInfoSave">保存</view>
@@ -661,7 +689,6 @@
         this.averageEveryTime = trainInfo.averageEveryTime || 0
         this.singleMostDuration = trainInfo.singleMostDuration || 0
         Object.assign(this, d.trainInfo)
-        console.log(d)
         this.$apply()
       }
     })
@@ -709,21 +736,26 @@
         if (data) {
           for (let d of data) {
             let timeDesc = ''
+
             // 一个小时内
             if (Date.now() - d.createTime < (1000 * 60 * 60)) {
               timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
+
+              console.log(timeDesc)
               if (timeDesc.indexOf('seconds ago') >= 0) {
                 timeDesc = '刚刚'
               } else if (timeDesc.indexOf('minute ago') >= 0) {
-                timeDesc = '一分钟前'
+                timeDesc = '1 分钟前'
+              }else if (timeDesc.indexOf('hour ago') >= 0) {
+                timeDesc = '1 小时前'
               } else {
                 timeDesc = timeDesc.replace('minutes ago', '分钟前')
               }
             } else if (Date.now() - d.createTime < (1000 * 60 * 60 * 24)) {
               // 一天内
               timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('hour').fromNow()
-              console.log(timeDesc)
               timeDesc = timeDesc.replace('hours ago', '小时前')
+              timeDesc = timeDesc.replace('an hour ago', '1 小时前')
             } else {
               timeDesc = moment(d.strCreateTime).format('YYYY-MM-DD HH:mm')
             }
@@ -735,21 +767,16 @@
         } else {
           this.dynamicList = []
         }
-        console.log(this.dynamicList)
         this.$apply()
       }
     })
   }
 
   const dynamicSave = function (id, title, content) {
-    let url = '/dynamic/add'
+    let url = '/train/experience'
     let params = {
-      title, content
-    }
-
-    if (id) {
-      params.id = id
-      url = '/diary/update'
+      trainId: id,
+      content
     }
 
     ajax({
@@ -758,7 +785,6 @@
       params,
       method: 'POST',
       success: (d) => {
-        console.log(d)
         this.$invoke('editEx', 'togglePopup')
         dynamicFind.call(this)
         this.$apply()
@@ -770,16 +796,15 @@
   /**
    * 删除日记
    */
-  const dynamicDel = function (id) {
+  const dynamicDel = function (refId) {
     ajax({
       ins: this,
       url: '/diary/del',
       method: 'POST',
       params: {
-        id
+        id: refId
       },
       success: (d) => {
-        console.log(d)
         dynamicFind.call(this)
       }
     })
@@ -855,14 +880,22 @@
           }
         }
       },
-      contentBlur(e) {
-        console.log(e.detail.value)
+      contentInput(e) {
         this.dynamic.content = e.detail.value
       },
       edit(item) {
-        console.log(item)
         this.dynamic = item
-        this.$invoke('editEx', 'togglePopup')
+
+        // 修改日记
+        if (item.iconType == 5) {
+          this.$parent.globalData.diaryTitle = this.dynamic.title
+          this.$parent.globalData.diaryContent = this.dynamic.content
+          this.$parent.globalData.diaryId = this.dynamic.refId
+          this.$parent.globalData.readOnly = false
+          this.$navigate('./ex-diary')
+        } else {
+          this.$invoke('editEx', 'togglePopup')
+        }
       },
       editExCancel() {
         this.$invoke('editEx', 'togglePopup')
@@ -871,7 +904,7 @@
         const that = this
 
         setTimeout(_ => {
-          const {id, title, content} = that.dynamic
+          const {refId, title, content} = that.dynamic
           if (!content) {
             return wx.showToast({
               title: '请录入练习状态',
@@ -880,7 +913,7 @@
               mask:true
             })
           }
-          dynamicSave.apply(that, [id, title, content])
+          dynamicSave.apply(that, [refId, title, content])
         }, 200)
       },
       deleteEx(item) {
@@ -891,7 +924,7 @@
         this.$invoke('deleteEx', 'togglePopup')
       },
       deleteComfirm() {
-        dynamicDel.apply(this, [this.dynamic.id])
+        dynamicDel.apply(this, [this.dynamic.refId])
         this.$invoke('deleteEx', 'togglePopup')
       },
       processShow(item) {
@@ -905,9 +938,10 @@
         this.showFeaturesList = false
       },
       toExDiary() {
-        this.$parent.globalData.diaryTitle = this.dynamic.title
-        this.$parent.globalData.diaryContent = this.dynamic.content
-        this.$parent.globalData.diaryStrCreateTime = this.dynamic.strCreateTime
+        this.$parent.globalData.diaryTitle = ''
+        this.$parent.globalData.diaryContent = ''
+        this.$parent.globalData.diaryId = ''
+        this.$parent.globalData.readOnly = false
 
         this.$navigate('./ex-diary')
         this.showFeaturesList = false
@@ -917,7 +951,13 @@
         this.showFeaturesList = false
       },
       readAllContent(item, index) {
-        this.dynamicList[index].readAll = true
+        this.dynamic = item
+        this.$parent.globalData.diaryTitle = item.title
+        this.$parent.globalData.diaryContent = item.content
+        this.$parent.globalData.diaryId = item.refId
+        this.$parent.globalData.readOnly = true
+        this.$navigate('./ex-diary')
+        // this.dynamicList[index].readAll = true
       },
       onTapStop() {
         this.isShowShare = false
