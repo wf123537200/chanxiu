@@ -2,30 +2,40 @@
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
     <view class="info-box" wx:if="{{ready}}">
-        <view class="field" @tap="uploadImage('logo')">
-            <text class="label">Logo</text>
-            <view class="content">
-                <image class="logo" src="{{_logo}}" wx:if="{{_logo}}"></image>
-            </view>
-            <image class="more" src="/images/more-gray.png"></image>
-        </view>
-        <navigator class="field" url="/pages/class/update?id={{detail.id}}&action=1">
-            <text class="label">名称</text>
-            <view class="content">
-                <text>{{detail.name}}</text>
-            </view>
-            <image class="more" src="/images/more-gray.png"></image>
+        <form report-submit="true" @submit="getFormId">
+            <button plain="true" class="field btn-formid" form-type="submit" hover-class="none" @tap="uploadImage('logo')">
+                <text class="label">Logo</text>
+                <view class="content">
+                    <image class="logo" src="{{_logo}}" wx:if="{{_logo}}"></image>
+                </view>
+                <image class="more" src="/images/more-gray.png"></image>
+            </button>
+        </form>
+        <navigator class="" url="/pages/class/update?id={{detail.id}}&action=1">
+            <form report-submit="true" @submit="getFormId">
+                <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
+                    <text class="label">名称</text>
+                    <view class="content">
+                        <text>{{detail.name}}</text>
+                    </view>
+                    <image class="more" src="/images/more-gray.png"></image>
+                </button>
+            </form>
         </navigator>
 
-        <view class="field desc">
-            <navigator class="header" url="/pages/class/update?id={{detail.id}}&action=2">
-                <text class="label">一句话介绍</text>
-                <image class="more" src="/images/more-gray.png"></image>
-            </navigator>
-            <view class="content">
-                <text>{{detail.brief}}</text>
-            </view>
-        </view>
+        <navigator url="/pages/class/update?id={{detail.id}}&action=2">
+            <form report-submit="true" @submit="getFormId">
+                <button plain="true" class="field desc btn-formid" form-type="submit" hover-class="none">
+                    <view class="header">
+                        <text class="label">一句话介绍</text>
+                        <image class="more" src="/images/more-gray.png"></image>
+                    </view>
+                    <view class="content">
+                        <text>{{detail.brief}}</text>
+                    </view>
+                </button>
+            </form>
+        </navigator>
     </view>
 </template>
 
@@ -105,9 +115,9 @@
             }
         }
 
-        .navigator-hover {
-            background-color: transparent !important;
-        }
+        /*.navigator-hover {*/
+            /*background-color: transparent !important;*/
+        /*}*/
 
         .more{
             width: 18rpx;
@@ -121,6 +131,7 @@
     import wepy from "wepy";
     import ready from "../../mixins/ready";
     import classInfo from "../../mixins/classInfo";
+    import formIds from "../../mixins/formIds";
     import {updateClass} from "../../modules/Classes";
     import getGlobalData from "../../components/getGlobalData";
 
@@ -141,7 +152,7 @@
             _logo: ""
         };
 
-        mixins = [ready, classInfo];
+        mixins = [ready, classInfo, formIds];
 
         methods = {
             login (e) {

@@ -14,7 +14,7 @@
 <script>
     import wepy from "wepy";
     import {deleteClass} from "../../../modules/Classes";
-    import {collectFormId} from "../../../modules/Common";
+    import formIds from "../../../mixins/formIds";
 
     import popup from "../../../components/zan-popup-a";
 
@@ -31,15 +31,11 @@
             //message: ""
         };
 
+        mixins = [formIds];
+
         methods = {
             async submit (e) {
-                let msgType = 10;
-
-                await (collectFormId.bind(this)({
-                    formId: e.detail.formId,
-                    page: "/pages/class/detail?id=" + this.classId,
-                    type: msgType
-                })).catch(() =>{});
+                await this.getFormId(e);
 
                 await deleteClass.bind(this)().catch(() => {
                     wx.showToast({

@@ -5,15 +5,15 @@
         <nav :id.sync="classId" nav="students"></nav>
 
         <view class="tab">
-            <view data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
-                <text>{{item.text}}</text>
-            </view>
+            <form report-submit="true" @submit="getFormId" data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
+                <button class="btn-formid" hover-class="none" plain="true" form-type="submit">{{item.text}}</button>
+            </form>
         </view>
 
         <view class="tab-body flex-v flex-1 {{currentTab}}">
             <!--所有同学-->
             <view class="students" wx:if="{{currentTab==='all'}}">
-                <view class="student" wx:for="{{students}}" wx:key="{{index}}">
+                <form report-submit="true" @submit="getFormId" class="student" wx:for="{{students}}" wx:key="{{index}}">
                     <image class="avatar" src="{{item.avatarUrl}}"></image>
                     <view class="row">
                         <text class="nick-name">{{item.nickName}}</text>
@@ -24,20 +24,20 @@
                         <text class="join-time">{{item.strCreateTime}}加入</text>
                     </view>
 
-                    <image src="/images/classes/trigger.png" class="trigger" data-id="{{item.id}}" @tap.stop="showStudentsActions" wx:if="{{!item.isMe && currentStudentId !== item.id && ((isMonitor && item.role === 0) || (isMonitor && item.role !== 0) || (isMonitor || (isViceMonitor && item.role === 0)))}}"></image>
+                    <button plain="true" form-type="submit" class="trigger btn-formid" hover-class="none" data-id="{{item.id}}" @tap.stop="showStudentsActions" wx:if="{{!item.isMe && currentStudentId !== item.id && ((isMonitor && item.role === 0) || (isMonitor && item.role !== 0) || (isMonitor || (isViceMonitor && item.role === 0)))}}">
+                        <image src="/images/classes/trigger.png"></image>
+                    </button>
 
                     <view class="actions" @tap.stop="ghost" wx:if="{{currentStudentId === item.id}}">
-                        <form class="confirm-box" data-id="{{item.id}}" wx:if="{{confirm.studentId === item.id}}" report-submit="true" @submit="confirmStudentOperate">
-                            <button class="confirm" form-type="submit">{{confirm.text}}</button>
-                        </form>
+                        <button plain="true" form-type="submit" class="confirm" data-id="{{item.id}}" wx:if="{{confirm.studentId === item.id}}" @tap="confirmStudentOperate">{{confirm.text}}</button>
                         <block wx:else>
-                            <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="promoteStudent" wx:if="{{isMonitor && item.role === 0}}">设为班干部</button>
-                            <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="cancelStudent" wx:if="{{isMonitor && item.role !== 0}}">取消班干部</button>
-                            <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="replaceStudent" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">接任我</button>
-                            <button plain="true" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="deleteStudent" class="del" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">删除</button>
+                            <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="promoteStudent" wx:if="{{isMonitor && item.role === 0}}">设为班干部</button>
+                            <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="cancelStudent" wx:if="{{isMonitor && item.role !== 0}}">取消班干部</button>
+                            <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="replaceStudent" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">接任我</button>
+                            <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="deleteStudent" class="del" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">删除</button>
                         </block>
                     </view>
-                </view>
+                </form>
             </view>
             <!--新同学-->
             <view class="students" wx:if="{{currentTab==='new'}}">
@@ -73,24 +73,26 @@
         </view>
 
         <!--操作按钮-->
-        <block wx:if="{{isPending}}">
-            <view class="btn-box fixed to-bottom">
-                <button class="btn-disabled">等待审核</button>
+        <form report-submit="true" @submit="getFormId">
+            <block wx:if="{{isPending}}">
+                <view class="btn-box fixed to-bottom">
+                    <button form-type="submit" class="btn-disabled">等待审核</button>
+                </view>
+            </block>
+            <view class="btn-box fixed to-bottom" wx:elif="{{isMyClass}}">
+                <button form-type="submit" class="btn-primary" open-type="share">邀请新同学</button>
             </view>
-        </block>
-        <view class="btn-box fixed to-bottom" wx:elif="{{isMyClass}}">
-            <button class="btn-primary" open-type="share">邀请新同学</button>
-        </view>
-        <block wx:else>
-            <view class="btn-box fixed to-bottom join-class">
-                <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass" wx:if="{{detail.remainingQuota > 0}}">加入班级</button>
-                <button class="btn-disabled" wx:else>已满员</button>
-            </view>
-        </block>
+            <block wx:else>
+                <view class="btn-box fixed to-bottom join-class">
+                    <button form-type="submit" class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass" wx:if="{{detail.remainingQuota > 0}}">加入班级</button>
+                    <button form-type="submit" class="btn-disabled" wx:else>已满员</button>
+                </view>
+            </block>
+        </form>
 
         <!--返回列表页-->
         <view class="fixed to-bottom switch-page-btn-box" wx:if="{{bootFromMsg}}">
-            <button @tap="gotoClassListPage">首页</button>
+            <button form-type="submit" @tap="gotoClassListPage">首页</button>
         </view>
     </view>
 </template>
@@ -115,6 +117,7 @@
         padding: 30rpx 40rpx;
 
         .student {
+            display: block;
             position: relative;
             padding: 30rpx 0;
             overflow: hidden;
@@ -194,12 +197,15 @@
 
             .trigger {
                 position: absolute;
-                padding: 20rpx;
                 top: 10rpx;
                 right: -10rpx;
-                width: 35rpx;
-                height: 28rpx;
                 z-index: 2;
+
+                image {
+                    padding: 20rpx;
+                    width: 35rpx;
+                    height: 28rpx;
+                }
             }
 
             .actions {
@@ -253,7 +259,7 @@
     import wepy from "wepy";
     import classInfo from "../../mixins/classInfo";
     import {getStudents, getNewStudents, studentOperate} from "../../modules/Classes";
-    import {collectFormId} from "../../modules/Common";
+    import formIds from "../../mixins/formIds";
     import ready from "../../mixins/ready";
     import boot from "../../mixins/boot";
 
@@ -294,7 +300,7 @@
             userInfo: {}
         };
 
-        mixins = [ready, classInfo, boot];
+        mixins = [ready, classInfo, boot, formIds];
 
         watch = {
             async currentTab (value, oldValue) {
@@ -366,30 +372,30 @@
                 };
 
                 let confirmType = this.confirm.type;
-                let msgType;
+                // let msgType;
+                //
+                // // 删除
+                // if (confirmType === 0) {
+                //     msgType = 9;
+                // }
+                // // 接任
+                // else if (confirmType === 1) {
+                //     msgType = 7;
+                // }
+                // // 取消班干部
+                // else if (confirmType === 2) {
+                //     msgType = 8;
+                // }
+                // // 设为班干部
+                // else if (confirmType === 3) {
+                //     msgType = 7;
+                // }
 
-                // 删除
-                if (confirmType === 0) {
-                    msgType = 9;
-                }
-                // 接任
-                else if (confirmType === 1) {
-                    msgType = 7;
-                }
-                // 取消班干部
-                else if (confirmType === 2) {
-                    msgType = 8;
-                }
-                // 设为班干部
-                else if (confirmType === 3) {
-                    msgType = 7;
-                }
-
-                await (collectFormId.bind(this)({
-                    formId: e.detail.formId,
-                    page: "/pages/class/students?_f=1&id=" + this.classId,
-                    type: msgType
-                })).catch(() =>{});
+                // await (collectFormId.bind(this)({
+                //     formId: e.detail.formId,
+                //     page: "/pages/class/students?_f=1&id=" + this.classId,
+                //     type: msgType
+                // }));
 
                 await studentOperate.bind(this)({
                     studentId: this.confirm.studentId,
@@ -407,13 +413,13 @@
             async refuseStudent (e) {
                 let id = e.currentTarget.dataset.id;
                 let type = 4;
-                let msgType = 3;
+                //let msgType = 3;
 
-                await (collectFormId.bind(this)({
-                    formId: e.detail.formId,
-                    page: "/pages/class/fail?id=" + this.classId,
-                    type: msgType
-                })).catch(() =>{});
+                // await (collectFormId.bind(this)({
+                //     formId: e.detail.formId,
+                //     page: "/pages/class/fail?id=" + this.classId,
+                //     type: msgType
+                // })).catch(() =>{});
 
                 await studentOperate.bind(this)({
                     studentId: id,
@@ -424,13 +430,13 @@
             async agreeStudent (e) {
                 let id = e.currentTarget.dataset.id;
                 let type = 5;
-                let msgType = 2;
+                //let msgType = 2;
 
-                await (collectFormId.bind(this)({
-                    formId: e.detail.formId,
-                    page: "/pages/class/welcome?id=" + this.classId,
-                    type: msgType
-                })).catch(() =>{});
+                // await (collectFormId.bind(this)({
+                //     formId: e.detail.formId,
+                //     page: "/pages/class/welcome?id=" + this.classId,
+                //     type: msgType
+                // })).catch(() =>{});
 
                 await studentOperate.bind(this)({
                     studentId: id,

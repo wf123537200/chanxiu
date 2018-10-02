@@ -29,10 +29,10 @@
         </block>
     </view>
 
-    <view class="btn-box">
-        <navigator class="w-1-2 btn-primary" open-type="switchTab" url="/pages/class/list">返回首页</navigator>
-        <navigator class="w-1-2 btn-secondary" url="/pages/class/detail?id={{detail.id}}">查看班级信息</navigator>
-    </view>
+    <form class="btn-box" report-submit="true" @submit="getFormId">
+        <button class="btn-primary w-1-2" form-type="submit" @tap="gotoClassListPage">返回首页</button>
+        <button class="btn-secondary w-1-2" form-type="submit" @tap="gotoClassDetailPage">查看班级信息</button>
+    </form>
 </template>
 
 <style lang="less">
@@ -146,6 +146,8 @@
 <script>
     import wepy from "wepy";
     import ready from "../../mixins/ready";
+    import formIds from "../../mixins/formIds";
+    import boot from "../../mixins/boot";
     import classInfo from "../../mixins/classInfo";
 
     import login from "../../components/login";
@@ -164,9 +166,14 @@
             userInfo: {}
         };
 
-        mixins = [ready, classInfo];
+        mixins = [ready, classInfo, formIds, boot];
 
         methods = {
+            gotoClassDetailPage () {
+                wx.redirectTo({
+                    url: `/pages/class/detail?id=${this.detail.id}`
+                });
+            },
             login (e) {
                 wx.setStorageSync("token", {});
 

@@ -5,9 +5,9 @@
         <nav :id.sync="classId" nav="news"></nav>
 
         <view class="tab">
-            <view data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
-                <text>{{item.text}}</text>
-            </view>
+            <form data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" report-submit="true" @submit="getFormId" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
+                <button class="btn-formid" hover-class="none" plain="true" form-type="submit">{{item.text}}</button>
+            </form>
         </view>
 
         <view class="tab-body flex-v flex-1 {{currentTab}}">
@@ -32,63 +32,63 @@
                 </view>
 
                 <view class="tab sub">
-                    <view data-tab="{{item.id}}" class="tab-item {{currentRankTab === item.id ? 'on' : ''}}" @tap="switchRankTab" wx:key="index" wx:for="{{rankTab}}">
-                        <text>{{item.text}}</text>
-                    </view>
+                    <form data-tab="{{item.id}}" class="tab-item {{currentRankTab === item.id ? 'on' : ''}}" report-submit="true" @submit="getFormId" @tap="switchRankTab" wx:key="index" wx:for="{{rankTab}}">
+                        <button class="btn-formid" hover-class="none" plain="true" form-type="submit">{{item.text}}</button>
+                    </form>
                 </view>
 
-                <!--练习名单-->
-                <scroll-view class="data-list flex-1" scroll-y wx:if="{{currentRankTab === 'train'}}">
-                    <block wx:if="{{hasTrainInfo}}">
-                        <view class="data-item" wx:key="index" wx:for="{{brief.trainList1}}">
-                            <image class="avatar" src="{{item.avatarUrl}}"></image>
-                            <view class="total">
-                                <view class="time">{{item.trainInfo}}</view>
-                                <view class="nick-name">{{item.nickName}}</view>
+                <scroll-view class="data-list flex-1" scroll-y>
+                    <!--练习名单-->
+                    <block wx:if="{{currentRankTab === 'train'}}">
+                        <block wx:if="{{hasTrainInfo}}">
+                            <view class="data-item" wx:key="index" wx:for="{{brief.trainList1}}">
+                                <image class="avatar" src="{{item.avatarUrl}}"></image>
+                                <view class="total">
+                                    <view class="time">{{item.trainInfo}}</view>
+                                    <view class="nick-name">{{item.nickName}}</view>
+                                </view>
+                                <view class="detail">
+                                    <view class="time">{{item.strCreateTime}}</view>
+                                    <view class="every">{{item.everyTrainDuration}}</view>
+                                </view>
                             </view>
-                            <view class="detail">
-                                <view class="time">{{item.strCreateTime}}</view>
-                                <view class="every">{{item.everyTrainDuration}}</view>
-                            </view>
-                        </view>
+                        </block>
+                        <view class="no-records" wx:else>暂无人参与练习</view>
                     </block>
-                    <view class="no-records" wx:else>暂无人参与练习</view>
-                </scroll-view>
-
-                <!--排行榜-->
-                <scroll-view class="data-list flex-1" scroll-y wx:elif="{{currentRankTab === 'rank'}}">
-                    <block wx:if="{{hasTrainInfo}}">
-                        <view class="data-item" wx:key="index" wx:for="{{brief.trainList2}}">
-                            <image class="avatar" src="{{item.avatarUrl}}"></image>
-                            <view class="total">
-                                <view class="time">{{item.trainInfo}}</view>
-                                <view class="nick-name">{{item.nickName}}</view>
+                    <!--排行榜-->
+                    <block wx:elif="{{currentRankTab === 'rank'}}">
+                        <block wx:if="{{hasTrainInfo}}">
+                            <view class="data-item" wx:key="index" wx:for="{{brief.trainList2}}">
+                                <image class="avatar" src="{{item.avatarUrl}}"></image>
+                                <view class="total">
+                                    <view class="time">{{item.trainInfo}}</view>
+                                    <view class="nick-name">{{item.nickName}}</view>
+                                </view>
+                                <view class="detail">
+                                    <view class="time">{{item.strCreateTime}}</view>
+                                    <view class="every">{{item.everyTrainDuration}}</view>
+                                </view>
                             </view>
-                            <view class="detail">
-                                <view class="time">{{item.strCreateTime}}</view>
-                                <view class="every">{{item.everyTrainDuration}}</view>
-                            </view>
-                        </view>
+                        </block>
+                        <view class="no-records" wx:else>暂无人参与练习</view>
                     </block>
-                    <view class="no-records" wx:else>暂无人参与练习</view>
-                </scroll-view>
-
-                <!--中断榜-->
-                <scroll-view class="data-list flex-1" scroll-y wx:else="{{currentRankTab === 'break'}}">
-                    <block wx:if="{{brief.trainList3 && brief.trainList3.length > 0}}">
-                        <view class="data-item" wx:key="index" wx:for="{{brief.trainList3}}">
-                            <image class="avatar" src="{{item.avatarUrl}}"></image>
-                            <view class="total">
-                                <view class="time">{{item.trainInfo}}</view>
-                                <view class="nick-name">{{item.nickName}}</view>
+                    <!--中断榜-->
+                    <block wx:else>
+                        <block wx:if="{{brief.trainList3 && brief.trainList3.length > 0}}">
+                            <view class="data-item" wx:key="index" wx:for="{{brief.trainList3}}">
+                                <image class="avatar" src="{{item.avatarUrl}}"></image>
+                                <view class="total">
+                                    <view class="time">{{item.trainInfo}}</view>
+                                    <view class="nick-name">{{item.nickName}}</view>
+                                </view>
+                                <view class="detail">
+                                    <view class="time">{{item.strCreateTime}}</view>
+                                    <view class="every">{{item.everyTrainDuration}}</view>
+                                </view>
                             </view>
-                            <view class="detail">
-                                <view class="time">{{item.strCreateTime}}</view>
-                                <view class="every">{{item.everyTrainDuration}}</view>
-                            </view>
-                        </view>
+                        </block>
+                        <view class="no-records" wx:else>暂无人中断练习</view>
                     </block>
-                    <view class="no-records" wx:else>暂无人中断练习</view>
                 </scroll-view>
             </block>
 
@@ -126,63 +126,65 @@
         </view>
 
         <!--操作按钮-->
-        <!--简报-->
-        <block wx:if="{{currentTab === 'brief'}}">
-            <block wx:if="{{isPending}}">
-                <view class="btn-box fixed to-bottom">
-                    <button class="btn-disabled">等待审核</button>
-                </view>
+        <form report-submit="true" @submit="getFormId">
+            <!--简报-->
+            <block wx:if="{{currentTab === 'brief'}}">
+                <block wx:if="{{isPending}}">
+                    <view class="btn-box fixed to-bottom">
+                        <button class="btn-disabled">等待审核</button>
+                    </view>
+                </block>
+                <block wx:elif="{{!isMyClass}}">
+                    <view class="btn-box fixed to-bottom join-class">
+                        <button class="btn-primary" form-type="submit" open-type="getUserInfo" @getuserinfo="joinClass" wx:if="{{detail.remainingQuota > 0}}">加入班级</button>
+                        <button class="btn-disabled" form-type="submit" wx:else>已满员</button>
+                    </view>
+                </block>
+                <block wx:elif="{{isMonitor || isViceMonitor}}">
+                    <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
+                        <!--<button class="btn-primary w-1-2" open-type="getUserInfo">通报到群里</button>-->
+                        <button class="btn-secondary" form-type="submit" open-type="share">邀请新同学</button>
+                    </view>
+                    <view class="btn-box fixed to-bottom" wx:elif="{{currentRankTab === 'rank'}}">
+                        <button class="btn-secondary" form-type="submit" open-type="share">邀请新同学</button>
+                    </view>
+                    <view class="btn-box fixed to-bottom" wx:else>
+                        <!--<button class="btn-primary {{detail.isRemind ? '' : 'w-1-2'}}" open-type="getUserInfo">通报到群里</button>-->
+                        <button class="btn-secondary" form-type="submit" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind && trainRecords && trainRecords.length > 0}}">提醒他们</button>
+                        <button class="btn-primary" form-type="submit" open-type="share" wx:else>邀请新同学</button>
+                    </view>
+                </block>
+                <block wx:else>
+                    <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
+                        <button class="btn-secondary" form-type="submit" open-type="share">邀请新同学</button>
+                    </view>
+                </block>
             </block>
-            <block wx:elif="{{!isMyClass}}">
-                <view class="btn-box fixed to-bottom join-class">
-                    <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass" wx:if="{{detail.remainingQuota > 0}}">加入班级</button>
-                    <button class="btn-disabled" wx:else>已满员</button>
-                </view>
-            </block>
-            <block wx:elif="{{isMonitor || isViceMonitor}}">
-                <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
-                    <!--<button class="btn-primary w-1-2" open-type="getUserInfo">通报到群里</button>-->
-                    <button class="btn-secondary" open-type="share">邀请新同学</button>
-                </view>
-                <view class="btn-box fixed to-bottom" wx:elif="{{currentRankTab === 'rank'}}">
-                    <button class="btn-secondary" open-type="share">邀请新同学</button>
-                </view>
-                <view class="btn-box fixed to-bottom" wx:else>
-                    <!--<button class="btn-primary {{detail.isRemind ? '' : 'w-1-2'}}" open-type="getUserInfo">通报到群里</button>-->
-                    <button class="btn-secondary" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind && trainRecords && trainRecords.length > 0}}">提醒他们</button>
-                    <button class="btn-primary" open-type="share" wx:else>邀请新同学</button>
-                </view>
-            </block>
+            <!--记录-->
             <block wx:else>
-                <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
-                    <button class="btn-secondary" open-type="share">邀请新同学</button>
-                </view>
+                <block wx:if="{{isPending}}">
+                    <view class="btn-box fixed to-bottom">
+                        <button form-type="submit" class="btn-disabled">等待审核</button>
+                    </view>
+                </block>
+                <block wx:elif="{{!isMyClass}}">
+                    <view class="btn-box fixed to-bottom join-class">
+                        <button form-type="submit" class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass" wx:if="{{detail.remainingQuota > 0}}">加入班级</button>
+                        <button form-type="submit" class="btn-disabled" wx:else>已满员</button>
+                    </view>
+                </block>
+                <block wx:else>
+                    <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
+                        <button form-type="submit" class="btn-secondary" open-type="share">邀请新同学</button>
+                    </view>
+                </block>
             </block>
-        </block>
-        <!--记录-->
-        <block wx:else>
-            <block wx:if="{{isPending}}">
-                <view class="btn-box fixed to-bottom">
-                    <button class="btn-disabled">等待审核</button>
-                </view>
-            </block>
-            <block wx:elif="{{!isMyClass}}">
-                <view class="btn-box fixed to-bottom join-class">
-                    <button class="btn-primary" open-type="getUserInfo" @getuserinfo="joinClass" wx:if="{{detail.remainingQuota > 0}}">加入班级</button>
-                    <button class="btn-disabled" wx:else>已满员</button>
-                </view>
-            </block>
-            <block wx:else>
-                <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
-                    <button class="btn-secondary" open-type="share">邀请新同学</button>
-                </view>
-            </block>
-        </block>
 
-        <!--返回列表页-->
-        <view class="fixed to-bottom switch-page-btn-box" wx:if="{{bootFromMsg}}">
-            <button @tap="gotoClassListPage">首页</button>
-        </view>
+            <!--返回列表页-->
+            <view class="fixed to-bottom switch-page-btn-box" wx:if="{{bootFromMsg}}">
+                <button form-type="submit" @tap="gotoClassListPage">首页</button>
+            </view>
+        </form>
 
         <applyPopup :classId.sync="classId" @onSubmit.user="onApply"></applyPopup>
         <remindPopup :classId.sync="classId" @onSubmit.user="markRemind"></remindPopup>
@@ -376,9 +378,10 @@
     import wepy from "wepy";
     import moment from "moment";
     import classInfo from "../../mixins/classInfo";
-    import {getTrainList, getTrainRanks, getInterrupts, getTrainRecords} from "../../modules/Classes";
     import ready from "../../mixins/ready";
+    import formIds from "../../mixins/formIds";
     import share from "../../mixins/boot";
+    import {getTrainList, getTrainRanks, getInterrupts, getTrainRecords} from "../../modules/Classes";
 
     import nav from "./detail/navigator";
     import login from "../../components/login";
@@ -447,7 +450,7 @@
             contentVisibleInfo: {}
         };
 
-        mixins = [ready, classInfo, share];
+        mixins = [ready, classInfo, share, formIds];
 
         computed = {
             trainTimeTypeText () {

@@ -1,7 +1,7 @@
 <template>
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-    <form @submit="submit">
+    <form report-submit="true" @submit="submit">
         <view class="section">
             <view class="section-title">基本信息</view>
 
@@ -240,6 +240,7 @@
 <script>
     import wepy from "wepy";
     import ready from "../../mixins/ready";
+    import formIds from "../../mixins/formIds";
     import {createClass} from "../../modules/Classes";
     import getGlobalData from "../../components/getGlobalData";
 
@@ -258,7 +259,7 @@
             login
         };
 
-        mixins = [ready];
+        mixins = [ready, formIds];
 
         data = {
             userInfo: {},
@@ -324,6 +325,7 @@
                 });
             },
             async submit (e) {
+                this.getFormId(e);
                 const id = await this.createClass(e.detail.value);
 
                 wx.showToast({

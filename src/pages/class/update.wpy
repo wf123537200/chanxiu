@@ -1,7 +1,7 @@
 <template>
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-    <form @submit="submit">
+    <form report-submit="true" @submit="submit">
         <view class="section" wx:if="{{action === 1}}">
             <view class="section-body">
                 <view class="content">
@@ -243,6 +243,7 @@
     import wepy from "wepy";
     import ready from "../../mixins/ready";
     import classinfo from "../../mixins/classInfo";
+    import formIds from "../../mixins/formIds";
     import {updateClass} from "../../modules/Classes";
     import getGlobalData from "../../components/getGlobalData";
 
@@ -261,7 +262,7 @@
             login
         };
 
-        mixins = [ready, classinfo];
+        mixins = [ready, classinfo, formIds];
 
         data = {
             action: 1,
@@ -335,19 +336,28 @@
             async submit (e) {
                 const params = e.detail.value;
 
-                // if (!params.isSupportAdd) {
-                //     params.committee = false;
-                //     params.qrCodeUrl = "";
-                // }
+                if (!params.isSupportAdd) {
+                    params.committee = false;
+                    params.qrCodeUrl = "";
+                }
+
+                await this.getFormId(e);
 
                 await updateClass.bind(this)(params);
 
                 wx.showToast({
                     title: "修改成功",
                     complete: () => {
-                        wx.redirectTo({
-                            url: "/pages/class/detail?id=" + this.classId
-                        });
+                        if (this.action === 1 || this.action === 2) {
+                            wx.navigateBack({
+                                delta: 2
+                            });
+                        }
+                        else {
+                            wx.navigateBack({
+                                delta: 1
+                            });
+                        }
                     }
                 });
             }

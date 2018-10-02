@@ -1,7 +1,7 @@
 <template>
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-    <view wx:if="{{ready}}">
+    <form class="btn-box" report-submit="true" @submit="getFormId" wx:if="{{ready}}">
         <view class="content-box">
             <view class="base">
                 <image class="icon" src="{{detail.logo}}" mode="aspectFill"/>
@@ -15,9 +15,9 @@
         </view>
 
         <view class="btn-box btn-save-image">
-            <button class="btn-primary" @tap="saveImage">保存图片</button>
+            <button class="btn-primary" form-type="submit" @tap="saveImage">保存图片</button>
         </view>
-    </view>
+    </form>
 </template>
 
 <style lang="less">
@@ -103,6 +103,7 @@
 <script>
     import wepy from "wepy";
     import ready from "../../mixins/ready";
+    import formIds from "../../mixins/formIds";
     import classInfo from "../../mixins/classInfo";
 
     import login from "../../components/login";
@@ -121,7 +122,7 @@
             userInfo: {}
         };
 
-        mixins = [ready, classInfo];
+        mixins = [ready, classInfo, formIds];
 
         computed = {
             remainingQuota () {
@@ -134,8 +135,8 @@
             }
         };
 
-        saveImage () {
-            if (this.detail.qrCodeUrl) {
+        methods = {
+            saveImage (e) {
                 wx.downloadFile({
                     url: this.detail.qrCodeUrl,
                     success: (res) => {
@@ -159,7 +160,7 @@
                     }
                 });
             }
-        }
+        };
 
         onShow() {
             this.$parent.getUserInfo((userInfo) => {

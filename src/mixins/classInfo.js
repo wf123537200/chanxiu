@@ -70,7 +70,9 @@ export default class extends wepy.mixin {
     };
 
     async getClassDetail (fix) {
-        await getClassDetail.bind(this)(fix).catch(() => {
+        await getClassDetail.bind(this)(fix).catch((e) => {
+            console.log(e);
+
             wx.showToast({
                 title: "班级不存在",
                 complete() {

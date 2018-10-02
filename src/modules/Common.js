@@ -6,15 +6,14 @@ import ajax2promise from "../components/ajax2promise";
 import getGlobalData from "../components/getGlobalData";
 
 export async function collectFormId (params = {}) {
-    console.log("formId:", params.formId);
     await ajax2promise({
         ins: this,
+        method: "POST",
         url: "/template/message/collect",
         params
-    }).catch(() => {
-        console.log("formId:", params.formId);
-        throw "formId收集失败"
     });
+
+    console.log("formId已发送到后台:", params.formId);
 
     this.$apply();
 }

@@ -11,6 +11,7 @@ export async function getOpenClasses () {
 
     let classes = await ajax2promise({
         ins: this,
+        method: "GET",
         url: "/class/opens"
     });
 
@@ -31,6 +32,7 @@ export async function getMyClasses() {
 
     let classes = await ajax2promise({
         ins: this,
+        method: "GET",
         url: "/class/myadds"
     });
 
@@ -98,6 +100,7 @@ export async function updateClass(params = {}) {
 export async function getClassDetail(fix = true) {
     let detail = await ajax2promise({
         ins: this,
+        method: "GET",
         url: "/class/brief",
         params: {
             id: this.classId

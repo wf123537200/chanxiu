@@ -7,10 +7,10 @@
         <view class="feedback">反馈信息：无</view>
         <view class="encourage">请不要气馁，保持精进修习，可以让你找到合适的班级！</view>
 
-        <view class="btn-box">
-            <navigator class="btn-primary w-1-2" open-type="switchTab" url="/pages/class/list">返回首页</navigator>
-            <button class="btn-secondary w-1-2" @tap="joinClass">重新申请</button>
-        </view>
+        <form class="btn-box" report-submit="true" @submit="getFormId">
+            <button class="btn-primary w-1-2" form-type="submit" @tap="gotoClassListPage">返回首页</button>
+            <button class="btn-secondary w-1-2" form-type="submit" @tap="joinClass">重新申请</button>
+        </form>
 
         <applyPopup :id.sync="id"></applyPopup>
     </block>
@@ -56,6 +56,8 @@
 <script>
     import wepy from "wepy";
     import classInfo from "../../mixins/classInfo";
+    import formIds from "../../mixins/formIds";
+    import boot from "../../mixins/boot";
     import ready from "../../mixins/ready";
 
     import applyPopup from "./detail/apply-popup";
@@ -64,7 +66,7 @@
     export default class extends wepy.page {
         config = {
             disableScroll: true,
-            navigationBarTitleText: "加入班级申请失败"
+            navigationBarTitleText: "加入班级申请未通过"
         };
 
         data = {
@@ -76,7 +78,7 @@
             login
         };
 
-        mixins = [ready, classInfo];
+        mixins = [ready, classInfo, formIds, boot];
 
         methods = {
             login (e) {
