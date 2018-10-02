@@ -284,7 +284,7 @@ import 'wepy-async-function';
                             if(d && d.accessToken) {
                                 Object.assign(that, d)
                                 getUserInfoByCache.apply(that, [cb, userinfo])
-                                console.log('正在使用token： ' + d.accessToken)
+                                console.log('正在使用缓存的token： ' + d.accessToken)
                             } else {
                                 ajax({
                                     ins: that,

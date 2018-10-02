@@ -35,11 +35,11 @@
             </navigator>
         </view>
 
-        <view class="fixed to-bottom btn-box">
-            <form report-submit="true" @submit="gotoCreatePage">
-                <button class="btn-secondary" plain="true" form-type="submit">创建</button>
-            </form>
-        </view>
+        <form report-submit="true" @submit="gotoCreatePage">
+            <view class="fixed to-bottom btn-box">
+                <button class="btn-primary" form-type="submit">创  建</button>
+            </view>
+        </form>
     </block>
 </template>
 
@@ -195,17 +195,11 @@
             gotoCreatePage (e) {
                 this.getFormId(e);
 
-                wx.navigatorTo({
+                wx.navigateTo({
                     url: "/pages/class/create"
                 });
             }
         };
-
-        async create() {
-            wx.navigateTo({
-                url: "/pages/class/create"
-            });
-        }
 
         async getOpenClasses() {
             this.openedClasses = await getOpenClasses.bind(this)();

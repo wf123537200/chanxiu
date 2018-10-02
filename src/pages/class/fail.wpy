@@ -1,7 +1,7 @@
 <template>
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-    <block wx:if="{{ready}}">
+    <block wx:if="{{ready && !_error}}">
         <view class="header">你的申请未通过！</view>
         <view class="feedback">你发送的加入“{{detail.name}}”的申请未通过。</view>
         <view class="feedback">反馈信息：无</view>

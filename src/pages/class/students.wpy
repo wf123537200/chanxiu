@@ -1,7 +1,7 @@
 <template>
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-    <view class="full-height flex-v" wx:if="{{ready}}" @tap="hideStudentsActions">
+    <view class="full-height flex-v" wx:if="{{ready && !_error}}" @tap="hideStudentsActions">
         <nav :id.sync="classId" nav="students"></nav>
 
         <view class="tab">
@@ -480,9 +480,12 @@
                 this.addReadyCallback(this.getClassDetail());
                 this.addReadyCallback(this.getStudents());
                 await this.runReadyCallbacks();
-                wx.setNavigationBarTitle({
-                    title: this.detail.name
-                });
+
+                if (!this._error) {
+                    wx.setNavigationBarTitle({
+                        title: this.detail.name
+                    });
+                }
             });
         }
     }

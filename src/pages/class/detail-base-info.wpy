@@ -1,7 +1,7 @@
 <template>
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-    <view class="info-box" wx:if="{{ready}}">
+    <view class="info-box" wx:if="{{ready && !_error}}">
         <form report-submit="true" @submit="getFormId">
             <button plain="true" class="field btn-formid" form-type="submit" hover-class="none" @tap="uploadImage('logo')">
                 <text class="label">Logo</text>
@@ -215,7 +215,10 @@
                 this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail(false));
                 await this.runReadyCallbacks();
-                this.initData();
+
+                if (!this._error) {
+                    this.initData();
+                }
             });
         }
     }

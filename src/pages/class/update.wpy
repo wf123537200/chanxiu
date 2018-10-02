@@ -1,94 +1,96 @@
 <template>
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-    <form report-submit="true" @submit="submit">
-        <view class="section" wx:if="{{action === 1}}">
-            <view class="section-body">
-                <view class="content">
-                    <input type="text" name="name" value="{{detail.name}}" class="input" maxlength="15" placeholder="最多15字，必填。" />
-                </view>
-            </view>
-        </view>
-
-        <view class="section" wx:if="{{action === 2}}">
-            <view class="section-body">
-                <view class="content">
-                    <textarea name="brief" class="textarea" value="{{detail.brief}}" maxlength="30" placeholder="一句话介绍班级。最多30字，选填。" />
-                </view>
-            </view>
-        </view>
-
-        <view class="section" wx:if="{{action === 3}}">
-            <view class="section-body">
-                <view class="row radio-group-row">
-                    <view class="label required">加入条件</view>
+    <block wx:if="{{ready && !_error}}">
+        <form report-submit="true" @submit="submit">
+            <view class="section" wx:if="{{action === 1}}">
+                <view class="section-body">
                     <view class="content">
-                        <radio-group name="addType" @change="onAddTypeChanged">
-                            <label class="radio">
-                                <radio hidden value="0" checked="{{addType === 0}}"/>
-                                <text>直接加入，无需确认</text>
-                            </label>
-                            <label class="radio">
-                                <radio hidden value="1" checked="{{addType === 1}}"/>
-                                <text>邀请确认</text>
-                            </label>
-                        </radio-group>
-                    </view>
-                </view>
-
-                <view class="row radio-group-row">
-                    <view class="label">限额人数</view>
-                    <view class="content">
-                        <radio-group name="maxStudentNum">
-                            <label class="radio" wx:for="{{studentSupported}}" wx:key="index">
-                                <radio hidden value="{{item}}" checked="{{index === defaultCheckedStudent}}" />
-                                <text>{{item}}人</text>
-                            </label>
-                        </radio-group>
+                        <input type="text" name="name" value="{{detail.name}}" class="input" maxlength="15" placeholder="最多15字，必填。" />
                     </view>
                 </view>
             </view>
-        </view>
 
-        <view class="section" wx:if="{{action === 4}}">
-            <view class="section-body">
-                <view class="row">
-                    <view class="label">支持加群</view>
+            <view class="section" wx:if="{{action === 2}}">
+                <view class="section-body">
                     <view class="content">
-                        <switch checked="{{isSupportAdd}}" name="isSupportAdd" color="#b0976e" @change="onSupportAddChanged"></switch>
+                        <textarea name="brief" class="textarea" value="{{detail.brief}}" maxlength="30" placeholder="一句话介绍班级。最多30字，选填。" />
+                    </view>
+                </view>
+            </view>
 
-                        <block wx:if="{{isSupportAdd}}">
-                            <input type="text" name="committee" value="{{detail.committee}}" class="input v-space" maxlength="-1" placeholder="请输入班干部微信号" />
+            <view class="section" wx:if="{{action === 3}}">
+                <view class="section-body">
+                    <view class="row radio-group-row">
+                        <view class="label required">加入条件</view>
+                        <view class="content">
+                            <radio-group name="addType" @change="onAddTypeChanged">
+                                <label class="radio">
+                                    <radio hidden value="0" checked="{{addType === 0}}"/>
+                                    <text>直接加入，无需确认</text>
+                                </label>
+                                <label class="radio">
+                                    <radio hidden value="1" checked="{{addType === 1}}"/>
+                                    <text>邀请确认</text>
+                                </label>
+                            </radio-group>
+                        </view>
+                    </view>
 
-                            <view class="flex-h flex-vertical-bottom v-space">
-                                <view class="upload-image" @tap="uploadImage('qrCodeUrl')">
-                                    <image src="{{_qrCodeUrl}}" wx:if="{{_qrCodeUrl}}"></image>
+                    <view class="row radio-group-row">
+                        <view class="label">限额人数</view>
+                        <view class="content">
+                            <radio-group name="maxStudentNum">
+                                <label class="radio" wx:for="{{studentSupported}}" wx:key="index">
+                                    <radio hidden value="{{item}}" checked="{{index === defaultCheckedStudent}}" />
+                                    <text>{{item}}人</text>
+                                </label>
+                            </radio-group>
+                        </view>
+                    </view>
+                </view>
+            </view>
+
+            <view class="section" wx:if="{{action === 4}}">
+                <view class="section-body">
+                    <view class="row">
+                        <view class="label">支持加群</view>
+                        <view class="content">
+                            <switch checked="{{isSupportAdd}}" name="isSupportAdd" color="#b0976e" @change="onSupportAddChanged"></switch>
+
+                            <block wx:if="{{isSupportAdd}}">
+                                <input type="text" name="committee" value="{{detail.committee}}" class="input v-space" maxlength="-1" placeholder="请输入班干部微信号" />
+
+                                <view class="flex-h flex-vertical-bottom v-space">
+                                    <view class="upload-image" @tap="uploadImage('qrCodeUrl')">
+                                        <image src="{{_qrCodeUrl}}" wx:if="{{_qrCodeUrl}}"></image>
+                                    </view>
+                                    <text class="tip flex-1">
+                                        <text>可选。</text>
+                                        <text>请上传群二维码。为防止7天过期失效，建议您每周更新</text>
+                                    </text>
+                                    <input hidden name="qrCodeUrl" value="{{qrCodeUrl}}" class="input" maxlength="-1" />
                                 </view>
-                                <text class="tip flex-1">
-                                    <text>可选。</text>
-                                    <text>请上传群二维码。为防止7天过期失效，建议您每周更新</text>
-                                </text>
-                                <input hidden name="qrCodeUrl" value="{{qrCodeUrl}}" class="input" maxlength="-1" />
-                            </view>
-                        </block>
+                            </block>
+                        </view>
                     </view>
                 </view>
             </view>
-        </view>
 
-        <view class="section" wx:if="{{action === 5}}">
-            <view class="section-body">
-                <view class="content">
-                    <textarea name="detail" value="{{detail.detail}}" class="textarea detail" maxlength="500" adjust-position="true" auto-height="true" placeholder="最多500个字。" />
+            <view class="section" wx:if="{{action === 5}}">
+                <view class="section-body">
+                    <view class="content">
+                        <textarea name="detail" value="{{detail.detail}}" class="textarea detail" maxlength="500" adjust-position="true" auto-height="true" placeholder="最多500个字。" />
+                    </view>
                 </view>
             </view>
-        </view>
 
-        <view class="btn-box">
-            <button class="btn-secondary w-1-2" @tap="cancel">取  消</button>
-            <button class="btn-primary w-1-2" form-type="submit">确  定</button>
-        </view>
-    </form>
+            <view class="btn-box">
+                <button class="btn-secondary w-1-2" @tap="cancel">取  消</button>
+                <button class="btn-primary w-1-2" form-type="submit">确  定</button>
+            </view>
+        </form>
+    </block>
 </template>
 
 <style lang="less">
@@ -407,8 +409,11 @@
                 this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail(false));
                 await this.runReadyCallbacks();
-                this.initData();
-                this.setTitle();
+
+                if (!this._error) {
+                    this.initData();
+                    this.setTitle();
+                }
             });
         }
     }

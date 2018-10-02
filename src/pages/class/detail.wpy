@@ -4,7 +4,7 @@
     <!--</form>-->
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-    <block wx:if="{{ready}}">
+    <block wx:if="{{ready && !_error}}">
         <nav :id.sync="classId" nav="intro"></nav>
 
         <view class="info-box">
@@ -369,14 +369,16 @@
         }
 
         onShow() {
-            //this.addReadyCallback(this.getUserInfo());
             this.$parent.getUserInfo(async (userInfo) => {
                 this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail());
                 await this.runReadyCallbacks();
-                wx.setNavigationBarTitle({
-                    title: this.detail.name
-                });
+
+                if (!this._error) {
+                    wx.setNavigationBarTitle({
+                        title: this.detail.name || ""
+                    });
+                }
             });
         }
     }
