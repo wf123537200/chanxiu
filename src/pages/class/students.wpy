@@ -88,12 +88,12 @@
                     <button form-type="submit" class="btn-disabled" wx:else>已满员</button>
                 </view>
             </block>
-        </form>
 
-        <!--返回列表页-->
-        <view class="fixed to-bottom switch-page-btn-box" wx:if="{{bootFromMsg}}">
-            <button form-type="submit" @tap="gotoClassListPage">首页</button>
-        </view>
+            <!--返回列表页-->
+            <view class="fixed to-bottom switch-page-btn-box" wx:if="{{bootFromMsg}}">
+                <button form-type="submit" @tap="gotoClassListPage">首页</button>
+            </view>
+        </form>
     </view>
 </template>
 

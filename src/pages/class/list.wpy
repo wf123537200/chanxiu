@@ -35,12 +35,10 @@
             </navigator>
         </view>
 
-        <view class="fixed to-bottom switch-page-btn-box">
-            <navigator url="/pages/class/create">
-                <form report-submit="true" @submit="getFormId">
-                    <button class="btn-formid" plain="true" form-type="submit">创建</button>
-                </form>
-            </navigator>
+        <view class="fixed to-bottom btn-box">
+            <form report-submit="true" @submit="gotoCreatePage">
+                <button class="btn-secondary" plain="true" form-type="submit">创建</button>
+            </form>
         </view>
     </block>
 </template>
@@ -193,6 +191,13 @@
                     this.userInfo = Object.assign({}, userInfo);
                     this.$apply();
                 }, e.detail);
+            },
+            gotoCreatePage (e) {
+                this.getFormId(e);
+
+                wx.navigatorTo({
+                    url: "/pages/class/create"
+                });
             }
         };
 
