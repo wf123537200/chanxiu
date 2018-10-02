@@ -61,9 +61,53 @@
       this.content = this.$parent.globalData.diaryContent
 
       const strCreateTime = this.$parent.globalData.diaryStrCreateTime
-      if (strCreateTime.split(' ') && strCreateTime.split(' ').length >= 2) {
+      if (strCreateTime && strCreateTime.split(' ') && strCreateTime.split(' ').length >= 2) {
         this.strCreateTime = strCreateTime.split(' ')[0]
       }
+
+      /*
+      ajax({
+        ins: this,
+        url: '/diary/add',
+        method: 'POST',
+        params: {
+          title: 'title',
+          content: 'content'
+        },
+        success: (data) => {
+          console.log('success')
+        }
+      })
+      */
+
+      ajax({
+        ins: this,
+        url: '/diary/del',
+        method: 'POST',
+        params: {
+          id: 3,
+        },
+        success: (data) => {
+          console.log('success')
+        }
+      })
+
+
+      /*
+      ajax({
+        ins: this,
+        url: '/diary/update',
+        method: 'POST',
+        params: {
+          id: 3,
+          title: 'title2',
+          content: 'content2'
+        },
+        success: (data) => {
+          console.log('success')
+        }
+      })
+      */
     }
   }
 </script>

@@ -742,14 +742,10 @@
   }
 
   const dynamicSave = function (id, title, content) {
-    let url = '/dynamic/add'
+    let url = '/train/experience'
     let params = {
-      title, content
-    }
-
-    if (id) {
-      params.id = id
-      url = '/diary/update'
+      trainId: id,
+      content
     }
 
     ajax({
@@ -770,13 +766,13 @@
   /**
    * 删除日记
    */
-  const dynamicDel = function (id) {
+  const dynamicDel = function (refId) {
     ajax({
       ins: this,
-      url: '/diary/del',
+      url: '/train/del',
       method: 'POST',
       params: {
-        id
+        id: refId
       },
       success: (d) => {
         console.log(d)
@@ -871,7 +867,7 @@
         const that = this
 
         setTimeout(_ => {
-          const {id, title, content} = that.dynamic
+          const {refId, title, content} = that.dynamic
           if (!content) {
             return wx.showToast({
               title: '请录入练习状态',
@@ -880,7 +876,7 @@
               mask:true
             })
           }
-          dynamicSave.apply(that, [id, title, content])
+          dynamicSave.apply(that, [refId, title, content])
         }, 200)
       },
       deleteEx(item) {
@@ -891,7 +887,7 @@
         this.$invoke('deleteEx', 'togglePopup')
       },
       deleteComfirm() {
-        dynamicDel.apply(this, [this.dynamic.id])
+        dynamicDel.apply(this, [this.dynamic.refId])
         this.$invoke('deleteEx', 'togglePopup')
       },
       processShow(item) {
