@@ -14,6 +14,7 @@
 <script>
     import wepy from "wepy";
     import {remind} from "../../../modules/Classes";
+    import formIds from "../../../mixins/formIds";
 
     import popup from "../../../components/zan-popup-a";
 
@@ -30,13 +31,25 @@
             message: ""
         };
 
+        mixins = [formIds];
+
         methods = {
             async submit (e) {
+                this.getFormId(e);
+                //let msgType = 2;
+
+                // await (collectFormId.bind(this)({
+                //     formId: e.detail.formId,
+                //     page: "/pages/class/students?_f=1&id=" + this.classId,
+                //     type: msgType
+                // })).catch(() =>{});
+
                 await this.remind({
-                    message: this.message,
-                    formId: e.detail.formId
+                    message: this.message
                 });
+
                 this.$emit("onSubmit");
+                this.$apply();
                 wx.showToast({
                     title: "提醒完成"
                 });

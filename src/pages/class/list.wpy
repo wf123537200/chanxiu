@@ -1,0 +1,229 @@
+<template>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
+
+    <block wx:if="{{ready}}">
+        <view class="classes">
+            <navigator url="/pages/class/detail?id={{item.id}}" class="class" style="background-image: url({{bgImg}})" wx:key="{{index}}" wx:for="{{myClasses}}">
+                <form report-submit="true" @submit="getFormId">
+                    <button plain="true" form-type="submit">
+                        <text class="student-num">{{item.studentNum}}人</text>
+
+                        <view class="header text-nowrap text-ellipsis">
+                            <image src="{{item.logo}}" class="logo" mode="aspectFill" wx:if="{{item.logo}}"></image><text class="name">{{item.name}}</text>
+                        </view>
+
+                        <text class="desc">{{item.brief}}</text>
+
+                        <text class="train-info" wx:if="{{item.todayTrainInfo}}">{{item.todayTrainInfo}}</text>
+                    </button>
+                </form>
+            </navigator>
+            <navigator url="/pages/class/detail?id={{item.id}}" class="class" style="background-image: url({{bgImg}})" wx:key="{{index}}" wx:for="{{openedClasses}}">
+                <form report-submit="true" @submit="getFormId">
+                    <button plain="true" form-type="submit">
+                        <text class="student-num">{{item.studentNum}}人</text>
+
+                        <view class="header text-nowrap text-ellipsis">
+                            <image src="{{item.logo}}" class="logo" mode="aspectFill" wx:if="{{item.logo}}"></image><text class="name">{{item.name}}</text>
+                        </view>
+
+                        <text class="desc">{{item.brief}}</text>
+
+                        <text class="train-info" wx:if="{{item.todayTrainInfo}}">{{item.todayTrainInfo}}</text>
+                    </button>
+                </form>
+            </navigator>
+        </view>
+
+        <view class="fixed to-bottom switch-page-btn-box">
+            <navigator url="/pages/class/create">
+                <form report-submit="true" @submit="getFormId">
+                    <button class="btn-formid" plain="true" form-type="submit">创建</button>
+                </form>
+            </navigator>
+        </view>
+    </block>
+</template>
+
+<style lang="less">
+    @import (reference) "../../static/less/utility";
+
+    page {
+        .full-height;
+        background-color: #eee;
+    }
+
+    .classes {
+        /*height: ~"calc(100% - 110rpx)";*/
+        /*padding-bottom: 35rpx;*/
+        /*box-sizing: border-box;*/
+
+        button {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
+        }
+    }
+
+    .class {
+        position: relative;
+        height: 290rpx;
+        margin: 35rpx 30rpx 0;
+        background-color: #000;
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        &:last-of-type {
+            margin-bottom: 35rpx;
+        }
+
+        .student-num {
+            position: absolute;
+            right: 25rpx;
+            top: 20rpx;
+            color: #fff;
+            font-size: 24rpx;
+        }
+
+        .header {
+            margin: 0 90rpx;
+            padding-top: 35rpx;
+            line-height: 70rpx;
+            text-align: center;
+            font-size: 34rpx;
+            color: #fff;
+
+            .logo {
+                width: 70rpx;
+                height: 70rpx;
+                margin-right: 20rpx;
+                border-radius: 50%;
+                vertical-align: middle;
+            }
+
+            .name {
+                vertical-align: middle;
+            }
+        }
+
+        .desc {
+            display: block;
+            height: 80rpx;
+            margin: 15rpx 90rpx 0;
+            color: #aaa;
+            font-size: 24rpx;
+            line-height: 40rpx;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .train-info {
+            display: block;
+            margin-top: 15rpx;
+            text-align: center;
+            color: #fff;
+            font-size: 24rpx;
+        }
+    }
+
+    .btn-create-class-box {
+        width: 100%;
+        padding-bottom: 30rpx;
+        border-top: 2rpx solid #ddd;
+        background-color: #fff;
+        background-clip: content-box;
+        font-size: 34rpx;
+        border-radius: 0;
+
+        .btn {
+            width: 100%;
+            border: none;
+            line-height: 110rpx;
+            height: 110rpx;
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import ready from "../../mixins/ready";
+    import formIds from "../../mixins/formIds";
+    import getGlobalData from "../../components/getGlobalData";
+    import {getOpenClasses, getMyClasses} from "../../modules/Classes";
+
+    import login from "../../components/login";
+
+    export default class extends wepy.page {
+        config = {
+            navigationBarTitleText: "班级"
+        };
+
+        components = {
+            login
+        };
+
+        data = {
+            bgImg: "",
+            openedClasses: [],
+            myClasses: [],
+            userInfo: {},
+            currentTab: "all",
+            tab: [
+                {
+                    id: "all",
+                    text: "所有开放班级"
+                },
+                {
+                    id: "my",
+                    text: "我加入的班级"
+                }
+            ]
+        };
+
+        mixins = [ready, formIds];
+
+        methods = {
+            login (e) {
+                wx.setStorageSync("token", {});
+
+                this.$parent.getUserInfo((userInfo = {}) => {
+                    this.userInfo = Object.assign({}, userInfo);
+                    this.$apply();
+                }, e.detail);
+            }
+        };
+
+        async create() {
+            wx.navigateTo({
+                url: "/pages/class/create"
+            });
+        }
+
+        async getOpenClasses() {
+            this.openedClasses = await getOpenClasses.bind(this)();
+        };
+
+        async getMyClasses() {
+            this.myClasses = await getMyClasses.bind(this)();
+        };
+
+        onLoad () {
+            const global = getGlobalData(this);
+            const {ajaxPerfix} = global.data;
+
+            this.bgImg = `${ajaxPerfix}/res/app/train.png`;
+        }
+
+        async onShow() {
+            this.$parent.getUserInfo((userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.addReadyCallback(this.getOpenClasses());
+                this.addReadyCallback(this.getMyClasses());
+                this.runReadyCallbacks();
+            });
+        }
+    }
+</script>

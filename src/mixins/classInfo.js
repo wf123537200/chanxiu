@@ -1,6 +1,6 @@
 import wepy from "wepy";
-//import getGlobalData from "../components/getGlobalData";
-import {getClassDetail, joinClass, exitClass, applyClass, spaceClass} from "../modules/Classes";
+import {collectFormId} from "../modules/Common";
+import {getClassDetail, joinClass, exitClass, applyClass, deleteClass} from "../modules/Classes";
 
 export default class extends wepy.mixin {
     data = {
@@ -9,6 +9,10 @@ export default class extends wepy.mixin {
     };
 
     computed = {
+        // 待审核
+        isPending () {
+            return this.detail.status === 0;
+        },
         isMonitor () {
             const role = this.detail.role;
 
@@ -60,34 +64,30 @@ export default class extends wepy.mixin {
                 }
             });
         },
-        async spaceClass () {
-            await this.spaceClass().catch(() => {
-                wx.showToast({
-                    title: "操作失败"
-                });
-
-                throw "班级解散失败";
-            });
-
-            wx.showToast({
-                title: "班级已解散",
-                complete: () => {
-                    wx.switchTab({
-                        url: "/pages/class/index"
-                    });
-                }
-            });
+        showDeleteClassPopup () {
+            this.$invoke("deleteClassPopup", "show");
         }
     };
 
-    async getClassDetail () {
-        await this.getUserInfo();
-        await getClassDetail.bind(this)();
+    async getClassDetail (fix) {
+        await getClassDetail.bind(this)(fix).catch((e) => {
+            console.log(e);
+
+            wx.showToast({
+                title: "班级不存在",
+                complete() {
+                    wx.switchTab({
+                        url: "/pages/class/list"
+                    });
+                }
+            });
+
+            throw "班级不存在";
+        });
         this.$apply();
     };
 
     async joinClass () {
-        await this.getUserInfo();
         await joinClass.bind(this)();
         wx.navigateTo({
             url: "/pages/class/welcome?id=" + this.classId
@@ -95,20 +95,17 @@ export default class extends wepy.mixin {
     };
 
     async applyClass () {
-        await this.getUserInfo();
         await applyClass.bind(this)();
         this.$apply();
     };
 
     async exitClass () {
-        await this.getUserInfo();
         await exitClass.bind(this)();
         this.$apply();
     };
 
-    async spaceClass () {
-        await this.getUserInfo();
-        await spaceClass.bind(this)();
+    async deleteClass () {
+        await deleteClass.bind(this)();
         this.$apply();
     };
 

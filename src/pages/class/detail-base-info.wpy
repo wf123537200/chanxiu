@@ -1,0 +1,222 @@
+<template>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
+
+    <view class="info-box" wx:if="{{ready}}">
+        <form report-submit="true" @submit="getFormId">
+            <button plain="true" class="field btn-formid" form-type="submit" hover-class="none" @tap="uploadImage('logo')">
+                <text class="label">Logo</text>
+                <view class="content">
+                    <image class="logo" src="{{_logo}}" wx:if="{{_logo}}"></image>
+                </view>
+                <image class="more" src="/images/more-gray.png"></image>
+            </button>
+        </form>
+        <navigator class="" url="/pages/class/update?id={{detail.id}}&action=1">
+            <form report-submit="true" @submit="getFormId">
+                <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
+                    <text class="label">名称</text>
+                    <view class="content">
+                        <text>{{detail.name}}</text>
+                    </view>
+                    <image class="more" src="/images/more-gray.png"></image>
+                </button>
+            </form>
+        </navigator>
+
+        <navigator url="/pages/class/update?id={{detail.id}}&action=2">
+            <form report-submit="true" @submit="getFormId">
+                <button plain="true" class="field desc btn-formid" form-type="submit" hover-class="none">
+                    <view class="header">
+                        <text class="label">一句话介绍</text>
+                        <image class="more" src="/images/more-gray.png"></image>
+                    </view>
+                    <view class="content">
+                        <text>{{detail.brief}}</text>
+                    </view>
+                </button>
+            </form>
+        </navigator>
+    </view>
+</template>
+
+<style lang="less">
+    @import (reference) "../../static/less/utility";
+
+    page {
+        .full-height;
+        .flex-v;
+        background-color: #fff;
+    }
+
+    .info-box {
+        padding-top: 40rpx;
+        background-color: #fff;
+
+        .logo {
+            display: inline-block;
+            vertical-align: middle;
+            width: 90rpx;
+            height: 90rpx;
+            border: 1px solid #666;
+        }
+
+        .field {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            align-content: center;
+            padding: 20rpx 40rpx;
+            line-height: 40rpx;
+
+            &::after {
+                content: "";
+                position: absolute;
+                left: 40rpx;
+                right: 40rpx;
+                bottom: 0;
+                border-bottom: 2rpx solid #eee;
+            }
+
+            &.desc {
+                display: block;
+                padding: 0;
+
+                .header {
+                    //position: relative;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    align-content: center;
+                    padding: 20rpx 40rpx 10rpx;
+
+                    .label {
+                        .flex-1;
+                    }
+                }
+
+                .content {
+                    padding: 10rpx 40rpx 20rpx;
+                    line-height: 1.2;
+                    text-align: left;
+                }
+            }
+
+            .label {
+                font-size: 26rpx;
+                color: #333;
+            }
+
+            .content {
+                .flex-1;
+                color: #aaa;
+                font-size: 24rpx;
+                text-align: right;
+            }
+        }
+
+        /*.navigator-hover {*/
+            /*background-color: transparent !important;*/
+        /*}*/
+
+        .more{
+            width: 18rpx;
+            height: 18rpx;
+            margin-left: 15rpx;
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import ready from "../../mixins/ready";
+    import classInfo from "../../mixins/classInfo";
+    import formIds from "../../mixins/formIds";
+    import {updateClass} from "../../modules/Classes";
+    import getGlobalData from "../../components/getGlobalData";
+
+    import login from "../../components/login";
+
+    export default class extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "班级基本信息"
+        };
+
+        components = {
+            login
+        };
+
+        data = {
+            userInfo: {},
+            _logo: ""
+        };
+
+        mixins = [ready, classInfo, formIds];
+
+        methods = {
+            login (e) {
+                wx.setStorageSync("token", {});
+
+                this.$parent.getUserInfo((userInfo = {}) => {
+                    this.userInfo = Object.assign({}, userInfo);
+                    this.$apply();
+                }, e.detail);
+            },
+            uploadImage (type) {
+                wx.chooseImage({
+                    count: 1,
+                    sizeType: ["compressed"],
+                    success: async (res) => {
+                        const file = res.tempFilePaths[0];
+                        const global = getGlobalData(this);
+                        const {ajaxPerfix} = global.data;
+                        const token = global.ins.accessToken;
+
+                        this[`_${type}`] = file;
+
+                        wx.uploadFile({
+                            url: `${ajaxPerfix}/fileupload`,
+                            filePath: file,
+                            name: "file",
+                            formData:{
+                                "access_token": token
+                            },
+                            header: {
+                                "content-type": "multipart/form-data"
+                            },
+                            success: async ({data}) => {
+                                data = JSON.parse(data);
+
+                                //this[type] = data.data;
+                                await updateClass.bind(this)({
+                                    [type]: data.data
+                                });
+
+                                this.$apply();
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        initData() {
+            const global = getGlobalData(this);
+            const {ajaxPerfix} = global.data;
+
+            this._logo = this.detail.logo ? `${ajaxPerfix}${this.detail.logo}` : "";
+            this.$apply();
+        }
+
+        onLoad() {
+            //this.addReadyCallback(this.getUserInfo());
+            this.$parent.getUserInfo(async (userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.addReadyCallback(this.getClassDetail(false));
+                await this.runReadyCallbacks();
+                this.initData();
+            });
+        }
+    }
+</script>

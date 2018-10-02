@@ -4,24 +4,47 @@
 
 import ajax2promise from "../components/ajax2promise";
 import getGlobalData from "../components/getGlobalData";
-import "moment";
 
 export async function getOpenClasses () {
-    this.openedClasses = await ajax2promise({
+    const global = getGlobalData(this);
+    const {ajaxPerfix} = global.data;
+
+    let classes = await ajax2promise({
         ins: this,
+        method: "GET",
         url: "/class/opens"
     });
 
-    this.$apply();
-}
+    classes = classes.map((n) =>{
+        n.logo = n.logo ? `${ajaxPerfix}${n.logo}` : "";
+        n.qrCodeUrl = n.qrCodeUrl ? `${ajaxPerfix}${n.qrCodeUrl}` : "";
 
-export async function getMyClasses() {
-    this.myClasses = await ajax2promise({
-        ins: this,
-        url: "/class/myadds"
+        return n;
     });
 
     this.$apply();
+    return classes;
+}
+
+export async function getMyClasses() {
+    const global = getGlobalData(this);
+    const {ajaxPerfix} = global.data;
+
+    let classes = await ajax2promise({
+        ins: this,
+        method: "GET",
+        url: "/class/myadds"
+    });
+
+    classes = classes.map((n) =>{
+        n.logo = n.logo ? `${ajaxPerfix}${n.logo}` : "";
+        n.qrCodeUrl = n.qrCodeUrl ? `${ajaxPerfix}${n.qrCodeUrl}` : "";
+
+        return n;
+    });
+
+    this.$apply();
+    return classes;
 }
 
 export async function createClass(params = {}) {
@@ -36,28 +59,72 @@ export async function createClass(params = {}) {
     return result;
 }
 
-export async function getClassDetail() {
-    const detail = await ajax2promise({
+export async function updateClass(params = {}) {
+    const {
+        id,
+        name,
+        brief,
+        logo,
+        addType,
+        maxStudentNum,
+        isSupportAdd,
+        committee,
+        qrCodeUrl,
+        detail
+    } = this.detail;
+
+    params = Object.assign({
+        id,
+        name,
+        brief,
+        logo,
+        addType,
+        maxStudentNum,
+        isSupportAdd,
+        committee,
+        qrCodeUrl,
+        detail
+    }, params);
+
+    await ajax2promise({
         ins: this,
+        method: "POST",
+        url: "/class/update",
+        params
+    });
+
+    this.$apply();
+}
+
+// 班级详情
+export async function getClassDetail(fix = true) {
+    let detail = await ajax2promise({
+        ins: this,
+        method: "GET",
         url: "/class/brief",
         params: {
             id: this.classId
         }
     });
 
-    const global = getGlobalData(this);
-    const {ajaxPerfix} = global.data;
+    detail = Object.assign({}, detail);
 
-    if (detail.qrCodeUrl) {
-        detail.qrCodeUrl = `${ajaxPerfix}${detail.qrCodeUrl}`;
+    if (fix) {
+        const global = getGlobalData(this);
+        const {ajaxPerfix} = global.data;
+
+        if (detail.qrCodeUrl) {
+            detail.qrCodeUrl = `${ajaxPerfix}${detail.qrCodeUrl}`;
+        }
+
+        if (detail.logo) {
+            detail.logo = `${ajaxPerfix}${detail.logo}`;
+        }
     }
 
-    if (detail.logo) {
-        detail.logo = `${ajaxPerfix}${detail.logo}`;
-    }
+    detail.detail = detail.detail.replace(/\n/g, "\n");
 
     this.detail = detail;
-
     this.$apply();
 }
 
@@ -77,8 +144,7 @@ export async function joinClass() {
 
 export async function applyClass(params = {}) {
     params = Object.assign({
-        classId: this.classId,
-        pages: "/pages/class/detail?id=" + this.classId
+        classId: this.classId
     }, params);
 
     await ajax2promise({
@@ -106,11 +172,11 @@ export async function exitClass() {
 }
 
 // 解散
-export async function spaceClass() {
+export async function deleteClass() {
     await ajax2promise({
         ins: this,
         method: "POST",
-        url: "/class/space",
+        url: "/class/delete",
         params: {
             id: this.classId
         }

@@ -1,27 +1,39 @@
 <template>
     <view class="nav-box">
-        <navigator url="/pages/class/news?id={{id}}" class="item {{nav==='news' ? 'on' : ''}}">
-            <image src="/images/classes/m1-active.png" wx:if="{{nav==='news'}}"></image>
-            <image src="/images/classes/m1.png" wx:else></image>
-            <text>动态</text>
+        <navigator url="/pages/class/news?id={{id}}" open-type="redirect" class="item {{nav==='news' ? 'on' : ''}}">
+            <form report-submit="true" @submit="getFormId">
+                <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
+                    <image src="/images/classes/m1-active.png" wx:if="{{nav==='news'}}"></image>
+                    <image src="/images/classes/m1.png" wx:else></image>
+                    <text>动态</text>
+                </button>
+            </form>
         </navigator>
 
-        <!--<navigator hide url="/pages/class/detail?id={{id}}" class="item {{nav==='knowledge' ? 'on' : ''}}">-->
+        <!--<navigator hide url="/pages/class/detail?id={{id}}" open-type="redirect" class="item {{nav==='knowledge' ? 'on' : ''}}">-->
             <!--<image src="/images/classes/m2-active.png" wx:if="{{nav==='knowledge'}}"></image>-->
             <!--<image src="/images/classes/m2.png" wx:else></image>-->
             <!--<text>知识</text>-->
         <!--</navigator>-->
 
-        <navigator url="/pages/class/students?id={{id}}" class="item {{nav==='students' ? 'on' : ''}}">
-            <image src="/images/classes/m3-active.png" wx:if="{{nav==='students'}}"></image>
-            <image src="/images/classes/m3.png" wx:else></image>
-            <text>同学</text>
+        <navigator url="/pages/class/students?id={{id}}" open-type="redirect" class="item {{nav==='students' ? 'on' : ''}}">
+            <form report-submit="true" @submit="getFormId">
+                <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
+                    <image src="/images/classes/m3-active.png" wx:if="{{nav==='students'}}"></image>
+                    <image src="/images/classes/m3.png" wx:else></image>
+                    <text>同学</text>
+                </button>
+            </form>
         </navigator>
 
-        <navigator url="/pages/class/detail?id={{id}}" class="item {{nav==='intro' ? 'on' : ''}}">
-            <image src="/images/classes/m4-active.png" wx:if="{{nav==='intro'}}"></image>
-            <image src="/images/classes/m4.png" wx:else></image>
-            <text>简介</text>
+        <navigator url="/pages/class/detail?id={{id}}" open-type="redirect" class="item {{nav==='intro' ? 'on' : ''}}">
+            <form report-submit="true" @submit="getFormId">
+                <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
+                    <image src="/images/classes/m4-active.png" wx:if="{{nav==='intro'}}"></image>
+                    <image src="/images/classes/m4.png" wx:else></image>
+                    <text>简介</text>
+                </button>
+            </form>
         </navigator>
     </view>
 </template>
@@ -36,20 +48,19 @@
         .item {
             flex: 1;
             height: 100%;
-            padding-top: 15rpx;
             box-sizing: border-box;
-            color: #aaa;
             text-align: center;
 
             image {
                 display: block;
                 width: 64rpx;
                 height: 64rpx;
-                margin: 0 auto;
+                margin: 15rpx auto 0;
             }
 
             text {
                 font-size: 26rpx;
+                color: #aaa;
             }
 
             &.on {
@@ -63,11 +74,14 @@
 
 <script>
     import wepy from "wepy";
+    import formIds from "../../../mixins/formIds";
 
     export default class extends wepy.component {
         props = {
             nav: String,
             id: Number
-        }
+        };
+
+        mixins = [formIds];
     }
 </script>

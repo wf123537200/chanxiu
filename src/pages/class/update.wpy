@@ -2,54 +2,34 @@
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
     <form report-submit="true" @submit="submit">
-        <view class="section">
-            <view class="section-title">基本信息</view>
-
+        <view class="section" wx:if="{{action === 1}}">
             <view class="section-body">
-                <view class="row">
-                    <view class="label required">班级名称</view>
-                    <view class="content">
-                        <input type="text" name="name" class="input" maxlength="15" placeholder="最多15字，必填。" />
-                    </view>
-                </view>
-
-                <view class="row">
-                    <view class="label">介绍班级</view>
-                    <view class="content">
-                        <textarea name="brief" class="textarea" maxlength="30" placeholder="一句话介绍班级。最多30字，选填。" />
-                    </view>
-                </view>
-
-                <view class="row">
-                    <view class="label">班级头像</view>
-                    <view class="content flex-h flex-vertical-bottom">
-                        <view class="upload-image" @tap="uploadImage('logo')">
-                            <image src="{{_logo}}" wx:if="{{_logo}}"></image>
-                        </view>
-                        <text class="tip flex-1">
-                            <text>可选。</text>
-                            <text>您可以选择一个班级LOGO，最佳尺寸为116*116，不超过1M</text>
-                        </text>
-                        <input hidden name="logo" value="{{logo}}" class="input" maxlength="-1"/>
-                    </view>
+                <view class="content">
+                    <input type="text" name="name" value="{{detail.name}}" class="input" maxlength="15" placeholder="最多15字，必填。" />
                 </view>
             </view>
         </view>
 
-        <view class="section">
-            <view class="section-title">加入方式</view>
+        <view class="section" wx:if="{{action === 2}}">
+            <view class="section-body">
+                <view class="content">
+                    <textarea name="brief" class="textarea" value="{{detail.brief}}" maxlength="30" placeholder="一句话介绍班级。最多30字，选填。" />
+                </view>
+            </view>
+        </view>
 
+        <view class="section" wx:if="{{action === 3}}">
             <view class="section-body">
                 <view class="row radio-group-row">
                     <view class="label required">加入条件</view>
                     <view class="content">
-                        <radio-group name="addType">
+                        <radio-group name="addType" @change="onAddTypeChanged">
                             <label class="radio">
-                                <radio hidden value="0" checked="true" />
+                                <radio hidden value="0" checked="{{addType === 0}}"/>
                                 <text>直接加入，无需确认</text>
                             </label>
                             <label class="radio">
-                                <radio hidden value="1" />
+                                <radio hidden value="1" checked="{{addType === 1}}"/>
                                 <text>邀请确认</text>
                             </label>
                         </radio-group>
@@ -67,14 +47,18 @@
                         </radio-group>
                     </view>
                 </view>
+            </view>
+        </view>
 
+        <view class="section" wx:if="{{action === 4}}">
+            <view class="section-body">
                 <view class="row">
                     <view class="label">支持加群</view>
                     <view class="content">
                         <switch checked="{{isSupportAdd}}" name="isSupportAdd" color="#b0976e" @change="onSupportAddChanged"></switch>
 
                         <block wx:if="{{isSupportAdd}}">
-                            <input type="text" name="committee" class="input v-space" maxlength="-1" placeholder="请输入班干部微信号" />
+                            <input type="text" name="committee" value="{{detail.committee}}" class="input v-space" maxlength="-1" placeholder="请输入班干部微信号" />
 
                             <view class="flex-h flex-vertical-bottom v-space">
                                 <view class="upload-image" @tap="uploadImage('qrCodeUrl')">
@@ -92,8 +76,17 @@
             </view>
         </view>
 
+        <view class="section" wx:if="{{action === 5}}">
+            <view class="section-body">
+                <view class="content">
+                    <textarea name="detail" value="{{detail.detail}}" class="textarea detail" maxlength="500" adjust-position="true" auto-height="true" placeholder="最多500个字。" />
+                </view>
+            </view>
+        </view>
+
         <view class="btn-box">
-            <button class="btn-primary" form-type="submit">完  成</button>
+            <button class="btn-secondary w-1-2" @tap="cancel">取  消</button>
+            <button class="btn-primary w-1-2" form-type="submit">确  定</button>
         </view>
     </form>
 </template>
@@ -192,6 +185,10 @@
             }
         }
 
+        .detail {
+            min-height: 300rpx;
+        }
+
         .tip {
             margin-left: 20rpx;
             font-size: 24rpx;
@@ -231,6 +228,11 @@
         }
     }
 
+    .input,
+    .textarea {
+        display: block;
+    }
+
     .btn-box {
         margin-top: 20rpx;
         padding-bottom: 50rpx;
@@ -240,8 +242,9 @@
 <script>
     import wepy from "wepy";
     import ready from "../../mixins/ready";
+    import classinfo from "../../mixins/classInfo";
     import formIds from "../../mixins/formIds";
-    import {createClass} from "../../modules/Classes";
+    import {updateClass} from "../../modules/Classes";
     import getGlobalData from "../../components/getGlobalData";
 
     import login from "../../components/login";
@@ -252,22 +255,23 @@
     export default class extends wepy.page {
         config = {
             //disableScroll: true,
-            navigationBarTitleText: "创建班级"
+            navigationBarTitleText: "修改班级信息"
         };
 
         components = {
             login
         };
 
-        mixins = [ready, formIds];
+        mixins = [ready, classinfo, formIds];
 
         data = {
+            action: 1,
             userInfo: {},
-            //addType: 0,
+            addType: 0,
             studentSupported: STUDENTS,
             defaultCheckedStudent,
             students: STUDENTS[defaultCheckedStudent],
-            isSupportAdd: true,
+            isSupportAdd: false,
             logo: "",
             _logo: "",
             qrCodeUrl: "",
@@ -283,9 +287,14 @@
                     this.$apply();
                 }, e.detail);
             },
-            // onAddTypeChanged (e) {
-            //     this.addType = e.detail.value;
-            // },
+            cancel() {
+                wx.redirectTo({
+                    url: "/pages/class/detail?id=" + this.detail.id
+                });
+            },
+            onAddTypeChanged (e) {
+                this.addType = parseInt(e.detail.value);
+            },
             // onCountChanged (e) {
             //     this.students = e.detail.value;
             // },
@@ -325,26 +334,81 @@
                 });
             },
             async submit (e) {
-                this.getFormId(e);
-                const id = await this.createClass(e.detail.value);
+                const params = e.detail.value;
+
+                if (!params.isSupportAdd) {
+                    params.committee = false;
+                    params.qrCodeUrl = "";
+                }
+
+                await this.getFormId(e);
+
+                await updateClass.bind(this)(params);
 
                 wx.showToast({
-                    title: "创建成功",
-                    complete () {
-                        wx.redirectTo({
-                            url: "/pages/class/detail?id=" + id
-                        });
+                    title: "修改成功",
+                    complete: () => {
+                        if (this.action === 1 || this.action === 2) {
+                            wx.navigateBack({
+                                delta: 2
+                            });
+                        }
+                        else {
+                            wx.navigateBack({
+                                delta: 1
+                            });
+                        }
                     }
                 });
             }
         };
 
-        createClass = createClass;
+        setAction(options) {
+            if (options) {
+                this.action = parseInt(options.action) || 1;
+            }
+            else {
+                this.action = 1;
+            }
+        }
 
-        onShow () {
-            this.$parent.getUserInfo((userInfo) => {
+        setTitle() {
+            if (this.action === 3) {
+                wx.setNavigationBarTitle({
+                    title: "设置加入方式"
+                });
+            }
+            else if (this.action === 4) {
+                wx.setNavigationBarTitle({
+                    title: "设置加群"
+                });
+            }
+            else if (this.action === 5) {
+                wx.setNavigationBarTitle({
+                    title: "设置详细介绍"
+                });
+            }
+        }
+
+        initData () {
+            const global = getGlobalData(this);
+            const {ajaxPerfix} = global.data;
+
+            this.addType = parseInt(this.detail.addType);
+            this.isSupportAdd = this.detail.isSupportAdd;
+            this._qrCodeUrl = this.detail.qrCodeUrl ? `${ajaxPerfix}${this.detail.qrCodeUrl}` : "";
+            this.$apply();
+        }
+
+        onLoad (options) {
+            this.setAction(options);
+
+            this.$parent.getUserInfo(async (userInfo) => {
                 this.userInfo = Object.assign({}, userInfo);
-                this.$apply();
+                this.addReadyCallback(this.getClassDetail(false));
+                await this.runReadyCallbacks();
+                this.initData();
+                this.setTitle();
             });
         }
     }

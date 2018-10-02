@@ -1,14 +1,16 @@
 <template>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
+
     <block wx:if="{{ready}}">
         <view class="header">你的申请未通过！</view>
         <view class="feedback">你发送的加入“{{detail.name}}”的申请未通过。</view>
         <view class="feedback">反馈信息：无</view>
         <view class="encourage">请不要气馁，保持精进修习，可以让你找到合适的班级！</view>
 
-        <view class="btn-box">
-            <navigator class="btn-primary w-1-2" open-type="switchTab" url="/pages/class/index">返回首页</navigator>
-            <button class="btn-secondary w-1-2" @tap="joinClass">重新申请</button>
-        </view>
+        <form class="btn-box" report-submit="true" @submit="getFormId">
+            <button class="btn-primary w-1-2" form-type="submit" @tap="gotoClassListPage">返回首页</button>
+            <button class="btn-secondary w-1-2" form-type="submit" @tap="joinClass">重新申请</button>
+        </form>
 
         <applyPopup :id.sync="id"></applyPopup>
     </block>
@@ -53,35 +55,51 @@
 
 <script>
     import wepy from "wepy";
-    import {ajax} from "./../../components/ajax";
-    import getUserInfo from "../../mixins/getUserInfo";
     import classInfo from "../../mixins/classInfo";
+    import formIds from "../../mixins/formIds";
+    import boot from "../../mixins/boot";
     import ready from "../../mixins/ready";
 
     import applyPopup from "./detail/apply-popup";
+    import login from "../../components/login";
 
     export default class extends wepy.page {
         config = {
             disableScroll: true,
-            navigationBarTitleText: "加入班级申请失败"
+            navigationBarTitleText: "加入班级申请未通过"
+        };
+
+        data = {
+            userInfo: {}
         };
 
         components = {
-            applyPopup
+            applyPopup,
+            login
         };
 
-        mixins = [ready, getUserInfo, classInfo];
+        mixins = [ready, classInfo, formIds, boot];
 
         methods = {
+            login (e) {
+                wx.setStorageSync("token", {});
+
+                this.$parent.getUserInfo((userInfo = {}) => {
+                    this.userInfo = Object.assign({}, userInfo);
+                    this.$apply();
+                }, e.detail);
+            },
             showApplyPopup () {
                 this.$invoke("applyPopup", "show");
             }
         };
 
-        async onShow () {
-            //this.addReadyCallback(this.getUserInfo());
-            this.addReadyCallback(this.getClassDetail());
-            await this.runReadyCallbacks();
+        onShow () {
+            this.$parent.getUserInfo((userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.addReadyCallback(this.getClassDetail());
+                this.runReadyCallbacks();
+            });
         }
     }
 </script>
