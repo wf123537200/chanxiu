@@ -250,6 +250,11 @@
     height:68px;
     overflow:hidden;
     line-height: 1.7;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
   }
   .ex-process-pannel {
     display: flex;
@@ -671,7 +676,6 @@
         this.averageEveryTime = trainInfo.averageEveryTime || 0
         this.singleMostDuration = trainInfo.singleMostDuration || 0
         Object.assign(this, d.trainInfo)
-        console.log(d)
         this.$apply()
       }
     })
@@ -725,15 +729,18 @@
               if (timeDesc.indexOf('seconds ago') >= 0) {
                 timeDesc = '刚刚'
               } else if (timeDesc.indexOf('minute ago') >= 0) {
-                timeDesc = '一分钟前'
+                timeDesc = '1 分钟前'
+              }else if (timeDesc.indexOf('hour ago') >= 0) {
+                timeDesc = '1 小时前'
               } else {
                 timeDesc = timeDesc.replace('minutes ago', '分钟前')
               }
             } else if (Date.now() - d.createTime < (1000 * 60 * 60 * 24)) {
               // 一天内
               timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('hour').fromNow()
-              console.log(timeDesc)
               timeDesc = timeDesc.replace('hours ago', '小时前')
+
+
             } else {
               timeDesc = moment(d.strCreateTime).format('YYYY-MM-DD HH:mm')
             }
@@ -745,7 +752,6 @@
         } else {
           this.dynamicList = []
         }
-        console.log(this.dynamicList)
         this.$apply()
       }
     })
@@ -764,7 +770,6 @@
       params,
       method: 'POST',
       success: (d) => {
-        console.log(d)
         this.$invoke('editEx', 'togglePopup')
         dynamicFind.call(this)
         this.$apply()
@@ -785,7 +790,6 @@
         id: refId
       },
       success: (d) => {
-        console.log(d)
         dynamicFind.call(this)
       }
     })
