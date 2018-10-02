@@ -1029,12 +1029,16 @@
         this.minute = this.setTimes[index].value.minute
         this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
         this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
+        this.$apply()
       },
       onChangeTimesetByHB({hour, minute}) {
+        this.hourIndex = [this.hours.findIndex(t => t == hour)]
+        this.minuteIndex = [this.minutes.findIndex(t => t == minute)]
+
         this.setTimes.forEach((t, ins) => {
           if(t.value.hour === hour && t.value.minute === minute) {
             this.methods.onChangeTimesets.call(this, ins)
-          } else{
+          } else {
             t.isChecked = false
           }
         })
