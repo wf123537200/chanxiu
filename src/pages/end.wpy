@@ -239,6 +239,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
 
@@ -309,6 +310,11 @@
         url: '/train/summary',
         params: {},
         success: (d) => {
+          const strLastTime = d.trainInfo.strLastTime
+          if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
+            d.trainInfo.continuousNum = 0
+          }
+
           this.continuousNum = d.trainInfo.continuousNum || 0
           this.exTimeX = d.trainInfo.todayDuration
           this.$apply()

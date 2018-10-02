@@ -53,15 +53,25 @@
 </style>
 
 <template>
-  <view class="container">
-    <input class="ex-diary-title" bindinput="timeSetInput" value="{{title}}"
-           maxlength="30" type="text" placeholder="请输入日记标题"/>
-    <textarea class="ex-diary-content" bindinput="experienceInput"
-              value="{{content}}" maxlength="3000" auto-focus placeholder="请输入日记内容" />
+  <view>
+    <view class="container {{readOnly ? 'hide' : ''}}">
+      <input class="ex-diary-title" bindinput="timeSetInput" value="{{title}}"
+             maxlength="30" type="text" placeholder="请输入日记标题"/>
+      <textarea class="ex-diary-content" bindinput="experienceInput"
+                value="{{content}}" maxlength="3000" auto-focus placeholder="请输入日记内容" />
 
-    <view class="footer">
-      <view class="cancel-btn mr-20" @tap="cancelFn">取消</view>
-      <view class="cancel-btn confirm-btn" @tap="confirm">确定</view>
+      <view class="footer">
+        <view class="cancel-btn mr-20" @tap="cancelFn">取消</view>
+        <view class="cancel-btn confirm-btn" @tap="confirm">确定</view>
+      </view>
+    </view>
+    <view class="container {{readOnly ? '' : 'hide'}}">
+      <view class="ex-diary-title">
+        {{title}}
+      </view>
+      <view class="ex-diary-content">
+        {{content}}
+      </view>
     </view>
   </view>
 </template>
@@ -99,7 +109,8 @@
     data = {
       title: '正念日记-' + moment(new Date).format('YYYYMMDD'),
       strCreateTime: '',
-      content: ''
+      content: '',
+      readOnly: false
     }
     onGotUserInfo(e) {
     }
@@ -151,9 +162,12 @@
         this.$navigate('./ex-briefing');
       }
     }
-    onLoad() {
+    onShow() {
+      console.log('onShow')
       this.title = this.$parent.globalData.diaryTitle || this.title
       this.content = this.$parent.globalData.diaryContent
+      this.readOnly = this.$parent.globalData.readOnly
+      console.log('onShow')
 
       const strCreateTime = this.$parent.globalData.diaryStrCreateTime
       if (strCreateTime && strCreateTime.split(' ') && strCreateTime.split(' ').length >= 2) {

@@ -393,6 +393,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   import wepy from 'wepy'
   import zanPop from '../components/zan-popup'
   import {ajax} from '../components/ajax.js'
@@ -425,6 +426,11 @@
         url: '/train/summary',
         params: {},
         success: (d) => {
+          const strLastTime = d.trainInfo.strLastTime
+          if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
+            d.trainInfo.continuousNum = 0
+          }
+
           Object.assign(this, d.trainInfo)
           getCt.call(this)
           this.$parent.globalData.trainInfo = d.trainInfo
