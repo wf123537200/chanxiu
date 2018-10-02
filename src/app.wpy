@@ -176,7 +176,7 @@ export default class extends wepy.app {
                   selectText: '练习',
               },
               {
-                  pagePath: 'pages/class/index',
+                  pagePath: 'pages/class/list',
                   selectedIconPath: './images/class-bar-active.png',
                   iconPath: './images/ex-bar.png',
                   text: '班级',

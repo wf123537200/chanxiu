@@ -169,7 +169,6 @@
     position: absolute;
     top: 23px;
     left: 0;
-    width: 80px;
     border: 1px solid $border-color;
     z-index: 200;
     box-sizing: border-box;
@@ -210,10 +209,12 @@
       margin-bottom: 10px;
     }
   }
+  .mw080 {
+    min-width: 80px;
+  }
   .customize-types {
     position: relative;
     height: 20px;
-    width: 80px;
     line-height: 20px;
     box-sizing: border-box;
     font-size: 13px;
@@ -223,8 +224,7 @@
     width: 100%;
     height: 20px!important;
     line-height: 20px!important;
-    padding: 0;
-    padding-left: 5px;
+    padding: 0 10px;
     box-sizing: border-box;
     font-size: 13px;
     border-radius: 5px;
@@ -562,7 +562,7 @@
               </view>
             </view>
 
-            <view class="customize-types {{userInfo.nickName && index == 0? '' : 'hide'}}">
+            <view class="customize-types mw080 {{userInfo.nickName && index == 0? '' : 'hide'}}">
               <input catchtap class="customize-ab customize {{item.customizeInput ? 'focus' : ''}} {{typeName == 'customList actived'}}"
                      placeholder="自定义" catchfocus="customizeInput({{index}})" value="{{item.customizeInputVal}}" catchblur="customizeBlur({{index}})" />
             </view>
@@ -956,9 +956,13 @@
       exList: [],
       typeList1: [],
       typeList2: [],
+      // 一级方法选中的索引
       type1: 0,
+      // 选择的二级方法所在列表的索引
       type2: 0,
+      // 二级方法的选择下标
       type3: 0,
+      // 自定义方法列表的选择
       type4: -1,
       typeName: 'childList',
       // music
