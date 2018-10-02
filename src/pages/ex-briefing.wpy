@@ -266,18 +266,18 @@
     width: 100%;
     margin-top: 10px;
   }
-  .m-l-20 {
-    margin-left: 20px;
-    box-sizing: border-box;
+  .m-l-35 {
+    margin-left: 35px;
   }
   .read-all {
     flex: 1;
     font-size: 12px;
     color: $light-orange;
-    margin-left: 20px;
+    margin-left: 35px;
   }
   .process-btns {
-
+    display: flex;
+    align-items: end;
   }
   .share-briefing-btn:after,.share-briefing-btn:before {
     outline: 0;
@@ -296,11 +296,17 @@
     background-color: transparent;
   }
   .process-btn {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     margin-left: 30px;
+    background-size: 18px 18px;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 
+  .delete-btn {
+    background-size: 15px 18px;
+  }
   .popup-headerr {
     display: flex;
     align-items: center;
@@ -507,7 +513,7 @@
     <view class="pl-40 ex-data-pannel">
       <view class="ex-data">
         <view class="cur-times">今天练习{{todayInfo.todayTrainCount}}次{{todayInfo.todayDuration}}分钟</view>
-        <view class="ex-desc">连续练习{{todayInfo.continuousNum}}天，最大练习{{todayInfo.maxContinuousNum}}天</view>
+        <view class="ex-desc">连续练习{{todayInfo.continuousNum}}天，最大连续练习{{todayInfo.maxContinuousNum}}天</view>
       </view>
       <view class="gray-button mr-40" @tap.stop="onShowShare">去打卡</view>
     </view>
@@ -579,7 +585,7 @@
             </view>
             <view class="ex-date">{{item.strCreateTimeStr}}</view>
           </view>
-          <view class="flex-r m-l-20 line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">
+          <view class="flex-r m-l-35 line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">
             {{item.content}}
           </view>
           <view class="ex-process-pannel">
@@ -587,8 +593,8 @@
               {{item.content.length > 63 && !item.readAll ? '查看全文' : ''}}
             </view>
             <view class="process-btns">
-              <image class="process-btn" @tap="edit({{item}})" src="/images/edit.png"/>
-              <image class="process-btn {{item.content ? '' : 'hide'}}" @tap="deleteEx({{item}})" src="/images/delete.png"/>
+              <view class="process-btn" @tap="edit({{item}})" style="background-image: url(/images/edit.png)"></view>
+              <view class="process-btn delete-btn {{item.content ? '' : 'hide'}}" @tap="deleteEx({{item}})" style="background-image: url(/images/delete.png)"></view>
               <button class="process-btn share-briefing-btn" open-type="share" style="background-image: url('/images/send.png')">
               </button>
             </view>
@@ -875,7 +881,6 @@
         }
       },
       contentInput(e) {
-        console.log(e.detail.value)
         this.dynamic.content = e.detail.value
       },
       edit(item) {
