@@ -11,6 +11,7 @@ export async function getOpenClasses () {
 
     let classes = await ajax2promise({
         ins: this,
+        method: "GET",
         url: "/class/opens"
     });
 
@@ -31,6 +32,7 @@ export async function getMyClasses() {
 
     let classes = await ajax2promise({
         ins: this,
+        method: "GET",
         url: "/class/myadds"
     });
 
@@ -57,28 +59,72 @@ export async function createClass(params = {}) {
     return result;
 }
 
-export async function getClassDetail() {
-    const detail = await ajax2promise({
+export async function updateClass(params = {}) {
+    const {
+        id,
+        name,
+        brief,
+        logo,
+        addType,
+        maxStudentNum,
+        isSupportAdd,
+        committee,
+        qrCodeUrl,
+        detail
+    } = this.detail;
+
+    params = Object.assign({
+        id,
+        name,
+        brief,
+        logo,
+        addType,
+        maxStudentNum,
+        isSupportAdd,
+        committee,
+        qrCodeUrl,
+        detail
+    }, params);
+
+    await ajax2promise({
         ins: this,
+        method: "POST",
+        url: "/class/update",
+        params
+    });
+
+    this.$apply();
+}
+
+// 班级详情
+export async function getClassDetail(fix = true) {
+    let detail = await ajax2promise({
+        ins: this,
+        method: "GET",
         url: "/class/brief",
         params: {
             id: this.classId
         }
     });
 
-    const global = getGlobalData(this);
-    const {ajaxPerfix} = global.data;
+    detail = Object.assign({}, detail);
 
-    if (detail.qrCodeUrl) {
-        detail.qrCodeUrl = `${ajaxPerfix}${detail.qrCodeUrl}`;
+    if (fix) {
+        const global = getGlobalData(this);
+        const {ajaxPerfix} = global.data;
+
+        if (detail.qrCodeUrl) {
+            detail.qrCodeUrl = `${ajaxPerfix}${detail.qrCodeUrl}`;
+        }
+
+        if (detail.logo) {
+            detail.logo = `${ajaxPerfix}${detail.logo}`;
+        }
     }
 
-    if (detail.logo) {
-        detail.logo = `${ajaxPerfix}${detail.logo}`;
-    }
+    detail.detail = detail.detail.replace(/\n/g, "\n");
 
     this.detail = detail;
-
     this.$apply();
 }
 

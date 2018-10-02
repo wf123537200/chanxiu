@@ -8,9 +8,12 @@ import getGlobalData from "../components/getGlobalData";
 export async function collectFormId (params = {}) {
     await ajax2promise({
         ins: this,
+        method: "POST",
         url: "/template/message/collect",
         params
     });
+
+    console.log("formId已发送到后台:", params.formId);
 
     this.$apply();
 }

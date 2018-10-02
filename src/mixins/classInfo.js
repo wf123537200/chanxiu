@@ -64,36 +64,26 @@ export default class extends wepy.mixin {
                 }
             });
         },
-        async deleteClass (e) {
-            let msgType = 10;
+        showDeleteClassPopup () {
+            this.$invoke("deleteClassPopup", "show");
+        }
+    };
 
-            await (collectFormId.bind(this)({
-                formId: e.detail.formId,
-                page: "/pages/class/detail?id=" + this.classId,
-                type: msgType
-            })).catch(() =>{});
-
-            await this.deleteClass().catch(() => {
-                wx.showToast({
-                    title: "操作失败"
-                });
-
-                throw "班级解散失败";
-            });
+    async getClassDetail (fix) {
+        await getClassDetail.bind(this)(fix).catch((e) => {
+            console.log(e);
 
             wx.showToast({
-                title: "班级已解散",
-                complete: () => {
+                title: "班级不存在",
+                complete() {
                     wx.switchTab({
                         url: "/pages/class/list"
                     });
                 }
             });
-        }
-    };
 
-    async getClassDetail () {
-        await getClassDetail.bind(this)();
+            throw "班级不存在";
+        });
         this.$apply();
     };
 
