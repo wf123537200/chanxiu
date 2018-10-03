@@ -102,7 +102,7 @@
   export default class Tag extends wepy.page {
     config = {
       disableScroll: false,
-      navigationBarTitleText: '持一学院-精修1班'
+      navigationBarTitleText: '文字消息打卡预览'
     }
     components = {
     }

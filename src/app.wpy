@@ -208,7 +208,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    version: '1.1',
+    version: '2.0',
     hasNetwork: true,
     authInfo: null,
     userInfo: null,

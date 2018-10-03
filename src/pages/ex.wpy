@@ -99,7 +99,7 @@
     }
   }
 
-  const TIME = 10;
+  const TIME = 100;
   function getMinusTime(d) {
     const dx = this._d = new Date(d.setSeconds(d.getSeconds() - 1))
     return {hour: dx.getHours(), minute: d.getMinutes(), second: d.getSeconds()}
@@ -136,7 +136,12 @@
       res += (oHour - cHour) * 60 + oMinute - cMinute
     }
 
-    const second = this._d.getSeconds()
+    const second = 0
+    if (this._d) {
+      this._d.getSeconds()
+    } else {
+      return 0
+    }
 
     return res >= 1 && second !== 0 ? isFinite ? res : res - 1 : res
   }
@@ -280,7 +285,7 @@
           this.$apply()
         }, TIME)
 
-       this.timer = timer
+        this.timer = timer
         this.isPause = false
       },
       onEnd() {
