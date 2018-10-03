@@ -336,7 +336,7 @@
             async submit (e) {
                 const params = e.detail.value;
 
-                if (!params.name) {
+                if (this.action === 1 && !params.name) {
                     wx.showToast({
                         title: "请输入班级名"
                     });
