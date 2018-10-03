@@ -337,7 +337,7 @@
                 const params = e.detail.value;
 
                 if (!params.isSupportAdd) {
-                    params.committee = false;
+                    params.committee = "";
                     params.qrCodeUrl = "";
                 }
 

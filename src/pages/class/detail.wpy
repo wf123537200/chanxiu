@@ -95,7 +95,7 @@
                 <form report-submit="true" @submit="getFormId" class="header">
                     <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                         <text class="text">详细介绍</text>
-                        <text wx:if="{{!detail.detail}}">善未完善</text>
+                        <text class="content-text" wx:if="{{!detail.detail}}">尚未完善</text>
                         <image class="more" src="/images/more-gray.png"></image>
                     </button>
                 </form>
@@ -107,8 +107,8 @@
             <scroll-view class="content" scroll-y="true">
                 <form report-submit="true" @submit="getFormId">
                     <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
-                        <text space="nbsp" wx:if="{{detail.detail}}">{{detail.detail}}</text>
-                        <text wx:elif="{{!isMonitor}}">善未完善</text>
+                        <text class="content-text" space="nbsp" wx:if="{{detail.detail}}">{{detail.detail}}</text>
+                        <text class="content-text" wx:elif="{{!isMonitor}}">尚未完善</text>
                     </button>
                 </form>
             </scroll-view>
@@ -229,6 +229,11 @@
                 font-size: 24rpx;
                 text-align: right;
             }
+
+            .content-text {
+                color: #aaa;
+                font-size: 24rpx;
+            }
         }
 
         /*.qr, .more {*/
@@ -282,6 +287,11 @@
             font-size: 24rpx;
             line-height: 40rpx;
             color: #aaa;
+        }
+
+        .content-text {
+            color: #aaa;
+            font-size: 24rpx;
         }
 
         .more{
