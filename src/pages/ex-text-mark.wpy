@@ -144,7 +144,7 @@
           that.userInfo = userInfo
         }
         const exList = exTypeL.exList || ''
-        that.exList = exList.replace(' ', '-')
+        that.exList = exList.split(' ').join('-')
         that.exTime = Math.abs(that.$parent.globalData['exTime']) || 0
 
         ajax({
