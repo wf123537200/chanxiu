@@ -146,6 +146,7 @@
         const exList = exTypeL.exList || ''
         that.exList = exList.split(' ').join('-')
         that.exTime = Math.abs(that.$parent.globalData['exTime']) || 0
+        const stateText = that.$parent.globalData.stateText
 
         ajax({
           ins: that,
@@ -161,12 +162,12 @@
             const trainInfo = d.trainInfo
             that.continuousNum = trainInfo.continuousNum || 0
             if (that.exTime) {
-              text = `【${that.exList || ''}${that.exTime || 0}分钟，连续${that.continuousNum || 0}天】`
+              text = `【${that.exList || ''}${that.exTime || 0}分钟，连续第${that.continuousNum || 0}天】`
             } else {
               text = `今日练习${trainInfo.todayTrainCount || 0}次，共${trainInfo.todayDuration || 0}分钟`
             }
-            that.text = text + `\n感觉被舒服的身体包围。`
 
+            that.text = [text, stateText].join('\n')
             that.$apply()
           }
         })

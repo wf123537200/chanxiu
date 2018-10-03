@@ -464,6 +464,7 @@
       },
       // 文字信息打卡
       textMark() {
+        this.$parent.globalData.stateText = this.tips
         this.$navigate('./ex-text-mark');
       }
     }

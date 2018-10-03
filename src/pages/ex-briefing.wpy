@@ -233,8 +233,8 @@
   }
 
   .diary-wait-supplement {
-    width: 25px;
-    height: 18px;
+    width: 20px;
+    height: 13px;
   }
   .ex-title-pannel {
     display: flex;
@@ -488,6 +488,47 @@
   .hide {
     display: none!important;
   }
+
+
+
+  .fixed {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 10;
+
+    &.to-top {
+      top: 0;
+    }
+
+    &.to-bottom {
+      bottom: 60rpx;
+    }
+  }
+
+  .switch-page-btn-box {
+    width: 100rpx;
+    height: 100rpx;
+    left: auto;
+    bottom: 180rpx !important;
+    right: 80rpx;
+    text-align: right;
+    z-index: 10;
+
+    button,
+    navigator {
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      background-color: #b0976e;
+      border-radius: 100%;
+      line-height: 100rpx;
+      color: #fff;
+      text-align: center;
+      font-size: 32rpx;
+    }
+  }
 </style>
 
 <template>
@@ -517,8 +558,7 @@
       <view class="ex-data">
         <view class="cur-times">今天练习{{todayInfo.todayTrainCount}}次，{{todayInfo.todayDuration}}分钟</view>
         <view class="ex-desc">
-          <text class="continue-time {{ct === 1 ? '' : 'hide'}}">连续练习{{todayInfo.continuousNum}}天</text>
-          <text class="continue-time {{ct === 0 ? '' : 'hide'}}">连续练习{{todayInfo.continuousNum}}天,今天{{todayInfo.todayDuration}}分钟</text>
+          <text class="continue-time {{ct <= 1 ? '' : 'hide'}}">连续练习{{todayInfo.continuousNum}}天</text>
           <text class="continue-time {{ct > 1 ? '' : 'hide'}}">已中断{{ct}}天</text>
           <text>，最大连续练习{{todayInfo.maxContinuousNum}}天</text>
         </view>
@@ -593,16 +633,14 @@
             </view>
             <view class="ex-date">{{item.strCreateTimeStr}}</view>
           </view>
-          <view class="flex-r m-l-35 line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">
-            {{item.content}}
-          </view>
+          <text class="flex-r m-l-35 line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">{{item.content}}</text>
           <view class="ex-process-pannel">
             <view class="read-all" @tap="readAllContent({{item}}, {{index}})">
               {{item.content.length > 63 && !item.readAll ? '查看全文' : ''}}
             </view>
             <view class="process-btns">
               <view class="process-btn" @tap="edit({{item}})" style="background-image: url(/images/edit.png)"></view>
-              <view class="process-btn delete-btn {{item.content ? '' : 'hide'}}" @tap="deleteEx({{item}})" style="background-image: url(/images/delete.png)"></view>
+              <view class="process-btn delete-btn {{item.content || item.afterRecord ? '' : 'hide'}}" @tap="deleteEx({{item}})" style="background-image: url(/images/delete.png)"></view>
               <button class="process-btn share-briefing-btn" open-type="share" style="background-image: url('/images/send.png')">
               </button>
             </view>
@@ -654,10 +692,6 @@
           <view class="share-title">分享</view>
         </view>
         <view class="share-btn-wrap">
-          <button class="share-btn" @tap="onShowImage">
-            <image class="share-image" src="/images/firend.png"></image>
-            <view>朋友圈</view>
-          </button>
           <button class="share-btn" open-type="share">
             <image class="share-image" src="/images/weixin.png"></image>
             <view>微信</view>
@@ -668,6 +702,11 @@
           </button>
         </view>
       </view>
+    </view>
+
+    <!--返回列表页-->
+    <view class="fixed to-bottom switch-page-btn-box" wx:if="{{showHomeBtn}}">
+      <button @tap="toHome">首页</button>
     </view>
   </view>
 </template>
@@ -836,6 +875,7 @@
       editEx: zanPop
     }
     data = {
+      showHomeBtn: true,
       ct: 1,
       dynamic: {},
       dynamicList: [],
@@ -866,6 +906,9 @@
     onGotUserInfo(e) {
     }
     methods = {
+      toHome() {
+        wx.reLaunch({url: '/pages/setex'})
+      },
       timeTypeChange(timeType) {
         console.log(timeType)
         this.timeType = timeType
@@ -972,7 +1015,7 @@
         this.$parent.globalData.diaryTitle = item.title
         this.$parent.globalData.diaryContent = item.content
         this.$parent.globalData.diaryId = item.refId
-        this.$parent.globalData.readOnly = true
+        this.$parent.globalData.readOnly = false
         this.$navigate('./ex-diary')
         // this.dynamicList[index].readAll = true
       },
@@ -1002,18 +1045,6 @@
               duration: 2000,
               mask:true
             })
-          }
-        })
-      },
-      onShowImage() {
-        ajax({
-          ins: this,
-          url: '/train/poster/image',
-          params: {},
-          success: (d) => {
-            this.picUrl = this.$parent.globalData.resPerfix + d
-            this.isShowImage = true
-            this.$apply()
           }
         })
       },
