@@ -290,9 +290,7 @@
                 }, e.detail);
             },
             cancel() {
-                wx.redirectTo({
-                    url: "/pages/class/detail?id=" + this.detail.id
-                });
+                this.backToDetailPage();
             },
             onAddTypeChanged (e) {
                 this.addType = parseInt(e.detail.value);
@@ -350,20 +348,24 @@
                 wx.showToast({
                     title: "修改成功",
                     complete: () => {
-                        if (this.action === 1 || this.action === 2) {
-                            wx.navigateBack({
-                                delta: 2
-                            });
-                        }
-                        else {
-                            wx.navigateBack({
-                                delta: 1
-                            });
-                        }
+                        this.backToDetailPage();
                     }
                 });
             }
         };
+
+        backToDetailPage () {
+            if (this.action === 1 || this.action === 2) {
+                wx.navigateBack({
+                    delta: 2
+                });
+            }
+            else {
+                wx.navigateBack({
+                    delta: 1
+                });
+            }
+        }
 
         setAction(options) {
             if (options) {

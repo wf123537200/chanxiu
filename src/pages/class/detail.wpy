@@ -95,6 +95,7 @@
                 <form report-submit="true" @submit="getFormId" class="header">
                     <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                         <text class="text">详细介绍</text>
+                        <text wx:if="{{!detail.detail}}">善未完善</text>
                         <image class="more" src="/images/more-gray.png"></image>
                     </button>
                 </form>
@@ -106,7 +107,8 @@
             <scroll-view class="content" scroll-y="true">
                 <form report-submit="true" @submit="getFormId">
                     <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
-                        <text space="nbsp">{{detail.detail}}</text>
+                        <text space="nbsp" wx:if="{{detail.detail}}">{{detail.detail}}</text>
+                        <text wx:elif="{{!isMonitor}}">善未完善</text>
                     </button>
                 </form>
             </scroll-view>
