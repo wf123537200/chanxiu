@@ -641,7 +641,7 @@
             <view class="process-btns">
               <view class="process-btn" @tap="edit({{item}})" style="background-image: url(/images/edit.png)"></view>
               <view class="process-btn delete-btn {{item.content || item.afterRecord ? '' : 'hide'}}" @tap="deleteEx({{item}})" style="background-image: url(/images/delete.png)"></view>
-              <button class="process-btn share-briefing-btn" open-type="share" style="background-image: url('/images/send.png')">
+              <button class="process-btn share-briefing-btn" id="briefingShare" name="briefingShare" open-type="share" style="background-image: url('/images/send.png')">
               </button>
             </view>
           </view>
@@ -692,7 +692,7 @@
           <view class="share-title">分享</view>
         </view>
         <view class="share-btn-wrap">
-          <button class="share-btn" open-type="share">
+          <button id="wxBtn" class="share-btn" open-type="share">
             <image class="share-image" src="/images/weixin.png"></image>
             <view>微信</view>
           </button>
@@ -765,6 +765,23 @@
           Object.assign(this.todayInfo, trainInfo)
           getCt.call(this)
         }
+        this.$apply()
+      }
+    })
+  }
+
+  const getUserInfo = function (userId) {
+    let params = {}
+    if (userId) {
+      params.userId = userId
+    }
+
+    ajax({
+      ins: this,
+      url: '/brief/user/info',
+      params,
+      success: (d) => {
+        this.userId = d.id
         this.$apply()
       }
     })
@@ -875,7 +892,8 @@
       editEx: zanPop
     }
     data = {
-      showHomeBtn: true,
+      userId: '',
+      showHomeBtn: false,
       ct: 1,
       dynamic: {},
       dynamicList: [],
@@ -924,7 +942,12 @@
         dynamicFind.call(this)
       },
       onShareAppMessage (res) {
-        console.log('分享图片路径为： ' + this.resPerfix + this.shareUrl)
+        const shareBtnId = res.target.id
+        let path = '/pages/setex'
+
+        if (shareBtnId == 'briefingShare') {
+          path = 'pages/ex-briefing?userId=' + this.userId
+        }
 
         let imageUrl = ''
         if (this.shareUrl) {
@@ -933,7 +956,7 @@
 
         return {
           title: this.userInfo.nickName + `今天练习${this.todayInfo.todayTrainCount}次，共${this.todayInfo.todayDuration}分钟`,
-          path: '/pages/setex',
+          path,
           imageUrl: imageUrl,
           complete: (e) => {
             console.log(e)
@@ -1097,9 +1120,10 @@
         this.$navigate('./ex-text-mark');
       }
     }
-    onLoad() {
+    onLoad(options) {
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
+
       this.$parent.getUserInfo((userInfo) => {
         if (userInfo) {
           this.userInfo = userInfo
@@ -1107,7 +1131,10 @@
 
         this.$apply()
       })
+      console.log('options.userId : ')
+      console.log(options.userId)
 
+      getUserInfo.call(this, options.userId)
       // 获取历史练习数据
       briefHistoryInfo.call(this)
       // 获取今日练习数据
