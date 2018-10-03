@@ -37,7 +37,7 @@
 
         <form report-submit="true" @submit="gotoCreatePage">
             <view class="fixed to-bottom btn-box">
-                <button class="btn-primary" form-type="submit">创  建</button>
+                <button class="btn-secondary" form-type="submit">创  建</button>
             </view>
         </form>
     </block>

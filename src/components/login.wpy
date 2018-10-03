@@ -1,7 +1,7 @@
 <template>
     <view class="login-fixed-wrap {{!userInfo.nickName ? '' : 'hide'}}">
         <view class="login-pannel">
-            <view class="login-title">请先登录</view>
+            <view class="login-title">请先登录1</view>
 
             <button class="login-button" open-type="getUserInfo" lang="zh_CN" @getuserinfo="login">
                 <image class="weixin-blue-icon" src="/images/weixin_blue.svg"></image>
