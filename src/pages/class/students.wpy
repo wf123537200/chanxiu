@@ -80,7 +80,7 @@
                 </view>
             </block>
             <view class="btn-box fixed to-bottom" wx:elif="{{isMyClass}}">
-                <button form-type="submit" class="btn-primary" open-type="share">邀请新同学</button>
+                <button form-type="submit" class="btn-secondary" open-type="share">邀请新同学</button>
             </view>
             <block wx:else>
                 <view class="btn-box fixed to-bottom join-class">
