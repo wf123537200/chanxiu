@@ -88,6 +88,7 @@
     font-size: 14px;
   }
   .ex-desc {
+    display: flex;
     color: $gray-dark;
     font-size: 12px;
   }
@@ -513,7 +514,12 @@
     <view class="pl-40 ex-data-pannel">
       <view class="ex-data">
         <view class="cur-times">今天练习{{todayInfo.todayTrainCount}}次{{todayInfo.todayDuration}}分钟</view>
-        <view class="ex-desc">连续练习{{todayInfo.continuousNum}}天，最大连续练习{{todayInfo.maxContinuousNum}}天</view>
+        <view class="ex-desc">
+          <text class="continue-time {{ct === 1 ? '' : 'hide'}}">连续练习{{todayInfo.continuousNum}}天</text>
+          <text class="continue-time {{ct === 0 ? '' : 'hide'}}">连续练习{{todayInfo.continuousNum}}天,今天{{todayInfo.todayDuration}}分钟</text>
+          <text class="continue-time {{ct > 1 ? '' : 'hide'}}">已中断{{ct}}天</text>
+          <text>，最大连续练习{{todayInfo.maxContinuousNum}}天</text>
+        </view>
       </view>
       <view class="gray-button mr-40" @tap.stop="onShowShare">去打卡</view>
     </view>
@@ -669,6 +675,23 @@
   import {ajax} from '../components/ajax.js'
   import zanPop from '../components/zan-popup'
   import moment from 'moment'
+
+  const getCt = function() {
+    console.log(this.todayInfo)
+    const d = new Date()
+    const dx = new Date([d.getFullYear(), d.getMonth() + 1, d.getDate()].join('/') + ' 00:00:00').getTime()
+    const dt = new Date(this.todayInfo.lastTime).getTime()
+
+    if(!dt) {
+      return this.ct = 1
+    } else if(dt - dx < 86400000 && dt - dx > 0){
+      this.ct = 0
+    } else if(dt - dx < 0 && dt - dx > -86400000) {
+      this.ct = 1
+    } else {
+      this.ct = Math.round((dx - dt) / 86400000)
+    }
+  }
   /**
    * 获取历史练习数据
    */
@@ -682,12 +705,6 @@
       },
       success: (d) => {
         const trainInfo = d.trainInfo || {}
-
-        this.totalTrainDay = trainInfo.totalTrainDay || 0
-        this.averageDayTime = trainInfo.averageDayTime || 0
-        this.totalCount = trainInfo.totalCount || 0
-        this.averageEveryTime = trainInfo.averageEveryTime || 0
-        this.singleMostDuration = trainInfo.singleMostDuration || 0
         Object.assign(this, d.trainInfo)
         this.$apply()
       }
@@ -704,12 +721,9 @@
       success: (d) => {
         const trainInfo = d.trainInfo || {}
         if (trainInfo) {
-          this.todayInfo.todayTrainCount = trainInfo.todayTrainCount || '0'
-          this.todayInfo.todayDuration = trainInfo.todayDuration || '0'
-          this.todayInfo.continuousNum = trainInfo.continuousNum || '0'
-          this.todayInfo.maxContinuousNum = trainInfo.maxContinuousNum || '0'
-        } else
-        console.log(this.todayInfo)
+          Object.assign(this.todayInfo, trainInfo)
+          getCt.call(this)
+        }
         this.$apply()
       }
     })
@@ -820,6 +834,7 @@
       editEx: zanPop
     }
     data = {
+      ct: 1,
       dynamic: {},
       dynamicList: [],
       totalTrainDay: 0,
