@@ -51,6 +51,8 @@ export async function getMyClasses() {
 
 // 创建班级
 export async function createClass(params = {}) {
+    params.qr = "/pages/class/detail?_f=1&id=${classId}";
+
     const result = await ajax2promise({
         ins: this,
         method: "POST",
@@ -123,6 +125,10 @@ export async function getClassDetail(fix = true) {
 
         if (detail.logo) {
             detail.logo = `${ajaxPerfix}${detail.logo}`;
+        }
+
+        if (detail.qr) {
+            detail.qr = `${ajaxPerfix}${detail.qr}`;
         }
     }
 

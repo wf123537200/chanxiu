@@ -9,7 +9,7 @@
                 <text class="desc">{{detail.brief}}</text>
             </view>
 
-            <image class="qr" src="{{detail.qrCodeUrl}}" mode="aspectFit"></image>
+            <image class="qr" src="{{detail.qr}}" mode="aspectFit"></image>
 
             <text class="remain">{{remainingQuota}}</text>
         </view>
@@ -33,6 +33,7 @@
         .base {
             margin-bottom: 60rpx;
             overflow: hidden;
+            text-align: left;
 
             .icon {
                 float: left;

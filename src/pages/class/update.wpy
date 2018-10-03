@@ -336,6 +336,14 @@
             async submit (e) {
                 const params = e.detail.value;
 
+                if (!params.name) {
+                    wx.showToast({
+                        title: "请输入班级名"
+                    });
+
+                    return;
+                }
+
                 if (!params.isSupportAdd) {
                     params.committee = "";
                     params.qrCodeUrl = "";
@@ -377,7 +385,17 @@
         }
 
         setTitle() {
-            if (this.action === 3) {
+            if (this.action === 1) {
+                wx.setNavigationBarTitle({
+                    title: "设置班级名称"
+                });
+            }
+            else if (this.action === 2) {
+                wx.setNavigationBarTitle({
+                    title: "设置一句话介绍"
+                });
+            }
+            else if (this.action === 3) {
                 wx.setNavigationBarTitle({
                     title: "设置加入方式"
                 });
