@@ -70,19 +70,25 @@ export default class extends wepy.mixin {
     };
 
     async getClassDetail (fix) {
-        await getClassDetail.bind(this)(fix).catch((e) => {
-            console.log(e);
+        await (getClassDetail.bind(this)(fix)).catch(() => {
+            this._error = {
+                classNotExit: true
+            };
+
+            wx.removeStorageSync("bootFromMsg");
 
             wx.showToast({
                 title: "班级不存在",
+                duration: 1500,
                 complete() {
-                    wx.switchTab({
-                        url: "/pages/class/list"
-                    });
+                    setTimeout(function () {
+                        wx.switchTab({
+                            url: "/pages/class/list"
+                        });
+                    }, 1500);
                 }
             });
 
-            throw "班级不存在";
         });
         this.$apply();
     };

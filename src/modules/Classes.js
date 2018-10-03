@@ -5,6 +5,7 @@
 import ajax2promise from "../components/ajax2promise";
 import getGlobalData from "../components/getGlobalData";
 
+// 开放班级
 export async function getOpenClasses () {
     const global = getGlobalData(this);
     const {ajaxPerfix} = global.data;
@@ -26,6 +27,7 @@ export async function getOpenClasses () {
     return classes;
 }
 
+// 我加入的班级
 export async function getMyClasses() {
     const global = getGlobalData(this);
     const {ajaxPerfix} = global.data;
@@ -47,7 +49,10 @@ export async function getMyClasses() {
     return classes;
 }
 
+// 创建班级
 export async function createClass(params = {}) {
+    params.qr = "/pages/class/detail?_f=1&id=${classId}";
+
     const result = await ajax2promise({
         ins: this,
         method: "POST",
@@ -59,6 +64,7 @@ export async function createClass(params = {}) {
     return result;
 }
 
+// 修改班级
 export async function updateClass(params = {}) {
     const {
         id,
@@ -120,6 +126,10 @@ export async function getClassDetail(fix = true) {
         if (detail.logo) {
             detail.logo = `${ajaxPerfix}${detail.logo}`;
         }
+
+        if (detail.qr) {
+            detail.qr = `${ajaxPerfix}${detail.qr}`;
+        }
     }
 
     detail.detail = detail.detail.replace(/\n/g, "\n");
@@ -128,6 +138,7 @@ export async function getClassDetail(fix = true) {
     this.$apply();
 }
 
+// 直接加入
 export async function joinClass() {
     const result = await ajax2promise({
         ins: this,
@@ -142,6 +153,7 @@ export async function joinClass() {
     return result;
 }
 
+// 申请加入
 export async function applyClass(params = {}) {
     params = Object.assign({
         classId: this.classId
@@ -157,6 +169,7 @@ export async function applyClass(params = {}) {
     this.$apply();
 }
 
+// 退出班级
 export async function exitClass() {
     const result = await ajax2promise({
         ins: this,
@@ -251,6 +264,7 @@ export async function remind (params = {}) {
     this.$apply();
 }
 
+// 记录
 export async function getTrainRecords (params = {}) {
     params = Object.assign({
         classId: this.classId,
@@ -271,6 +285,7 @@ export async function getTrainRecords (params = {}) {
     return result;
 }
 
+// 同学列表
 export async function getStudents() {
     let result = await ajax2promise({
         ins: this,
@@ -294,6 +309,8 @@ export async function getStudents() {
 
         m.strCreateTime = m.strCreateTime.substring(0, 10);
 
+        m.everyTrainDuration = m.everyTrainDuration || "尚未开始练习";
+
         return m;
     });
 
@@ -301,6 +318,7 @@ export async function getStudents() {
     return result;
 }
 
+// 新同学
 export async function getNewStudents () {
     let result = await ajax2promise({
         ins: this,
@@ -337,6 +355,8 @@ export async function getNewStudents () {
             m.statusText = "";
         }
 
+        m.everyTrainDuration = m.everyTrainDuration || "尚未开始练习";
+
         return m;
     });
 
@@ -344,6 +364,7 @@ export async function getNewStudents () {
     return result;
 }
 
+// 同学操作
 export async function studentOperate(params = {}) {
     params = Object.assign({
         classId: this.classId
