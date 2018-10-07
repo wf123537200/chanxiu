@@ -13,8 +13,8 @@ export default function (ajaxParams) {
             resolve(data);
         };
 
-        ajaxParams.fail = function () {
-            fail && fail();
+        ajaxParams.fail = function (data) {
+            fail && fail(data);
             reject();
         };
 

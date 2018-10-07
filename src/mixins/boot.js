@@ -19,14 +19,9 @@ export default class extends wepy.mixin {
     };
 
     gotoClassListPage (e) {
-        wx.setStorage({
-            key: "bootFromMsg",
-            data: 0,
-            complete () {
-                wx.switchTab({
-                    url: "/pages/class/list"
-                });
-            }
+        wx.removeStorageSync("bootFromMsg");
+        wx.switchTab({
+            url: "/pages/class/list"
         });
     }
 
@@ -34,13 +29,11 @@ export default class extends wepy.mixin {
         if (options) {
             const f = parseInt(options._f) === 1;
 
+            this._bootFromMsg = f;
+
             if (f) {
                 wx.setStorageSync("bootFromMsg", 1);
             }
-            this._bootFromMsg = f;
-
-            console.log("options._f:", options._f);
-            console.log("bootFromMsg:", this._bootFromMsg);
         }
 
         wx.showShareMenu({

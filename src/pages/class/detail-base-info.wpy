@@ -1,7 +1,7 @@
 <template>
     <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-    <view class="info-box" wx:if="{{ready}}">
+    <view class="info-box" wx:if="{{ready && !_error}}">
         <form report-submit="true" @submit="getFormId">
             <button plain="true" class="field btn-formid" form-type="submit" hover-class="none" @tap="uploadImage('logo')">
                 <text class="label">Logo</text>
@@ -30,7 +30,7 @@
                         <text class="label">一句话介绍</text>
                         <image class="more" src="/images/more-gray.png"></image>
                     </view>
-                    <view class="content">
+                    <view class="content" wx:if="{{detail.brief}}">
                         <text>{{detail.brief}}</text>
                     </view>
                 </button>
@@ -80,7 +80,6 @@
 
             &.desc {
                 display: block;
-                padding: 0;
 
                 .header {
                     //position: relative;
@@ -88,7 +87,6 @@
                     flex-direction: row;
                     align-items: center;
                     align-content: center;
-                    padding: 20rpx 40rpx 10rpx;
 
                     .label {
                         .flex-1;
@@ -96,7 +94,7 @@
                 }
 
                 .content {
-                    padding: 10rpx 40rpx 20rpx;
+                    padding: 10rpx 0 0;
                     line-height: 1.2;
                     text-align: left;
                 }
@@ -215,7 +213,10 @@
                 this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail(false));
                 await this.runReadyCallbacks();
-                this.initData();
+
+                if (!this._error) {
+                    this.initData();
+                }
             });
         }
     }

@@ -2,7 +2,8 @@ import wepy from "wepy";
 
 export default class extends wepy.mixin {
     data = {
-        ready: false
+        ready: false,
+        _error: false
     };
 
     readyCallbacks = [];
@@ -18,10 +19,13 @@ export default class extends wepy.mixin {
     }
 
     async runReadyCallbacks() {
+        this._error = false;
+
         wx.showLoading({
             title: "加载中..",
             mask: true
         });
+
         await Promise.all(this.readyCallbacks);
         this.ready = true;
         this.$apply();
