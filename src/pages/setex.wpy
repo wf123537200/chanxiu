@@ -169,7 +169,6 @@
     position: absolute;
     top: 23px;
     left: 0;
-    width: 80px;
     border: 1px solid $border-color;
     z-index: 200;
     box-sizing: border-box;
@@ -210,10 +209,12 @@
       margin-bottom: 10px;
     }
   }
+  .mw080 {
+    min-width: 80px;
+  }
   .customize-types {
     position: relative;
     height: 20px;
-    width: 80px;
     line-height: 20px;
     box-sizing: border-box;
     font-size: 13px;
@@ -223,8 +224,7 @@
     width: 100%;
     height: 20px!important;
     line-height: 20px!important;
-    padding: 0;
-    padding-left: 5px;
+    padding: 0 10px;
     box-sizing: border-box;
     font-size: 13px;
     border-radius: 5px;
@@ -531,32 +531,29 @@
         <repeat for="{{typeList2}}" key="index" index="index" item="item">
           <view class="types-wrap2" style="top:70px;">
             <repeat for="{{item.childList}}" key="index2" index="index2" item="item2">
-              <view @tap="onSystemTypeClick({{index}}, {{index2}})" class="types {{typeName == 'childList' && type2 === index && type3 === index2 ? 'actived' : ''}}" >
+              <view @tap="onSystemTypeClick({{index}}, {{index2}})" class="types {{(index === 0 && type30 === index2) || (index === 1 && type31 === index2) ? 'actived' : ''}}" >
                 {{item2.name}}
               </view>
             </repeat>
-            <view class="customize-types {{userInfo.nickName && index == 0 && item.customList && item.customList.length ? '' : 'hide'}}">
-              <!--
-              <input class="customize {{item.customizeFocus ? 'focus' : ''}} {{typeName == 'customList' && type2 === index && type4 >= 0 ? 'actived' : ''}}"
-                     placeholder="自定义" catchfocus="customizeFocus({{index}})" value="{{item.customizeValue}}" catchblur="customizeBlur({{index}})" />
-              -->
-              <view class="customize {{item.customizeFocus ? 'focus' : ''}} {{typeName == 'customList' && type2 === index && type4 >= 0 ? 'actived' : ''}}"
-                    @tap.top="customizeFocus({{index}})">
-                {{item.customizeValue || item.customList[0].name || '自定义列表'}}
+
+            <repeat for="{{item.customList}}" key="index4" index="index4" item="item4">
+              <view @tap="selectCustomize({{index}}, {{index4}})" class="types {{index === 0 && type4 === index4 ? 'actived' : ''}}" >
+                {{item4.name}}
               </view>
-              <view class="customize-types-pannel {{item.customizeFocus && item.customList && item.customList.length ? '' : 'hide'}}">
+            </repeat>
+
+            <view class="customize-types mw080 {{userInfo.nickName && index == 0 ? '' : 'hide'}}">
+              <input catchtap class="customize-ab customize {{item.customizeInput ? 'focus' : ''}}"
+                     placeholder="自定义" catchfocus="customizeFocus({{index}})" value="{{item.customizeInputVal}}" catchblur="customizeBlur({{index}})" />
+
+              <view class="customize-types-pannel mw080 {{item.customizeFocus && item.customList && item.customList.length ? '' : 'hide'}}">
                 <repeat for="{{item.customList}}" key="index3" index="index3" item="item3">
                   <view catchtap class="customize-type">
-                    <view class="customize-type-text" catchtap="selectCustomize({{index}}, {{index3}})">{{item3.name}}</view>
+                    <view class="customize-type-text">{{item3.name}}</view>
                     <image class="delete-customize-btn" catchtap="deleteEx({{index}}, {{index3}})" src="/images/delete.png" />
                   </view>
                 </repeat>
               </view>
-            </view>
-
-            <view class="customize-types {{userInfo.nickName && index == 0? '' : 'hide'}}">
-              <input catchtap class="customize-ab customize {{item.customizeInput ? 'focus' : ''}} {{typeName == 'customList actived'}}"
-                     placeholder="自定义" catchfocus="customizeInput({{index}})" value="{{item.customizeInputVal}}" catchblur="customizeBlur({{index}})" />
             </view>
           </view>
         </repeat>
@@ -643,7 +640,6 @@
 
   const initAjax = function () {
     if(this.$parent.accessToken) {
-      wx.showLoading({title: '加载中..'})
       // 初始化数据
       ajax({
         ins: this,
@@ -658,7 +654,6 @@
           getCt.call(this)
           this.$parent.globalData.trainInfo = d.trainInfo
           this.$apply()
-          wx.hideLoading()
         }
       })
     } else {
@@ -686,11 +681,11 @@
 
   const setTypeList2 = function(type1Index = 0) {
     let childList = this.typeListAll[type1Index].childList
-
+    const type4 = this.type4
     childList.forEach( (c, index) => {
       let customizeValue = ''
-      if (index == this.type2) {
-        customizeValue = this.customizeValue || ''
+      if (type4 >= 0 && c.customList && c.customList.length > type4) {
+        customizeValue = this.customizeValue = c.customList[type4].name
       }
       c.customizeValue = customizeValue
       c.customizeFocus = false
@@ -771,18 +766,27 @@
       return
     }
 
+    let exList = [type1Name]
     const typeList2 = this.typeList2 || []
     if(!typeList2.length) {
-      this.exList = [type1Name]
+      this.exList = exList
       return
     }
 
     let type2Name = ''
-    const typeObj = typeList2[this.type2]
-    if (this.typeName == 'childList') {
-      type2Name = typeObj.childList[this.type3].name
-    } else if (typeObj.customList && typeObj.customList.length){
+    let typeObj = typeList2[0]
+    if (this.type30 >= 0 && typeObj.childList && typeObj.childList.length > this.type30) {
+      type2Name = typeObj.childList[this.type30].name
+      exList.push(type2Name)
+    } else if (this.type4 >= 0 && typeObj.customList && typeObj.customList.length){
       type2Name = typeObj.customList[this.type4].name || ''
+      exList.push(type2Name)
+    }
+
+    typeObj = typeList2[1]
+    if (this.type31 >= 0 && typeObj.childList && typeObj.childList.length > this.type31) {
+      type2Name = typeObj.childList[this.type31].name
+      exList.push(type2Name)
     }
 
     if (isValid && !type2Name) {
@@ -795,26 +799,46 @@
       return
     }
 
-    this.exList = [type1Name, type2Name]
+    this.exList = exList
+
+    wx.setStorage({
+      key: 'exType',
+      data: {
+        type1: this.type1,
+        type30: this.type30,
+        type31: this.type31,
+        type4: this.type4,
+        exList: this.exList.join(' '),
+      },
+      success: function(res){
+        console.log('本地存储exType成功')
+      }
+    })
   }
   const getTrainMethodIds = function () {
     const type1id = this.typeList1[this.type1].id
-
+    let typeIdArr = [type1id]
     const typeList2 = this.typeList2 || []
     if (!typeList2.length) {
-      return type1id
+      return typeIdArr.join(' ')
     }
 
-    let type2Id = ''
-    const typeObj = this.typeList2[this.type2]
-    if (this.typeName == 'childList') {
-      type2Id = typeObj.childList[this.type3].id
-    } else if (typeObj.customList && typeObj.customList.length){
-      type2Id = typeObj.customList[this.type4].id
+    let typeObj = typeList2[0]
+    if (this.type30 >= 0 && typeObj.childList && typeObj.childList.length > this.type30) {
+      let type2Id = typeObj.childList[this.type30].id
+      typeIdArr.push(type2Id)
+    } else if (this.type4 >= 0 && typeObj.customList && typeObj.customList.length){
+      let type2Id = typeObj.customList[this.type4].id
+      typeIdArr.push(type2Id)
     }
 
-    if (!type1id || !type2Id) return console.error('getTrainMethodIds error')
-    return [type1id, type2Id].join(' ')
+    typeObj = typeList2[1]
+    if (this.type31 >= 0 && typeObj.childList && typeObj.childList.length > this.type31) {
+      let type2Id = typeObj.childList[this.type31].id
+      typeIdArr.push(type2Id)
+    }
+
+    return typeIdArr.join(' ')
   }
 
   const initPage = async function() {
@@ -828,10 +852,9 @@
     }
     if(exTypeL) {
       this.type1 = exTypeL.type1
-      this.type2 = exTypeL.type2
-      this.type3 = exTypeL.type3
+      this.type30 = exTypeL.type30
+      this.type31 = exTypeL.type31
       this.type4 = exTypeL.type4
-      this.typeName = exTypeL.typeName
       this.exList = exTypeL.exList.split(' ')
     }
 
@@ -874,6 +897,7 @@
           promotionArticleUrl: d.url,
           promotionArticleBrief: d.brief,
         })
+        wx.hideLoading()
         this.$apply()
       }
     })
@@ -881,10 +905,8 @@
 
   const selectDefaultMethod = function (item) {
     this.customizeValue = item.customizeValue = ''
-    this.type2 = 0
-    this.type3 = 0
+    this.type30 = 0
     this.type4 = -1
-    this.typeName = 'childList'
   }
 
   export default class Tag extends wepy.page {
@@ -951,11 +973,14 @@
       exList: [],
       typeList1: [],
       typeList2: [],
+      // 一级方法选中的索引
       type1: 0,
-      type2: 0,
-      type3: 0,
+      // 二级方法的选择下标（第一个）
+      type30: 0,
+      // 二级方法的选择下标（第二个）
+      type31: 0,
+      // 自定义方法列表的选择
       type4: -1,
-      typeName: 'childList',
       // music
       music: '无',
       musicTypeList: [],
@@ -979,6 +1004,7 @@
     }
     onLoad() {
       const that = this
+      wx.showLoading({title: '加载中..'})
       that.$parent.getUserInfo((userInfo) => {
         if (userInfo && userInfo.nickName) {
           that.userInfo = userInfo
@@ -1055,25 +1081,64 @@
         buildExList.call(this, true)
         this.$invoke('setExType', 'togglePopup')
       },
+      /**
+       * 一级方法选择
+       * @param index
+       */
       onTypeClick(index) {
         this.type1 = index
-        this.type2 = 0;
-        this.type3 = 0;
+        this.type30 = 0;
+        this.type31 = 0;
         this.type4 = -1;
-        this.typeName = 'childList';
         setTypeList2.apply(this, [this.type1]);
       },
+      /**
+       * 二级方法选择
+       * @param type2index
+       * @param type3index
+       */
       onSystemTypeClick(type2index, type3index) {
-        this.type2 = type2index
-        this.type3 = type3index
-        this.type4 = -1
-        this.typeName = 'childList'
-        for (let t of this.typeList2) {
-          t.customizeValue = ''
-          t.customizeFocus = false
-          t.customizeInput = false
-          t.customizeInputVal = ''
+        if (type2index == 0) {
+          if (type3index == this.type30) {
+            this.type30 = -1
+          } else {
+            this.type30 = type3index
+          }
+
+          this.type4 = -1
+          const typeObj = this.typeList2[0]
+          typeObj.customizeValue = ''
+          typeObj.customizeFocus = false
+          typeObj.customizeInput = false
+          typeObj.customizeInputVal = ''
+        } else if (type2index == 1) {
+          if (type3index == this.type31) {
+            this.type31 = -1
+          } else {
+            this.type31 = type3index
+          }
         }
+      },
+      /**
+       * 自定义方法选择
+       * @param index
+       * @param index3
+       */
+      selectCustomize(index, index3) {
+        this.type30 = -1
+        this.type4 = index3
+
+        const typeList2 = this.typeList2
+        for (let t of typeList2) {
+          t.customizeValue = ''
+        }
+
+        const item = typeList2[index]
+        const typeObj = item.customList[index3]
+        item.customizeValue = typeObj.name
+        item.customizeFocus = false
+        item.customizeInput = false
+        item.customizeInputVal = ''
       },
       //设置音乐相关
       onShowSetMusic() {
@@ -1170,21 +1235,6 @@
             console.log('本地存储setTime成功')
           }
         })
-
-        wx.setStorage({
-          key: 'exType',
-          data: {
-            type1: this.type1,
-            type2: this.type2,
-            type3: this.type3,
-            type4: this.type4,
-            typeName: this.typeName,
-            exList: this.exList.join(' '),
-          },
-          success: function(res){
-            console.log('本地存储exType成功')
-          }
-        })
       },
       getUserInfo(e) {
         const that = this
@@ -1214,14 +1264,8 @@
       customizeFocus(index) {
         let item = this.typeList2[index]
         item.customizeFocus = true
-        item.customizeInput = false
-        item.customizeInputVal = ''
-        this.$apply()
-      },
-      customizeInput(index) {
-        let item = this.typeList2[index]
-        item.customizeFocus = false
         item.customizeInput = true
+        item.customizeInputVal = ''
         this.$apply()
       },
       exTypeWrapClick() {
@@ -1254,19 +1298,11 @@
         const customList = item.customList || []
         const extentObj = customList.find(c => c.name == value)
         if (extentObj) {
-          // selectDefaultMethod.call(this, item)
           this.$apply()
           return
         }
 
-        this.type2 = index
-        this.type3 = -1
-        this.type4 = customList.length
-        this.typeName = 'customList'
-        item.customizeFocus = false
-        this.customizeValue = item.customizeValue = value
         if (customList && customList.length >= 3) {
-          selectDefaultMethod.call(this, item)
           wx.showToast({
             title: '自定义最多3个',
             icon: 'error',
@@ -1277,6 +1313,11 @@
           return
         }
 
+        this.type30 = -1
+        this.type4 = customList.length
+        item.customizeFocus = false
+        this.customizeValue = item.customizeValue = value
+
         const childList = item.childList || []
         let parentTrainMethodId = ''
         if (childList && childList.length) {
@@ -1286,37 +1327,27 @@
 
         this.$apply()
       },
-      selectCustomize(index, index3) {
-        this.type2 = index
-        this.type3 = -1
-        this.type4 = index3
-        this.typeName = 'customList'
-
-        const typeList2 = this.typeList2
-        for (let t of typeList2) {
-          t.customizeValue = ''
-        }
-
-        const item = typeList2[index]
-        const typeObj = item.customList[index3]
-        item.customizeValue = typeObj.name
-        item.customizeFocus = false
-        item.customizeInput = false
-        item.customizeInputVal = ''
-      },
       deleteEx(index, index3) {
-        this.type4 = -1
-
         const item = this.typeList2[index]
         const customList = item.customList
         const typeObj = customList[index3]
+
+        item.customizeFocus = false
+        if (index3 == this.type4) {
+          this.customizeValue = item.customizeValue = ''
+          this.type30 = 0
+          this.type4 = -1
+        } else if (index3 < this.type4) {
+          this.type4 = this.type4 - 1
+        }
 
         if (typeObj) {
           customList.splice(index3, 1)
           item.customizeValue = ''
           delCustomize.call(this, typeObj.id)
-          selectDefaultMethod.call(this, item)
         }
+
+        buildExList.call(this, false)
       }
     }
   }

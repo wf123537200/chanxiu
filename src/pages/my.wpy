@@ -185,9 +185,9 @@
         <view class="header-arrow">></view>
       </view>
 
-      <view class="continue-time">
-        已连续练习{{continuousNum}}天
-      </view>
+      <view class="continue-time {{ct === 1 ? '' : 'hide'}}">连续练习{{continuousNum}}天</view>
+      <view class="continue-time {{ct === 0 ? '' : 'hide'}}">连续练习{{continuousNum}}天,今天{{todayDuration}}分钟</view>
+      <view class="continue-time {{ct > 1 ? '' : 'hide'}}">已中断{{ct}}天</view>
     </view>
     <!-- 数据 end -->
 
@@ -213,6 +213,22 @@
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
 
+  const getCt = function() {
+    const d = new Date()
+    const dx = new Date([d.getFullYear(), d.getMonth() + 1, d.getDate()].join('/') + ' 00:00:00').getTime()
+    const dt = new Date(this.strLastTime).getTime()
+
+    if(!dt) {
+      return this.ct = 1
+    } else if(dt - dx < 86400000 && dt - dx > 0){
+      this.ct = 0
+    } else if(dt - dx < 0 && dt - dx > -86400000) {
+      this.ct = 1
+    } else {
+      this.ct = Math.round((dx - dt) / 86400000)
+    }
+  }
+
   const initPage = function () {
     // my info
     ajax({
@@ -222,6 +238,7 @@
       success: (d) => {
         if (d && d.trainInfo) {
           Object.assign(this, d.trainInfo)
+          getCt.call(this)
           this.exTime = d.trainInfo.todayDuration || 0
           this.$apply()
         }
@@ -236,6 +253,7 @@
     }
     components = {}
     data = {
+      ct: 1,
       userInfo: {
         nickName: ''
       },

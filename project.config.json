@@ -28,7 +28,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 7,
+			"current": 5,
 			"list": [
 				{
 					"id": -1,
@@ -61,10 +61,10 @@
 					"query": ""
 				},
 				{
-					"id": -1,
-					"name": "pages/ex-briefing",
+					"id": 5,
+					"name": "查看练习简报",
 					"pathName": "pages/ex-briefing",
-					"query": ""
+					"query": "userId= 1073"
 				},
 				{
 					"id": -1,

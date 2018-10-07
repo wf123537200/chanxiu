@@ -151,7 +151,7 @@
     <view class="form-title">
       练习状态
     </view>
-    <textarea class="edit-content" bindinput="experienceInput"  value="{{experience}}" auto-focus placeholder="请输入练习简报" />
+    <textarea class="edit-content" bindinput="experienceInput"  value="{{experience}}" auto-focus placeholder="请输入练习状态" />
 
     <view class="footer">
       <view class="cancel-btn mr-20" @tap="cancelFn">取消</view>

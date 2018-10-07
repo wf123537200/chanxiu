@@ -10,14 +10,14 @@
   }
 
   .userinfo-avatar {
-    position: absolute;
+    position: fixed;
     top: 15px;
     right: 10px;
     width: 35px;
     height: 35px;
   }
   .user-mark {
-    position: absolute;
+    position: fixed;
     top: 15px;
     right: 60px;
     min-width: 155px;
@@ -59,13 +59,13 @@
     background-color: $light-orange;
   }
   .copy-btn {
-    position: absolute;
+    position: fixed;
     left: 50%;
     bottom: 25px;
     margin-left: -60px;
   }
   .user-mark-pannel {
-    position: absolute;
+    position: fixed;
     left: 0;
     bottom: 84px;
     width: 100%;
@@ -102,7 +102,7 @@
   export default class Tag extends wepy.page {
     config = {
       disableScroll: false,
-      navigationBarTitleText: '持一学院-精修1班'
+      navigationBarTitleText: '文字消息打卡预览'
     }
     components = {
     }
@@ -144,8 +144,9 @@
           that.userInfo = userInfo
         }
         const exList = exTypeL.exList || ''
-        that.exList = exList.replace(' ', '-')
+        that.exList = exList.split(' ').join('-')
         that.exTime = Math.abs(that.$parent.globalData['exTime']) || 0
+        const stateText = that.$parent.globalData.stateText
 
         ajax({
           ins: that,
@@ -161,12 +162,12 @@
             const trainInfo = d.trainInfo
             that.continuousNum = trainInfo.continuousNum || 0
             if (that.exTime) {
-              text = `【${that.exList || ''}${that.exTime || 0}分钟，连续${that.continuousNum || 0}天】`
+              text = `【${that.exList || ''}${that.exTime || 0}分钟，连续第${that.continuousNum || 0}天】`
             } else {
               text = `今日练习${trainInfo.todayTrainCount || 0}次，共${trainInfo.todayDuration || 0}分钟`
             }
-            that.text = text + `\n感觉被舒服的身体包围。`
 
+            that.text = [text, stateText].join('\n')
             that.$apply()
           }
         })
