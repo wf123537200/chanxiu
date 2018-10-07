@@ -19,19 +19,24 @@ export default class extends wepy.mixin {
         let _global = getGlobalData(this);
         let {ins, data} = _global;
         let formIds = data.formIds;
-        let expire = moment().format("YYYY-MM-DD HH:mm:ss");
+        let expire = moment().add(7, "d").format("YYYY-MM-DD HH:mm:ss");
 
         if (!formIds) {
             formIds = [];
         }
 
-        let id = {
-            formId,
-            expire
-        };
+        if (formId !== "the formId is a mock one") {
+            let id = {
+                formId,
+                expire
+            };
 
-        formIds.push(id);
-        ins.globalData.formIds = formIds;
+            formIds.push(id);
+            ins.globalData.formIds = formIds;
+        }
+        else {
+            console.log("从开发版收集到formId");
+        }
     }
 
     async onLoad () {

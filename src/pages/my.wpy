@@ -265,7 +265,8 @@
       exTime: 0
     }
     getUserInfo(e) {
-      const that = this
+      const that = this;
+      wx.setStorageSync("token", {});
 
       that.$parent.getUserInfo(userInfo => {
         if (userInfo) {

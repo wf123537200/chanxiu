@@ -326,7 +326,18 @@
             },
             async submit (e) {
                 this.getFormId(e);
-                const id = await this.createClass(e.detail.value);
+
+                const params = e.detail.value;
+
+                if (!params.name) {
+                    wx.showToast({
+                        title: "请输入班级名"
+                    });
+
+                    return;
+                }
+
+                const id = await this.createClass(params);
 
                 wx.showToast({
                     title: "创建成功",

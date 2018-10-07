@@ -409,16 +409,8 @@
 
 <template>
   <view class="container ex {{!!promotionArticleName ? '' : 'hide'}}" style="background-size:cover; background-image: url({{backgroundImage}})" >
-    <view class="login-fixed-wrap {{!userInfo.nickName ? '' : 'hide'}}">
-      <view class="login-pannel">
-        <view class="login-title">请先登录</view>
+    <login :userInfo.sync="userInfo" @login.user="login"></login>
 
-        <button class="login-button" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo">
-          <image class="weixin-blue-icon" src="/images/weixin_blue.svg"></image>
-          <view>微信快捷登录</view>
-        </button>
-      </view>
-    </view>
     <!-- 展示栏 -->
     <view class="wrap" @tap="toBriefing">
       <view class="header-banner-wrap">
@@ -620,6 +612,8 @@
   import moment from 'moment'
   import zanPop from '../components/zan-popup'
   import {ajax} from '../components/ajax.js'
+
+  import login from "../components/login";
 
   const createTime = function(range) {
     const res = [];
@@ -924,6 +918,7 @@
       setTime: zanPop,
       setExType: zanPop,
       setMusic: zanPop,
+        login
     }
     data = {
       typeListAll: [],
@@ -1026,6 +1021,14 @@
       }
     }
     methods = {
+        login (e) {
+            wx.setStorageSync("token", {});
+
+            this.$parent.getUserInfo((userInfo = {}) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.$apply();
+            }, e.detail);
+        },
       toBriefing() {
         this.$navigate('./ex-briefing');
       },
@@ -1235,6 +1238,7 @@
       },
       getUserInfo(e) {
         const that = this
+          debugger
         that.$parent.getUserInfo(userInfo => {
           if (userInfo && userInfo.nickName) {
             that.userInfo = userInfo

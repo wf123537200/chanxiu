@@ -39,6 +39,10 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
           console.log("--formId已发送，执行业务请求--");
         }
 
+        if (url === '/weixin/token') {
+            console.log("开始请求token接口：");
+        }
+
         wepy.request({url: ajaxPerfix + url, data: Object.assign(params, {'access_token': token}), method, header: {'content-type': 'application/x-www-form-urlencoded'}}).then(data => {
           if(data.data.code === 0) {
             // 存储
@@ -51,7 +55,10 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
             })
             success && success(data.data.data)
           } else {
-            fail && fail()
+            if (method === 'GET') {
+              wx.removeStorageSync(ajaxPerfix + url);
+            }
+            fail && fail(data);
             if(data.data.code === 500211) {
                 wx.setStorage({
                 key: 'token',
@@ -61,7 +68,8 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
                   wx.reLaunch({url: '/pages/setex'})
                 }
               })
-            } else {
+            }
+            else {
               wx.showToast({
                 title:  data.data.msg || '调用接口失败',
                 icon: 'error',
@@ -70,7 +78,7 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
               })
             }
 
-            throw new Error(data.data.msg + ':' + url)
+            //throw new Error(data.data.msg + ':' + url)
           }
         })
       }
