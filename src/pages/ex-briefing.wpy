@@ -718,7 +718,6 @@
   import moment from 'moment'
 
   const getCt = function() {
-    console.log(this.todayInfo)
     const d = new Date()
     const dx = new Date([d.getFullYear(), d.getMonth() + 1, d.getDate()].join('/') + ' 00:00:00').getTime()
     const dt = new Date(this.todayInfo.lastTime).getTime()
@@ -762,7 +761,11 @@
       success: (d) => {
         const trainInfo = d.trainInfo || {}
         if (trainInfo) {
-          Object.assign(this.todayInfo, trainInfo)
+          this.todayInfo.todayTrainCount = trainInfo.todayTrainCount || 0
+          this.todayInfo.todayDuration = trainInfo.todayDuration || 0
+          this.todayInfo.continuousNum = trainInfo.continuousNum || 0
+          this.todayInfo.maxContinuousNum = trainInfo.maxContinuousNum || 0
+          this.todayInfo.lastTime = trainInfo.lastTime || 0
           getCt.call(this)
         }
         this.$apply()

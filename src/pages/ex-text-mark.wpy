@@ -10,14 +10,14 @@
   }
 
   .userinfo-avatar {
-    position: absolute;
+    position: fixed;
     top: 15px;
     right: 10px;
     width: 35px;
     height: 35px;
   }
   .user-mark {
-    position: absolute;
+    position: fixed;
     top: 15px;
     right: 60px;
     min-width: 155px;
@@ -59,13 +59,13 @@
     background-color: $light-orange;
   }
   .copy-btn {
-    position: absolute;
+    position: fixed;
     left: 50%;
     bottom: 25px;
     margin-left: -60px;
   }
   .user-mark-pannel {
-    position: absolute;
+    position: fixed;
     left: 0;
     bottom: 84px;
     width: 100%;

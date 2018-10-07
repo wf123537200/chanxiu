@@ -646,7 +646,6 @@
 
   const initAjax = function () {
     if(this.$parent.accessToken) {
-      wx.showLoading({title: '加载中..'})
       // 初始化数据
       ajax({
         ins: this,
@@ -661,7 +660,6 @@
           getCt.call(this)
           this.$parent.globalData.trainInfo = d.trainInfo
           this.$apply()
-          wx.hideLoading()
         }
       })
     } else {
@@ -905,6 +903,7 @@
           promotionArticleUrl: d.url,
           promotionArticleBrief: d.brief,
         })
+        wx.hideLoading()
         this.$apply()
       }
     })
@@ -1010,6 +1009,7 @@
     }
     onLoad() {
       const that = this
+      wx.showLoading({title: '加载中..'})
       that.$parent.getUserInfo((userInfo) => {
         if (userInfo && userInfo.nickName) {
           that.userInfo = userInfo
