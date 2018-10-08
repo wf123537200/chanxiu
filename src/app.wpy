@@ -225,7 +225,7 @@ import 'wepy-async-function';
             formIds: "",
             // 消息模板页面配置
             templatePages: {
-                1: "/pages/class/detail?id=${classId}",
+                1: "/pages/class/students?_f=1&tab=1&id=${classId}",
                 2: "/pages/class/welcome?id=${classId}",
                 3: "/pages/class/fail?id=${classId}",
                 4: "/pages/class/news?_f=1&time_type=1&id=${classId}",

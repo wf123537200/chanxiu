@@ -19,7 +19,7 @@ export default class extends wepy.mixin {
         let _global = getGlobalData(this);
         let {ins, data} = _global;
         let formIds = data.formIds;
-        let expire = moment().add(7, "d").format("YYYY-MM-DD HH:mm:ss");
+        let expire = moment().add(6, "d").format("YYYY-MM-DD HH:mm:ss");
 
         if (!formIds) {
             formIds = [];
