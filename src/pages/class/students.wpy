@@ -85,7 +85,7 @@
         <form report-submit="true" @submit="getFormId">
             <block wx:if="{{isPending}}">
                 <view class="btn-box fixed to-bottom">
-                    <button form-type="submit" class="btn-disabled">等待审核</button>
+                    <button plain="true" form-type="submit" class="btn-disabled" hover-class="none">等待审核</button>
                 </view>
             </block>
             <view class="btn-box fixed to-bottom" wx:elif="{{isMyClass}}">
@@ -293,7 +293,7 @@
         };
 
         data = {
-            currentTab: "all",
+            currentTab: "",
             tab: [
                 {
                     id: "all",
@@ -319,18 +319,13 @@
 
         watch = {
             async currentTab (value, oldValue) {
-                if (value === "new") {
+                if (value === "new" && oldValue !== "new") {
                     this.clearConfirmInfo();
                     this.clearCurrentStudentId();
-
-                    if (oldValue !== "new") {
-                        this.getNewStudents();
-                    }
+                    this.getNewStudents();
                 }
-                else {
-                    if (oldValue !== "all") {
-                        this.getStudents();
-                    }
+                else if (oldValue !== "all") {
+                    this.getStudents();
                 }
             }
         };
@@ -458,11 +453,20 @@
             }
         }
 
+        onLoad(options) {
+            if (parseInt(options.tab) === 1) {
+                this.currentTab = "new";
+            }
+            else {
+                this.currentTab = "all";
+            }
+        }
+
         onShow() {
             this.$parent.getUserInfo(async (userInfo) => {
                 this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail());
-                this.addReadyCallback(this.getStudents());
+                //this.addReadyCallback(this.getStudents());
                 await this.runReadyCallbacks();
 
                 if (!this._error) {
