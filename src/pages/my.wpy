@@ -271,6 +271,7 @@
       averageDayTime: 0,
       singleMostDuration: 0,
       continuousNum: 0,
+      todayDuration: 0,
       exTime: 0
     }
     getUserInfo(e) {
