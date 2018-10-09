@@ -948,7 +948,7 @@
         dynamicFind.call(this)
       },
       onShareAppMessage (res) {
-        const shareBtnId = res.target.id
+        const shareBtnId = res.target ? res.target.id : ''
         let path = '/pages/setex'
 
         if (shareBtnId == 'briefingShare') {
@@ -959,6 +959,7 @@
         if (this.shareUrl) {
           imageUrl = this.resPerfix + this.shareUrl + '?' + Date.now()
         }
+        console.log('分享的path：' + path)
 
         return {
           title: this.userInfo.nickName + `今天练习${this.todayInfo.todayTrainCount}次，共${this.todayInfo.todayDuration}分钟`,

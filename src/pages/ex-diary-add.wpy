@@ -240,9 +240,6 @@
     if (!time) {
       return '练习完成为空'
     }
-    if (!experience) {
-      return '练习状态为空'
-    }
     if (isNaN(type1)) {
       return '练习方法为空'
     }
@@ -320,7 +317,7 @@
         this.$apply()
       },
       typeList3Change: function (e) {
-        this.type2 = e.detail.value
+        this.type3 = e.detail.value
         this.$apply()
       },
       timeSetInput: function(e) {
@@ -354,7 +351,9 @@
           method: 'POST',
           params,
           success: (d) => {
-            this.$navigate('./ex-briefing');
+            wx.navigateBack({
+              delta: 1
+            })
           }
         })
       },
