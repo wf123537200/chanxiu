@@ -182,7 +182,7 @@
           {
             pagePath: 'pages/class/list',
             selectedIconPath: './images/class-bar-active.png',
-            iconPath: './images/ex-bar.png',
+            iconPath: './images/class-bar.png',
             text: '班级',
             selectText: '班级'
           },
@@ -198,13 +198,9 @@
     }
 
     onShow = () => {
-      wx.setKeepScreenOn({
-        keepScreenOn: true,
-      })
-
-      if(this.globalData.musicUrl && this.globalData.musicTitle && this.globalData.isInex) {
-        wx.playBackgroundAudio()
-      }
+        wx.setKeepScreenOn({
+            keepScreenOn: true,
+        })
     }
 
     onHide = () => {

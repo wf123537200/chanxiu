@@ -1,7 +1,7 @@
 <template>
-    <login :userInfo.sync="userInfo" @login.user="login"></login>
-
     <view class="full-height flex-v" @tap="hideTrainTimeTypeDrop" wx:if="{{ready && !_error}}">
+        <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
+
         <nav :id.sync="classId" nav="news"></nav>
 
         <view class="tab">
@@ -151,11 +151,11 @@
                     <view class="btn-box fixed to-bottom" wx:else>
                         <!--<button class="btn-primary {{detail.isRemind ? '' : 'w-1-2'}}" open-type="getUserInfo">通报到群里</button>-->
                         <button class="btn-secondary" form-type="submit" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind && trainRecords && trainRecords.length > 0}}">提醒他们</button>
-                        <button class="btn-primary" form-type="submit" open-type="share" wx:else>邀请新同学</button>
+                        <button class="btn-secondary" form-type="submit" open-type="share" wx:else>邀请新同学</button>
                     </view>
                 </block>
                 <block wx:else>
-                    <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
+                    <view class="btn-box fixed to-bottom">
                         <button class="btn-secondary" form-type="submit" open-type="share">邀请新同学</button>
                     </view>
                 </block>

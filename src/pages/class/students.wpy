@@ -1,7 +1,7 @@
 <template>
-    <login :userInfo.sync="userInfo" @login.user="login"></login>
+    <view class="full-height flex-v" @tap="hideStudentsActions" wx:if="{{ready && !_error}}">
+        <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
 
-    <view class="full-height flex-v" wx:if="{{ready && !_error}}" @tap="hideStudentsActions">
         <nav :id.sync="classId" nav="students"></nav>
 
         <view class="tab">
@@ -104,6 +104,8 @@
             </view>
         </form>
     </view>
+
+    <applyPopup :classId.sync="classId" @onSubmit.user="onApply"></applyPopup>
 </template>
 
 <style lang="less">
@@ -280,6 +282,7 @@
 
     import nav from "./detail/navigator";
     import login from "../../components/login";
+    import applyPopup from "./detail/apply-popup";
 
     export default class extends wepy.page {
         config = {
@@ -289,7 +292,8 @@
 
         components = {
             nav,
-            login
+            login,
+            applyPopup
         };
 
         data = {
@@ -331,6 +335,10 @@
         };
 
         methods = {
+            onApply () {
+                this.detail.status = 0;
+                this.$apply();
+            },
             gotoExBriefingPage (e) {
                 const id = e.target.dataset.id;
                 this.getFormId(e);
