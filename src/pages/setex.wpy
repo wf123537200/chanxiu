@@ -409,7 +409,7 @@
 
 <template>
   <view class="container ex {{!!promotionArticleName ? '' : 'hide'}}" style="background-size:cover; background-image: url({{backgroundImage}})" >
-    <login :userInfo.sync="userInfo" @login.user="login"></login>
+    <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
 
     <!-- 展示栏 -->
     <view class="wrap" @tap="toBriefing">
