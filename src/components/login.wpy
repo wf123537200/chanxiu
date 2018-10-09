@@ -1,5 +1,5 @@
 <template>
-    <view class="login-fixed-wrap {{!userInfo.nickName ? '' : 'hide'}}">
+    <view class="login-fixed-wrap">
         <view class="login-pannel">
             <view class="login-title">请先登录</view>
 

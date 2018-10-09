@@ -1,10 +1,7 @@
 <template>
-    <!--<form report-submit="true" @submit="getFormId">-->
-
-    <!--</form>-->
-    <login :userInfo.sync="userInfo" @login.user="login"></login>
-
     <block wx:if="{{ready && !_error}}">
+        <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
+
         <nav :id.sync="classId" nav="intro"></nav>
 
         <view class="info-box">

@@ -1,7 +1,7 @@
 <template>
-    <login :userInfo.sync="userInfo" @login.user="login"></login>
-
     <block wx:if="{{ready}}">
+        <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
+
         <view class="classes">
             <navigator url="/pages/class/detail?id={{item.id}}" class="class" style="background-image: url({{bgImg}})" wx:key="{{index}}" wx:for="{{myClasses}}">
                 <form report-submit="true" @submit="getFormId">
