@@ -1,7 +1,7 @@
 <template>
-    <login :userInfo.sync="userInfo" @login.user="login"></login>
-
     <form class="btn-box" report-submit="true" @submit="getFormId" wx:if="{{ready && !_error}}">
+        <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
+
         <view class="content-box">
             <view class="base">
                 <image class="icon" src="{{detail.logo}}" mode="aspectFill"/>

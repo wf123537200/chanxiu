@@ -1,7 +1,7 @@
 <template>
-    <login :userInfo.sync="userInfo" @login.user="login"></login>
-
     <block wx:if="{{ready && !_error}}">
+        <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
+
         <view class="header">你的申请未通过！</view>
         <view class="feedback">你发送的加入“{{detail.name}}”的申请未通过。</view>
         <view class="feedback">反馈信息：无</view>
@@ -12,7 +12,7 @@
             <button class="btn-secondary w-1-2" form-type="submit" @tap="joinClass">重新申请</button>
         </form>
 
-        <applyPopup :id.sync="id"></applyPopup>
+        <applyPopup :classId.sync="classId"></applyPopup>
     </block>
 </template>
 
