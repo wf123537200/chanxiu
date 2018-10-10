@@ -14,7 +14,7 @@
             <!--所有同学-->
             <view class="students" wx:if="{{currentTab==='all'}}">
                 <view class="student" wx:for="{{students}}" wx:key="{{index}}">
-                    <form class="avatar" report-submit="true" data-isMe="item.isMe" data-id="item.id" @submit="gotoExBriefingPage">
+                    <form class="avatar" report-submit="true" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
                         <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                             <image src="{{item.avatarUrl}}"></image>
                         </button>
@@ -48,7 +48,7 @@
             <view class="students" wx:if="{{currentTab==='new'}}">
                 <block wx:if="{{newStudents.length > 0}}">
                     <view class="student" wx:for="{{newStudents}}" wx:key="{{index}}">
-                        <form class="avatar" report-submit="true" data-isMe="item.isMe" data-id="item.id" @submit="gotoExBriefingPage">
+                        <form class="avatar" report-submit="true" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
                             <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                                 <image src="{{item.avatarUrl}}"></image>
                             </button>
@@ -344,7 +344,7 @@
                 this.getFormId(e);
 
                 wx.navigateTo({
-                    url: "/pages/ex-briefing?user_id=" + id
+                    url: "/pages/ex-briefing?userId=" + id
                 });
             },
             login (e) {
