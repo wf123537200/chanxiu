@@ -563,7 +563,7 @@
           <text>，最大连续练习{{todayInfo.maxContinuousNum}}天</text>
         </view>
       </view>
-      <view class="gray-button mr-40" @tap.stop="onShowShare">去打卡</view>
+      <view class="gray-button mr-40" @tap.stop="onShowShare" wx:if="{{upstateState}}">去打卡</view>
     </view>
 
     <!-- 数据 -->
@@ -613,7 +613,7 @@
 
     <view class="header-pannel pl-20">
       练习记录
-      <view class="add-flag-pannel" @tap="processShow()">
+      <view wx:if="{{upstateState}}" class="add-flag-pannel" @tap="processShow()">
         <view class="add-flag">+</view>
       </view>
     </view>
@@ -639,9 +639,9 @@
               {{item.content.length > 63 && !item.readAll ? '查看全文' : ''}}
             </view>
             <view class="process-btns">
-              <view class="process-btn" @tap="edit({{item}})" style="background-image: url(/images/edit.png)"></view>
-              <view class="process-btn delete-btn {{item.content || item.afterRecord ? '' : 'hide'}}" @tap="deleteEx({{item}})" style="background-image: url(/images/delete.png)"></view>
-              <button class="process-btn share-briefing-btn" id="briefingShare" name="briefingShare" open-type="share" style="background-image: url('/images/send.png')">
+              <view  class="process-btn" wx:if="{{upstateState}}" @tap="edit({{item}})" style="background-image: url(/images/edit.png)"></view>
+              <view class="process-btn delete-btn" wx:if="{{upstateState && (item.content || item.afterRecord)}}" @tap="deleteEx({{item}})" style="background-image: url(/images/delete.png)"></view>
+              <button class="process-btn share-briefing-btn" wx:if="{{upstateState}}" id="briefingShare" name="briefingShare" open-type="share" style="background-image: url('/images/send.png')">
               </button>
             </view>
           </view>
@@ -705,7 +705,7 @@
     </view>
 
     <!--返回列表页-->
-    <view class="fixed to-bottom switch-page-btn-box" wx:if="{{showHomeBtn}}">
+    <view class="fixed to-bottom switch-page-btn-box" wx:if="{{!upstateState}}">
       <button @tap="toHome">首页</button>
     </view>
   </view>
@@ -785,6 +785,9 @@
       params,
       success: (d) => {
         this.userId = d.id
+        this.upstateState = d.isMe || !userId
+        this.isMe = d.isMe
+        this.userInfo = d
         this.$apply()
       }
     })
@@ -896,7 +899,7 @@
     }
     data = {
       userId: '',
-      showHomeBtn: false,
+      upstateState: false,
       ct: 1,
       dynamic: {},
       dynamicList: [],
@@ -945,7 +948,7 @@
         dynamicFind.call(this)
       },
       onShareAppMessage (res) {
-        const shareBtnId = res.target.id
+        const shareBtnId = res.target ? res.target.id : ''
         let path = '/pages/setex'
 
         if (shareBtnId == 'briefingShare') {
@@ -956,6 +959,7 @@
         if (this.shareUrl) {
           imageUrl = this.resPerfix + this.shareUrl + '?' + Date.now()
         }
+        console.log('分享的path：' + path)
 
         return {
           title: this.userInfo.nickName + `今天练习${this.todayInfo.todayTrainCount}次，共${this.todayInfo.todayDuration}分钟`,
@@ -1041,9 +1045,8 @@
         this.$parent.globalData.diaryTitle = item.title
         this.$parent.globalData.diaryContent = item.content
         this.$parent.globalData.diaryId = item.refId
-        this.$parent.globalData.readOnly = false
+        this.$parent.globalData.readOnly = !this.upstateState
         this.$navigate('./ex-diary')
-        // this.dynamicList[index].readAll = true
       },
       onTapStop() {
         this.isShowShare = false
@@ -1124,20 +1127,21 @@
       }
     }
     onLoad(options) {
+      const userId = options.userId
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
 
-      this.$parent.getUserInfo((userInfo) => {
-        if (userInfo) {
-          this.userInfo = userInfo
-        }
+      if (!userId) {
+        this.$parent.getUserInfo((userInfo) => {
+          if (userInfo) {
+            this.userInfo = userInfo
+          }
 
-        this.$apply()
-      })
-      console.log('options.userId : ')
-      console.log(options.userId)
+          this.$apply()
+        })
+      }
 
-      getUserInfo.call(this, options.userId)
+      getUserInfo.call(this, options.userId || '')
       // 获取历史练习数据
       briefHistoryInfo.call(this)
       // 获取今日练习数据

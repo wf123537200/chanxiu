@@ -318,10 +318,10 @@
         success: (d) => {
           const strLastTime = d.trainInfo.strLastTime
           if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
-            d.trainInfo.continuousNum = 0
+            d.trainInfo.continuousNum = 1
           }
 
-          this.continuousNum = d.trainInfo.continuousNum || 0
+          this.continuousNum = d.trainInfo.continuousNum || 1
           this.exTimeX = d.trainInfo.todayDuration
           this.$apply()
         }

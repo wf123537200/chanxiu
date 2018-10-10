@@ -155,7 +155,9 @@
           params,
           method: 'POST',
           success: (d) => {
-            this.$navigate('./ex-briefing');
+            wx.navigateBack({
+              delta: 1
+            })
           }
         })
       },
