@@ -19,7 +19,7 @@
             </view>
         </view>
 
-        <view class="wechat {{!admin ? 'no-admin' : ''}}" wx:if="{{detail.isSupportAdd}}">
+        <view class="wechat {{!detail.committee ? 'no-admin' : ''}}" wx:if="{{detail.isSupportAdd}}">
             <block wx:if="{{detail.qrCodeUrl}}">
                 <text>你可以长按识别二维码加群</text>
                 <image class="qrcode" src="{{detail.qrCodeUrl}}"></image>

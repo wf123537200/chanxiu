@@ -158,7 +158,8 @@
         'pages/class/students',
         'pages/class/welcome',
         'pages/class/fail',
-        'pages/class/qr'
+        'pages/class/qr',
+        'pages/class/wechat-qr'
       ],
       window: {
         backgroundTextStyle: 'light',

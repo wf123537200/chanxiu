@@ -77,12 +77,13 @@
                     </button>
                 </form>
             </navigator>
-            <form report-submit="true" @submit="getFormId" wx:else>
+            <form report-submit="true" @submit="viewQrcode" wx:else>
                 <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                     <text class="label">是否支持加群</text>
                     <view class="content">
                         <text>{{isSupportAddText}}</text>
                     </view>
+                    <image class="more" src="/images/more-gray.png" wx:if="{{isMyClass && detail.isSupportAdd}}"></image>
                 </button>
             </form>
         </view>
@@ -141,6 +142,19 @@
             </view>
         </form>
     </block>
+
+    <!--<qrCodePopup skin="qrCodePopup">-->
+        <!--<form report-submit="true" @submit="getFormId">-->
+            <!--<view class="qrCode">-->
+                <!--<view class="title">班级群二维码</view>-->
+                <!--<image src="{{detail.qrCodeUrl}}"></image>-->
+            <!--</view>-->
+            <!--<button class="btn-formid" form-type="submit">-->
+                <!--<view class="line1"></view>-->
+                <!--<view class="line2"></view>-->
+            <!--</button>-->
+        <!--</form>-->
+    <!--</qrCodePopup>-->
 
     <applyPopup :classId.sync="classId" @onSubmit.user="onApply"></applyPopup>
     <deleteClassPopup :classId.sync="classId"></deleteClassPopup>
@@ -297,6 +311,64 @@
             margin-left: 15rpx;
         }
     }
+
+    /*.qrCodePopup {
+        text-align: center;
+
+        .zan-popup__container {
+            background: none !important;
+            border-radius: 0 !important;
+        }
+
+        .title {
+            display: block;
+            margin-bottom: 30rpx;
+            font-size: 26rpx;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .qrCode {
+            display: inline-block;
+            padding: 40rpx;
+            background-color: #fff;
+
+            image {
+                width: 500rpx;
+                height: 500rpx;
+                vertical-align: top;
+            }
+        }
+
+        button {
+            display: none;
+            position: relative;
+            width: 80rpx;
+            height: 80rpx;
+            margin-top: 40rpx;
+            //background-color: #fff;
+            border-radius: 50%;
+
+            @size: 4rpx;
+            .line1,
+            .line2 {
+                content: "";
+                display: block;
+                position: absolute;
+                left: 16rpx;
+                right: 16rpx;
+                top: 50%;
+                height: @size;
+                background-color: rgba(255, 255, 255, 0.8);
+                transform-origin: 50% 50%;
+                transform: translateY(50%) rotate(45deg);
+            }
+
+            .line2 {
+                transform: translateY(50%) rotate(-45deg);
+            }
+        }
+    }*/
 </style>
 
 <script>
@@ -307,6 +379,7 @@
     import formIds from "../../mixins/formIds";
 
     import login from "../../components/login";
+    //import popup from "../../components/zan-popup";
     import applyPopup from "./detail/apply-popup";
     import deleteClassPopup from "./detail/delete-class-popup";
     import nav from "./detail/navigator";
@@ -323,7 +396,8 @@
             //info,
             applyPopup,
             deleteClassPopup,
-            login
+            login,
+            //qrCodePopup: popup
         };
 
         data = {
@@ -345,7 +419,7 @@
             },
             isSupportAddText () {
                 if (this.detail.isSupportAdd) {
-                    return "入班后可加群";
+                    return "加入班级后可加群";
                 }
                 else {
                     return "不支持";
@@ -367,6 +441,16 @@
                     this.userInfo = Object.assign({}, userInfo);
                     this.$apply();
                 }, e.detail);
+            },
+            viewQrcode (e) {
+                this.getFormId(e);
+
+                debugger
+                if (this.isMyClass && this.detail.isSupportAdd) {
+                    wx.redirectTo({
+                        url: "/pages/class/wechat-qr?id=" + this.classId
+                    });
+                }
             }
         };
 
