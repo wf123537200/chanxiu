@@ -10,77 +10,75 @@
             </form>
         </view>
 
-        <view class="tab-body flex-1 students-box {{currentTab}}">
-            <scroll-view class="students" scroll-y="true">
-                <!--所有同学-->
-                <block wx:if="{{currentTab==='all'}}">
-                    <view class="student" wx:for="{{students}}" wx:key="{{index}}">
-                        <form class="avatar" report-submit="true" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
+        <view class="tab-body flex-v flex-1 {{currentTab}}">
+            <!--所有同学-->
+            <view class="students" wx:if="{{currentTab==='all'}}">
+                <view class="student" wx:for="{{students}}" wx:key="{{index}}">
+                    <form class="avatar" report-submit="true" data-isMe="item.isMe" data-id="item.id" @submit="gotoExBriefingPage">
+                        <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
+                            <image src="{{item.avatarUrl}}"></image>
+                        </button>
+                    </form>
+                    <view class="row">
+                        <text class="nick-name">{{item.nickName}}</text>
+                        <text class="role">{{item.roleText}}</text>
+                    </view>
+                    <view class="row">
+                        <text class="train" wx:if="{{item.everyTrainDuration}}">{{item.everyTrainDuration}}</text>
+                        <text class="join-time">{{item.strCreateTime}}加入</text>
+                    </view>
+
+                    <form report-submit="true" @submit="getFormId">
+                        <button plain="true" form-type="submit" class="trigger btn-formid" hover-class="none" data-id="{{item.id}}" @tap.stop="showStudentsActions" wx:if="{{!item.isMe && currentStudentId !== item.id && ((isMonitor && item.role === 0) || (isMonitor && item.role !== 0) || (isMonitor || (isViceMonitor && item.role === 0)))}}">
+                            <image src="/images/classes/trigger.png"></image>
+                        </button>
+                        <view class="actions" @tap.stop="ghost" wx:if="{{currentStudentId === item.id}}">
+                            <button plain="true" form-type="submit" class="confirm" data-id="{{item.id}}" wx:if="{{confirm.studentId === item.id}}" @tap="confirmStudentOperate">{{confirm.text}}</button>
+                            <block wx:else>
+                                <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="promoteStudent" wx:if="{{isMonitor && item.role === 0}}">设为班干部</button>
+                                <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="cancelStudent" wx:if="{{isMonitor && item.role !== 0}}">取消班干部</button>
+                                <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="replaceStudent" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">接任我</button>
+                                <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="deleteStudent" class="del" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">删除</button>
+                            </block>
+                        </view>
+                    </form>
+                </view>
+            </view>
+            <!--新同学-->
+            <view class="students" wx:if="{{currentTab==='new'}}">
+                <block wx:if="{{newStudents.length > 0}}">
+                    <view class="student" wx:for="{{newStudents}}" wx:key="{{index}}">
+                        <form class="avatar" report-submit="true" data-isMe="item.isMe" data-id="item.id" @submit="gotoExBriefingPage">
                             <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                                 <image src="{{item.avatarUrl}}"></image>
                             </button>
                         </form>
                         <view class="row">
                             <text class="nick-name">{{item.nickName}}</text>
-                            <text class="role">{{item.roleText}}</text>
-                        </view>
-                        <view class="row">
-                            <text class="train" wx:if="{{item.everyTrainDuration}}">{{item.everyTrainDuration}}</text>
-                            <text class="join-time">{{item.strCreateTime}}加入</text>
-                        </view>
-
-                        <form report-submit="true" @submit="getFormId">
-                            <button plain="true" form-type="submit" class="trigger btn-formid" hover-class="none" data-id="{{item.id}}" @tap.stop="showStudentsActions" wx:if="{{!item.isMe && currentStudentId !== item.id && ((isMonitor && item.role === 0) || (isMonitor && item.role !== 0) || (isMonitor || (isViceMonitor && item.role === 0)))}}">
-                                <image src="/images/classes/trigger.png"></image>
-                            </button>
-                            <view class="actions" @tap.stop="ghost" wx:if="{{currentStudentId === item.id}}">
-                                <button plain="true" form-type="submit" class="confirm" data-id="{{item.id}}" wx:if="{{confirm.studentId === item.id}}" @tap="confirmStudentOperate">{{confirm.text}}</button>
-                                <block wx:else>
-                                    <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="promoteStudent" wx:if="{{isMonitor && item.role === 0}}">设为班干部</button>
-                                    <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="cancelStudent" wx:if="{{isMonitor && item.role !== 0}}">取消班干部</button>
-                                    <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="replaceStudent" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">接任我</button>
-                                    <button plain="true" form-type="submit" data-id="{{item.id}}" open-type="getUserInfo" @getuserinfo="deleteStudent" class="del" wx:if="{{isMonitor || (isViceMonitor && item.role === 0)}}">删除</button>
+                            <view class="new-student-actions">
+                                <text wx:if="{{item.statusText}}">{{item.statusText}}</text>
+                                <block wx:elif="{{isMonitor || isViceMonitor}}">
+                                    <form report-submit="true" data-id="{{item.id}}" @submit="refuseStudent">
+                                        <button class="btn-secondary" open-type="getUserInfo" form-type="submit">拒绝</button>
+                                    </form>
+                                    <form report-submit="true" data-id="{{item.id}}" @submit="agreeStudent">
+                                        <button class="btn-primary" open-type="getUserInfo" form-type="submit">通过</button>
+                                    </form>
                                 </block>
                             </view>
-                        </form>
+                        </view>
+                        <view class="row">
+                            <view class="row">
+                                <text class="train" wx:if="{{item.everyTrainDuration}}">{{item.everyTrainDuration}}</text>
+                                <text class="join-time">{{item.strCreateTime}}</text>
+                            </view>
+
+                            <view class="row intro">{{item.introduction}}</view>
+                        </view>
                     </view>
                 </block>
-                <!--新同学-->
-                <block wx:else>
-                    <block wx:if="{{newStudents.length > 0}}">
-                        <view class="student" wx:for="{{newStudents}}" wx:key="{{index}}">
-                            <form class="avatar" report-submit="true" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
-                                <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
-                                    <image src="{{item.avatarUrl}}"></image>
-                                </button>
-                            </form>
-                            <view class="row">
-                                <text class="nick-name">{{item.nickName}}</text>
-                                <view class="new-student-actions">
-                                    <text wx:if="{{item.statusText}}">{{item.statusText}}</text>
-                                    <block wx:elif="{{isMonitor || isViceMonitor}}">
-                                        <form report-submit="true" data-id="{{item.id}}" @submit="refuseStudent">
-                                            <button class="btn-secondary" open-type="getUserInfo" form-type="submit">拒绝</button>
-                                        </form>
-                                        <form report-submit="true" data-id="{{item.id}}" @submit="agreeStudent">
-                                            <button class="btn-primary" open-type="getUserInfo" form-type="submit">通过</button>
-                                        </form>
-                                    </block>
-                                </view>
-                            </view>
-                            <view class="row">
-                                <view class="row">
-                                    <text class="train" wx:if="{{item.everyTrainDuration}}">{{item.everyTrainDuration}}</text>
-                                    <text class="join-time">{{item.strCreateTime}}</text>
-                                </view>
-
-                                <view class="row intro">{{item.introduction}}</view>
-                            </view>
-                        </view>
-                    </block>
-                    <view class="no-records" wx:else>暂无新同学</view>
-                </block>
-            </scroll-view>
+                <view class="no-records" wx:else>暂无新同学</view>
+            </view>
         </view>
 
         <!--操作按钮-->
@@ -119,32 +117,15 @@
     }
 
     .tab {
-        position: relative;
         margin-top: 18rpx;
-
-        .share {
-            position: absolute;
-            top: 25rpx;
-            right: 25rpx;
-        }
     }
 
     .tab-body {
         background-color: #fff;
     }
 
-    .students-box {
-        position: relative;
-    }
-
     .students {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        padding: 30rpx 40rpx 140rpx;
-        box-sizing: border-box;
+        padding: 30rpx 40rpx;
 
         .student {
             display: block;
@@ -363,7 +344,7 @@
                 this.getFormId(e);
 
                 wx.navigateTo({
-                    url: "/pages/ex-briefing?userId=" + id
+                    url: "/pages/ex-briefing?user_id=" + id
                 });
             },
             login (e) {
