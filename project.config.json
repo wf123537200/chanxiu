@@ -28,7 +28,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 5,
+			"current": 8,
 			"list": [
 				{
 					"id": -1,
@@ -77,6 +77,12 @@
 					"name": "pages/end",
 					"pathName": "pages/end",
 					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "share",
+					"pathName": "pages/ex-briefing",
+					"query": "userId=1073"
 				}
 			]
 		}

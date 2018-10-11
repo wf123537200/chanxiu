@@ -299,12 +299,9 @@
     background-color: transparent;
   }
   .process-btn {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     margin-left: 30px;
-    background-size: 20px 20px;
-    background-repeat: no-repeat;
-    background-position: center;
   }
   .btn-img {
     width: 100%;
@@ -316,7 +313,9 @@
   }
 
   .delete-btn {
-    background-size: 17px 20px;
+    width: 15px;
+    height: 18px;
+    background-size: 16px 18px;
   }
   .popup-headerr {
     display: flex;
@@ -540,7 +539,7 @@
 </style>
 
 <template>
-  <view class="container">
+  <view class="container {{!isLoading ? '' : 'hide'}}">
     <image class="imagex {{isShowImage ? '': 'hide'}}" @tap.stop="onStop" mode="aspectFit" src="{{ picUrl }}"/>
     <view class="mask {{isShowImage ? '' : 'hide'}}" @tap.stop="onStop"></view>
     <view class="close" @tap.stop="onHideImage">
@@ -714,7 +713,7 @@
     </view>
 
     <!--返回列表页-->
-    <view class="fixed to-bottom switch-page-btn-box" wx:if="{{!upstateState}}">
+    <view class="fixed to-bottom switch-page-btn-box" wx:if="{{userId}}">
       <button @tap="toHome">首页</button>
     </view>
   </view>
@@ -750,7 +749,8 @@
       url: '/brief/history/info',
       params: {
         // timeType/分类/整型 1=查询本周，2=查询本月，3=查询全
-        timeType: this.timeType
+        timeType: this.timeType,
+        userId: this.userId
       },
       success: (d) => {
         const trainInfo = d.trainInfo || {}
@@ -767,6 +767,7 @@
     ajax({
       ins: this,
       url: '/brief/today/info',
+      params: { userId: this.userId },
       success: (d) => {
         const trainInfo = d.trainInfo || {}
         if (trainInfo) {
@@ -802,6 +803,61 @@
     })
   }
 
+  const getToken = function () {
+    const that = this
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success (data) {
+          console.log('登录成功, %o', data)
+
+
+          ajax({
+            ins: that,
+            url: '/weixin/token',
+            params: {
+              authCode: data.code
+            },
+            method: 'POST',
+            success: (d) => {
+              console.log('授权成功 %o, token ok', d)
+              wx.setStorage({
+                key: 'token',
+                data: d,
+                success: function(res){
+                  console.log('本地存储 token 成功')
+                  resolve()
+                }
+              })
+            },
+            fail: () => {
+              ajax({
+                ins: that,
+                url: '/weixin/token/refresh',
+                params: {
+                  authCode: data.code
+                },
+                method: 'POST',
+                success: (d) => {
+                  wx.setStorage({
+                    key: 'token',
+                    data: d,
+                    success: function(res){
+                      console.log('本地存储 token 成功')
+                    }
+                  })
+                  resolve()
+                },
+                fail: () => {
+                  console.log('多次授权失败')
+                  reject()
+                }
+              })
+            }
+          })
+        }
+      })
+    })
+  }
   /**
    * 获取动态练习记录
    */
@@ -817,7 +873,8 @@
         // findType/查询类型/整型, 1=查询所有，2=查询状态记录，3=查询练习日记
         findType: this.dynamicTimeType,
         offset: (page - 1) * 10,
-        count: pageSize
+        count: pageSize,
+        userId: this.userId
       },
       success: (data) => {
         if (data) {
@@ -907,6 +964,7 @@
       editEx: zanPop
     }
     data = {
+      isLoading: false,
       userId: '',
       upstateState: false,
       ct: 1,
@@ -1135,11 +1193,12 @@
         this.$navigate('./ex-text-mark');
       }
     }
-    onLoad(options) {
-      const userId = options.userId
+    async onLoad(options) {
+      this.isLoading = true
+      wx.showLoading({title: '加载中..'})
+      const userId = this.userId = options.userId || ''
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
-
       if (!userId) {
         this.$parent.getUserInfo((userInfo) => {
           if (userInfo) {
@@ -1148,6 +1207,11 @@
 
           this.$apply()
         })
+      } else {
+        const d = wx.getStorageSync('token')
+        if (!d) {
+          await getToken.call(this)
+        }
       }
 
       getUserInfo.call(this, options.userId || '')
@@ -1157,6 +1221,10 @@
       getTodayInfo.call(this)
       // 获取动态练习记录
       dynamicFind.call(this)
+      this.isLoading = false
+      setTimeout(_ => {
+        wx.hideLoading()
+      }, 200)
     }
   }
 </script>
