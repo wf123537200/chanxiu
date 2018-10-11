@@ -1,5 +1,5 @@
 <template>
-    <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
+    <!--<login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>-->
 
     <form report-submit="true" @submit="submit">
         <view class="section">
@@ -27,7 +27,7 @@
                             <image src="{{_logo}}" wx:if="{{_logo}}"></image>
                         </view>
                         <text class="tip flex-1">
-                            <text>可选。</text>
+                            <text class="warn">可选。</text>
                             <text>您可以选择一个班级LOGO，最佳尺寸为116*116，不超过1M</text>
                         </text>
                         <input hidden name="logo" value="{{logo}}" class="input" maxlength="-1"/>
@@ -81,8 +81,8 @@
                                     <image src="{{_qrCodeUrl}}" wx:if="{{_qrCodeUrl}}"></image>
                                 </view>
                                 <text class="tip flex-1">
-                                    <text>可选。</text>
-                                    <text>请上传群二维码。为防止7天过期失效，建议您每周更新</text>
+                                    <text class="warn">班干部微信号和群二维码至少需要填写一个。</text>
+                                    <text>为防止7天过期失效，建议您每周更新</text>
                                 </text>
                                 <input hidden name="qrCodeUrl" value="{{qrCodeUrl}}" class="input" maxlength="-1" />
                             </view>
@@ -197,6 +197,10 @@
             font-size: 24rpx;
             line-height: 1.5;
             color: #aaa;
+
+            text {
+                display: block;
+            }
         }
 
         radio-group {
@@ -244,7 +248,7 @@
     import {createClass} from "../../modules/Classes";
     import getGlobalData from "../../components/getGlobalData";
 
-    import login from "../../components/login";
+    //import login from "../../components/login";
 
     const STUDENTS = [150];
     const defaultCheckedStudent = 0;
@@ -256,7 +260,7 @@
         };
 
         components = {
-            login
+            //login
         };
 
         mixins = [ready, formIds];
@@ -332,6 +336,22 @@
                 if (!params.name) {
                     wx.showToast({
                         title: "请输入班级名"
+                    });
+
+                    return;
+                }
+
+                // if (!params.logo) {
+                //     wx.showToast({
+                //         title: "请上传班级LOGO"
+                //     });
+                //
+                //     return;
+                // }
+
+                if (params.isSupportAdd && !params.committee && !params.qrCodeUrl) {
+                    wx.showToast({
+                        title: "请填写群信息"
                     });
 
                     return;

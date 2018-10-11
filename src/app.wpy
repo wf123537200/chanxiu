@@ -158,7 +158,8 @@
         'pages/class/students',
         'pages/class/welcome',
         'pages/class/fail',
-        'pages/class/qr'
+        'pages/class/qr',
+        'pages/class/wechat-qr'
       ],
       window: {
         backgroundTextStyle: 'light',
@@ -308,8 +309,8 @@
                       url: '/weixin/token/refresh',
                       params: {
                         authCode: data.code,
-                        nickName: userinfo.userInfo.nickName,
-                        avatarUrl: userinfo.userInfo.avatarUrl,
+                        nickName: userinfo.userInfo && userinfo.userInfo.nickName,
+                        avatarUrl: userinfo.userInfo && userinfo.userInfo.avatarUrl,
                       },
                       method: 'POST',
                       success: (d) => {
