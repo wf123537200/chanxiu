@@ -306,6 +306,14 @@
     background-repeat: no-repeat;
     background-position: center;
   }
+  .btn-img {
+    width: 100%;
+    height: 100%;
+  }
+  .btn {
+    display: block;
+    font-size: 0;
+  }
 
   .delete-btn {
     background-size: 17px 20px;
@@ -639,9 +647,10 @@
               {{item.content.length > 63 && !item.readAll ? '查看全文' : ''}}
             </view>
             <view class="process-btns">
-              <view  class="process-btn" wx:if="{{upstateState}}" @tap="edit({{item}})" style="background-image: url(/images/edit.png)"></view>
-              <view class="process-btn delete-btn" wx:if="{{upstateState && (item.content || item.afterRecord)}}" @tap="deleteEx({{item}})" style="background-image: url(/images/delete.png)"></view>
-              <button class="process-btn share-briefing-btn" wx:if="{{upstateState}}" id="briefingShare" name="briefingShare" open-type="share" style="background-image: url('/images/send.png')">
+              <image class="process-btn" src="/images/edit.png" wx:if="{{upstateState}}" @tap="edit({{item}})"></image>
+              <image class="process-btn delete-btn" src="/images/delete.png" wx:if="{{upstateState && (item.content || item.afterRecord)}}" @tap="deleteEx({{item}})"></image>
+              <button class="process-btn btn share-briefing-btn" wx:if="{{upstateState}}" id="briefingShare" name="briefingShare" open-type="share">
+                <image src="/images/send.png" class="btn-img"></image>
               </button>
             </view>
           </view>
