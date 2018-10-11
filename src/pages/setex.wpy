@@ -432,7 +432,7 @@
       </view>
 
       <view class="continue-time {{ct === 1 ? 'orange' : 'hide'}}">连续练习{{continuousNum}}天</view>
-      <view class="continue-time {{ct === 0 ? '' : 'hide'}}">连续练习{{continuousNum}}天,今天{{todayDuration}}分钟</view>
+      <view class="continue-time {{ct === 0 ? '' : 'hide'}}">连续练习{{continuousNum}}天,今天{{todayDuration || 0}}分钟</view>
       <view class="continue-time {{ct > 1 ? 'red' : 'hide'}}">已中断{{ct}}天</view>
     </view>
     <!-- 展示栏 end -->
