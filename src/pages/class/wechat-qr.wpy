@@ -1,0 +1,118 @@
+<template>
+    <block wx:if="{{ready && !_error}}">
+        <view class="wechat">
+            <block wx:if="{{detail.qrCodeUrl}}">
+                <text>你可以点击班级群二维码图片，全屏预览图片后再长按图片保存。</text>
+                <image class="qrcode" src="{{detail.qrCodeUrl}}" @tap="viewQrCode"></image>
+            </block>
+            <block wx:if="{{detail.committee}}">
+                <text>你<text wx:if="{{detail.qrCodeUrl}}">也</text>可以添加班委微信号：{{detail.committee}}，请求加群。</text>
+            </block>
+
+            <form class="btn-box btn-save-image" report-submit="true" @submit="getFormId" wx:if="{{detail.qrCodeUrl}}">
+                <button class="btn-primary" form-type="submit" @tap="saveImage">保存图片</button>
+            </form>
+        </view>
+    </block>
+</template>
+
+<style lang="less">
+    @import (reference) "../../static/less/utility";
+
+    page {
+        background-color: #fff;
+    }
+
+    .wechat {
+        margin-top: 80rpx;
+        text-align: center;
+        font-size: 26rpx;
+        color: #aaa;
+
+        & > text {
+            display: block;
+            padding: 0 80rpx;
+        }
+
+        .qrcode {
+            display: block;
+            width: 300rpx;
+            height: 300rpx;
+            margin: 50rpx auto;
+        }
+
+        .btn-box {
+            margin-top: 60rpx;
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import ready from "../../mixins/ready";
+    import formIds from "../../mixins/formIds";
+    import boot from "../../mixins/boot";
+    import classInfo from "../../mixins/classInfo";
+
+    export default class extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "查看班级群二维码"
+        };
+
+        data = {
+            userInfo: {}
+        };
+
+        mixins = [ready, classInfo, formIds, boot];
+
+        methods = {
+            login (e) {
+                wx.setStorageSync("token", {});
+
+                this.$parent.getUserInfo((userInfo = {}) => {
+                    this.userInfo = Object.assign({}, userInfo);
+                    this.$apply();
+                }, e.detail);
+            },
+            viewQrCode () {
+                wx.previewImage({
+                    urls: [this.detail.qrCodeUrl],
+                    current: this.detail.qrCodeUrl
+                });
+            },
+            saveImage (e) {
+                wx.downloadFile({
+                    url: this.detail.qrCodeUrl,
+                    success: (res) => {
+                        if (res.statusCode === 200) {
+                            wx.saveImageToPhotosAlbum({
+                                filePath: res.tempFilePath,
+                                success () {
+                                    wx.showToast({
+                                        title: "保存成功",
+                                        icon: "success"
+                                    });
+                                },
+                                fail () {
+                                    wx.showToast({
+                                        title: "保存失败",
+                                        icon: "fail"
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        };
+
+        onShow() {
+            this.$parent.getUserInfo((userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.addReadyCallback(this.getClassDetail());
+                this.runReadyCallbacks();
+            });
+        }
+    }
+</script>

@@ -17,7 +17,7 @@ export async function getOpenClasses () {
     });
 
     classes = classes.map((n) =>{
-        n.logo = n.logo ? `${ajaxPerfix}${n.logo}` : "";
+        n.logo = n.logo ? `${ajaxPerfix}${n.logo}` : "/images/classes/class-logo.png";
         n.qrCodeUrl = n.qrCodeUrl ? `${ajaxPerfix}${n.qrCodeUrl}` : "";
 
         return n;
@@ -125,6 +125,9 @@ export async function getClassDetail(fix = true) {
 
         if (detail.logo) {
             detail.logo = `${ajaxPerfix}${detail.logo}`;
+        }
+        else {
+            detail.logo = "/images/classes/class-logo.png";
         }
 
         if (detail.qr) {
