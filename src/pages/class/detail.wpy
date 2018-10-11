@@ -5,8 +5,8 @@
         <nav :id.sync="classId" nav="intro"></nav>
 
         <view class="info-box">
-            <view class="base {{isMonitor ? 'editable' : ''}}">
-                <navigator url="/pages/class/detail-base-info?id={{detail.id}}" wx:if="{{isMonitor}}">
+            <view class="base {{isMonitor || isViceMonitor ? 'editable' : ''}}">
+                <navigator url="/pages/class/detail-base-info?id={{detail.id}}" wx:if="{{isMonitor || isViceMonitor}}">
                     <form report-submit="true" @submit="getFormId">
                         <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                             <image class="logo" src="{{detail.logo}}" mode="aspectFill"/>
@@ -33,7 +33,6 @@
                 </form>
             </view>
 
-
             <navigator url="/pages/class/qr?id={{detail.id}}">
                 <form report-submit="true" @submit="getFormId">
                     <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
@@ -46,7 +45,7 @@
                 </form>
             </navigator>
 
-            <navigator url="/pages/class/update?id={{detail.id}}&action=3" wx:if="{{isMonitor}}">
+            <navigator url="/pages/class/update?id={{detail.id}}&action=3" wx:if="{{isMonitor || isViceMonitor}}">
                 <form report-submit="true" @submit="getFormId">
                     <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                         <text class="label">加入方式</text>
@@ -66,7 +65,7 @@
                 </button>
             </form>
 
-            <navigator url="/pages/class/update?id={{detail.id}}&action=4" wx:if="{{isMonitor}}">
+            <navigator url="/pages/class/update?id={{detail.id}}&action=4" wx:if="{{isMonitor || isViceMonitor}}">
                 <form report-submit="true" @submit="getFormId">
                     <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                         <text class="label">是否支持加群</text>
@@ -89,7 +88,7 @@
         </view>
 
         <view class="intro">
-            <navigator url="/pages/class/update?id={{detail.id}}&action=5" wx:if="{{isMonitor}}">
+            <navigator url="/pages/class/update?id={{detail.id}}&action=5" wx:if="{{isMonitor || isViceMonitor}}">
                 <form report-submit="true" @submit="getFormId" class="header">
                     <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                         <text class="text">详细介绍</text>

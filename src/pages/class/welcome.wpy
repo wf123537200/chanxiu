@@ -19,14 +19,13 @@
             </view>
         </view>
 
-        <view class="wechat {{!detail.committee ? 'no-admin' : ''}}" wx:if="{{detail.isSupportAdd}}">
+        <view class="wechat" wx:if="{{detail.isSupportAdd}}">
             <block wx:if="{{detail.qrCodeUrl}}">
-                <text>你可以长按识别二维码加群</text>
-                <image class="qrcode" src="{{detail.qrCodeUrl}}"></image>
+                <text>你可以点击班级群二维码图片，全屏预览图片后再长按图片保存。</text>
+                <image class="qrcode" src="{{detail.qrCodeUrl}}" @tap="viewQrCode"></image>
             </block>
             <block wx:if="{{detail.committee}}">
-                <text wx:if="{{detail.qrCodeUrl}}">你也可添加班委微信号：{{detail.committee}}，请求加群</text>
-                <text wx:else>你可添加班委微信号：{{detail.committee}}，请求加群</text>
+                <text>你<text wx:if="{{detail.qrCodeUrl}}">也</text>可以添加班委微信号：{{detail.committee}}，请求加群。</text>
             </block>
         </view>
 
@@ -119,27 +118,24 @@
     }
 
     .wechat {
-        line-height: 100rpx;
+        margin-top: 50rpx;
         text-align: center;
-        font-size: 28rpx;
+        font-size: 26rpx;
         color: #aaa;
 
         & > text {
             display: block;
+            padding: 0 80rpx;
         }
 
         .qrcode {
             display: block;
-            width: 290rpx;
-            height: 290rpx;
-            margin: 0 auto;
+            width: 300rpx;
+            height: 300rpx;
+            margin: 50rpx auto;
         }
 
         & + .btn-box {
-            margin-top: 60rpx;
-        }
-
-        &.no-admin + .btn-box {
             margin-top: 80rpx;
         }
     }
@@ -183,6 +179,12 @@
                     this.userInfo = Object.assign({}, userInfo);
                     this.$apply();
                 }, e.detail);
+            },
+            viewQrCode () {
+                wx.previewImage({
+                    urls: [this.detail.qrCodeUrl],
+                    current: this.detail.qrCodeUrl
+                });
             }
         };
 
