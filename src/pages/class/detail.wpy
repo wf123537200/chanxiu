@@ -444,9 +444,8 @@
             viewQrcode (e) {
                 this.getFormId(e);
 
-                debugger
                 if (this.isMyClass && this.detail.isSupportAdd) {
-                    wx.redirectTo({
+                    wx.navigateTo({
                         url: "/pages/class/wechat-qr?id=" + this.classId
                     });
                 }

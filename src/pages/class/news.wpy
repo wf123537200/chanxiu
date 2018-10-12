@@ -95,7 +95,7 @@
             <!--记录-->
             <block wx:if="{{currentTab === 'record'}}">
                 <scroll-view class="data-list record flex-1" scroll-y @scrolltolower="getTrainRecords">
-                    <block wx:if="{{trainRecords && trainRecords.length > 0}}">
+                    <block wx:if="{{_trainRecords && _trainRecords.length > 0}}">
                         <block wx:key="index" wx:for-index="index" wx:for-item="item" wx:for="{{trainRecords}}">
                             <view class="date">
                                 <text>{{index}}</text>
@@ -150,7 +150,7 @@
                     </view>
                     <view class="btn-box fixed to-bottom" wx:else>
                         <!--<button class="btn-primary {{detail.isRemind ? '' : 'w-1-2'}}" open-type="getUserInfo">通报到群里</button>-->
-                        <button class="btn-secondary" form-type="submit" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind && trainRecords && trainRecords.length > 0}}">提醒他们</button>
+                        <button class="btn-secondary" form-type="submit" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind && _trainRecords && _trainRecords.length > 0}}">提醒他们</button>
                         <button class="btn-secondary" form-type="submit" open-type="share" wx:else>邀请新同学</button>
                     </view>
                 </block>
@@ -263,7 +263,7 @@
             top: 74rpx + 18rpx + 70rpx + 4rpx;
             bottom: 0;
             padding-top: 20rpx;
-            padding-bottom: 20rpx;
+            padding-bottom: 140rpx;
             background-color: #fff;
 
             &.record {
