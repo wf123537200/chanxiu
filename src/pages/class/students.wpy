@@ -416,8 +416,6 @@
                     this.$apply();
                 };
 
-                clear();
-
                 let confirmType = this.confirm.type;
 
                 wx.showLoading();
@@ -432,6 +430,8 @@
                 wx.showToast({
                     title: "操作成功"
                 });
+
+                clear();
                 this.getClassDetail();
                 this.getStudents();
             },
