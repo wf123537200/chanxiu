@@ -444,15 +444,15 @@
 
         data = {
             userInfo: {},
-            currentTab: "brief",
+            currentTab: "record",
             tab: [
-                {
-                    id: "brief",
-                    text: "简报"
-                },
                 {
                     id: "record",
                     text: "记录"
+                },
+                {
+                    id: "brief",
+                    text: "简报"
                 }
             ],
             brief: {
@@ -753,7 +753,7 @@
 
         init () {
             this._trainRecords = [];
-            this.currentTab = "brief";
+            this.currentTab = "record";
             this.currentRankTab = "train";
             this.trainRecordRequestCount = 0;
             this.contentHeights = {};
@@ -771,7 +771,7 @@
                 this.init();
                 this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail());
-                this.addReadyCallback(this.getData());
+                this.addReadyCallback(this.getTrainRecords());
                 await this.runReadyCallbacks();
 
                 if (!this._error) {
