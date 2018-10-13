@@ -417,11 +417,13 @@
                 };
 
                 let confirmType = this.confirm.type;
+                let studentId = this.confirm.studentId;
 
+                clear();
                 wx.showLoading();
 
                 await studentOperate.bind(this)({
-                    studentId: this.confirm.studentId,
+                    studentId,
                     type: confirmType
                 });
 
@@ -430,8 +432,6 @@
                 wx.showToast({
                     title: "操作成功"
                 });
-
-                clear();
                 this.getClassDetail();
                 this.getStudents();
             },
