@@ -1,7 +1,7 @@
 <template>
     <view class="nav-box">
         <navigator url="/pages/class/news?id={{id}}" open-type="redirect" class="item" wx:if="{{nav!=='news'}}">
-            <form report-submit="true" @submit="getFormId">
+            <form report-submit="true" data-from="2" @submit="getFormId">
                 <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
                     <image src="/images/classes/m1-active.png" wx:if="{{nav==='news'}}"></image>
                     <image src="/images/classes/m1.png" wx:else></image>
@@ -10,7 +10,7 @@
             </form>
         </navigator>
         <view class="item on" wx:else>
-            <form report-submit="true" @submit="getFormId">
+            <form report-submit="true" data-from="3" @submit="getFormId">
                 <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
                     <image src="/images/classes/m1-active.png" wx:if="{{nav==='news'}}"></image>
                     <image src="/images/classes/m1.png" wx:else></image>
@@ -26,7 +26,7 @@
         <!--</navigator>-->
 
         <navigator url="/pages/class/students?id={{id}}" open-type="redirect" class="item" wx:if="{{nav!=='students'}}">
-            <form report-submit="true" @submit="getFormId">
+            <form report-submit="true" data-from="4" @submit="getFormId">
                 <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
                     <image src="/images/classes/m3-active.png" wx:if="{{nav==='students'}}"></image>
                     <image src="/images/classes/m3.png" wx:else></image>
@@ -35,7 +35,7 @@
             </form>
         </navigator>
         <view class="item on" wx:else>
-            <form report-submit="true" @submit="getFormId">
+            <form report-submit="true" data-from="5" @submit="getFormId">
                 <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
                     <image src="/images/classes/m3-active.png" wx:if="{{nav==='students'}}"></image>
                     <image src="/images/classes/m3.png" wx:else></image>
@@ -45,7 +45,7 @@
         </view>
 
         <navigator url="/pages/class/detail?id={{id}}" open-type="redirect" class="item" wx:if="{{nav!=='intro'}}">
-            <form report-submit="true" @submit="getFormId">
+            <form report-submit="true" data-from="6" @submit="getFormId">
                 <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
                     <image src="/images/classes/m4-active.png" wx:if="{{nav==='intro'}}"></image>
                     <image src="/images/classes/m4.png" wx:else></image>
@@ -54,7 +54,7 @@
             </form>
         </navigator>
         <view class="item on" wx:else>
-            <form report-submit="true" @submit="getFormId">
+            <form report-submit="true" data-from="7" @submit="getFormId">
                 <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
                     <image src="/images/classes/m4-active.png" wx:if="{{nav==='intro'}}"></image>
                     <image src="/images/classes/m4.png" wx:else></image>

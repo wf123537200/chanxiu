@@ -1,6 +1,6 @@
 <template>
     <popup title="中断提醒" @onHide.user="clearFormData">
-        <form report-submit="true" @submit="submit" @reset="reset">
+        <form report-submit="true" data-from="8" @submit="submit" @reset="reset">
             <textarea class="textarea" value="{{message}}" name="message" placeholder="跟TA说两句，激励一下TA。最多30字。" @input="updateMessage"></textarea>
 
             <view class="btn-box popup-btn-box">

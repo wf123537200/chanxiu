@@ -9,7 +9,7 @@
             <image class="avatar" src="{{detail.avatarUrl}}"></image>
         </view>
 
-        <form class="btn-box actions" report-submit="true" @submit="getFormId">
+        <form class="btn-box actions" report-submit="true" data-from="36" @submit="getFormId">
             <view class="type">
                 <button class="{{brief.timeType === 1 ? 'active' : ''}}" plain="true" form-type="submit" data-type="1" @tap="switchTimeType">今日</button>
                 <button class="{{brief.timeType === 2 ? 'active' : ''}}" plain="true" form-type="submit" data-type="2" @tap="switchTimeType">本周</button>

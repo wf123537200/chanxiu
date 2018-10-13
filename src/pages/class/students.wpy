@@ -5,7 +5,7 @@
         <nav :id.sync="classId" nav="students"></nav>
 
         <view class="tab">
-            <form report-submit="true" @submit="getFormId" data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
+            <form report-submit="true" data-from="37" @submit="getFormId" data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
                 <button class="btn-formid" hover-class="none" plain="true" form-type="submit">{{item.text}}</button>
             </form>
         </view>
@@ -15,7 +15,7 @@
                 <!--所有同学-->
                 <block wx:if="{{currentTab==='all'}}">
                     <view class="student" wx:for="{{students}}" wx:key="{{index}}">
-                        <form class="avatar" report-submit="true" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
+                        <form class="avatar" report-submit="true" data-from="38" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
                             <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                                 <image src="{{item.avatarUrl}}"></image>
                             </button>
@@ -29,7 +29,7 @@
                             <text class="join-time">{{item.strCreateTime}}加入</text>
                         </view>
 
-                        <form report-submit="true" @submit="getFormId">
+                        <form report-submit="true" data-from="39" @submit="getFormId">
                             <button plain="true" form-type="submit" class="trigger btn-formid" hover-class="none" data-id="{{item.id}}" @tap.stop="showStudentsActions" wx:if="{{!item.isMe && currentStudentId !== item.id && ((isMonitor && item.role === 0) || (isMonitor && item.role !== 0) || (isMonitor || (isViceMonitor && item.role === 0)))}}">
                                 <image src="/images/classes/trigger.png"></image>
                             </button>
@@ -84,7 +84,7 @@
         </view>
 
         <!--操作按钮-->
-        <form report-submit="true" @submit="getFormId">
+        <form report-submit="true" data-from="40" @submit="getFormId">
             <block wx:if="{{isPending}}">
                 <view class="btn-box fixed to-bottom">
                     <button plain="true" form-type="submit" class="btn-disabled" hover-class="none">等待审核</button>

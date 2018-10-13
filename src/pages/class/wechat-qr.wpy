@@ -9,7 +9,7 @@
                 <text>你<text wx:if="{{detail.qrCodeUrl}}">也</text>可以添加班委微信号：{{detail.committee}}，请求加群。</text>
             </block>
 
-            <form class="btn-box btn-save-image" report-submit="true" @submit="getFormId" wx:if="{{detail.qrCodeUrl}}">
+            <form class="btn-box btn-save-image" report-submit="true" data-from="42" @submit="getFormId" wx:if="{{detail.qrCodeUrl}}">
                 <button class="btn-primary" form-type="submit" @tap="saveImage">保存图片</button>
             </form>
         </view>

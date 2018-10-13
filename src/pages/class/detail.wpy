@@ -7,7 +7,7 @@
         <view class="info-box">
             <view class="base {{isMonitor || isViceMonitor ? 'editable' : ''}}">
                 <navigator url="/pages/class/detail-base-info?id={{detail.id}}" wx:if="{{isMonitor || isViceMonitor}}">
-                    <form report-submit="true" @submit="getFormId">
+                    <form report-submit="true" data-from="10" @submit="getFormId">
                         <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                             <image class="logo" src="{{detail.logo}}" mode="aspectFill"/>
                             <view class="content">
@@ -18,7 +18,7 @@
                         </button>
                     </form>
                 </navigator>
-                <form report-submit="true" @submit="getFormId" wx:else>
+                <form report-submit="true" data-from="11" @submit="getFormId" wx:else>
                     <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                         <image class="logo" src="{{detail.logo}}" mode="aspectFill"/>
                         <view class="content">
@@ -28,13 +28,13 @@
                     </button>
                 </form>
 
-                <form report-submit="true" @submit="getFormId">
+                <form report-submit="true" data-from="12" @submit="getFormId">
                     <button class="btn-invite btn-secondary mini auto-width" form-type="submit" open-type="share" wx:if="{{isMyClass}}">邀请</button>
                 </form>
             </view>
 
             <navigator url="/pages/class/qr?id={{detail.id}}">
-                <form report-submit="true" @submit="getFormId">
+                <form report-submit="true" data-from="13" @submit="getFormId">
                     <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                         <text class="label">班级二维码</text>
                         <view class="content">
@@ -46,7 +46,7 @@
             </navigator>
 
             <navigator url="/pages/class/update?id={{detail.id}}&action=3" wx:if="{{isMonitor || isViceMonitor}}">
-                <form report-submit="true" @submit="getFormId">
+                <form report-submit="true" data-from="14" @submit="getFormId">
                     <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                         <text class="label">加入方式</text>
                         <view class="content">
@@ -56,7 +56,7 @@
                     </button>
                 </form>
             </navigator>
-            <form report-submit="true" @submit="getFormId" wx:else>
+            <form report-submit="true" data-from="15" @submit="getFormId" wx:else>
                 <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                     <text class="label">加入方式</text>
                     <view class="content">
@@ -66,7 +66,7 @@
             </form>
 
             <navigator url="/pages/class/update?id={{detail.id}}&action=4" wx:if="{{isMonitor || isViceMonitor}}">
-                <form report-submit="true" @submit="getFormId">
+                <form report-submit="true" data-from="16" @submit="getFormId">
                     <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                         <text class="label">是否支持加群</text>
                         <view class="content">
@@ -76,7 +76,7 @@
                     </button>
                 </form>
             </navigator>
-            <form report-submit="true" @submit="viewQrcode" wx:else>
+            <form report-submit="true" data-from="17" @submit="viewQrcode" wx:else>
                 <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                     <text class="label">是否支持加群</text>
                     <view class="content">
@@ -97,12 +97,12 @@
                     </button>
                 </form>
             </navigator>
-            <form report-submit="true" @submit="getFormId" class="header" wx:else>
+            <form report-submit="true" data-from="18" @submit="getFormId" class="header" wx:else>
                 <button class="btn-formid" plain="true" form-type="submit" hover-class="none">详细介绍</button>
             </form>
 
             <scroll-view class="content" scroll-y="true">
-                <form report-submit="true" @submit="getFormId">
+                <form report-submit="true" data-from="19" @submit="getFormId">
                     <button plain="true" class="btn-formid" form-type="submit" hover-class="none">
                         <text class="content-text" space="nbsp" wx:if="{{detail.detail}}">{{detail.detail}}</text>
                         <text class="content-text" wx:elif="{{!isMonitor}}">尚未完善</text>
@@ -111,7 +111,7 @@
             </scroll-view>
         </view>
 
-        <form report-submit="true" @submit="getFormId">
+        <form report-submit="true" data-from="20" @submit="getFormId">
             <!--操作按钮-->
             <block wx:if="{{isPending}}">
                 <view class="btn-box fixed to-bottom">

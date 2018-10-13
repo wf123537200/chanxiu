@@ -12,10 +12,10 @@ export default class extends wepy.mixin {
 
     getFormId (e) {
         console.log("收集到formId：", e.detail.formId);
-        this.dealFormIds(e.detail.formId);
+        this.dealFormIds(e.detail.formId, e.currentTarget.dataset.from);
     };
 
-    dealFormIds (formId) {
+    dealFormIds (formId, from) {
         let _global = getGlobalData(this);
         let {ins, data} = _global;
         let formIds = data.formIds;
@@ -28,7 +28,8 @@ export default class extends wepy.mixin {
         if (formId !== "the formId is a mock one") {
             let id = {
                 formId,
-                expire
+                expire,
+                from
             };
 
             formIds.push(id);

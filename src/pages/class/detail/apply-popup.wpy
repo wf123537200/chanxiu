@@ -1,6 +1,6 @@
 <template>
     <popup title="请求加入班级" @onHide.user="clearFormData">
-        <form report-submit="true" data-index="0" @submit="submit" @reset="reset">
+        <form report-submit="true" data-from="0" @submit="submit" @reset="reset">
             <textarea class="textarea" value="{{reason}}" name="reason" placeholder="你可以介绍下自己。选填。" @input="updateReason"></textarea>
 
             <view class="btn-box popup-btn-box">

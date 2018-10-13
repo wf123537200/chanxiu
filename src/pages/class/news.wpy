@@ -5,7 +5,7 @@
         <nav :id.sync="classId" nav="news"></nav>
 
         <view class="tab">
-            <form data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" report-submit="true" @submit="getFormId" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
+            <form data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" report-submit="true" @submit="getFormId" data-from="28" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
                 <button class="btn-formid" hover-class="none" plain="true" form-type="submit">{{item.text}}</button>
             </form>
         </view>
@@ -32,7 +32,7 @@
                 </view>
 
                 <view class="tab sub">
-                    <form data-tab="{{item.id}}" class="tab-item {{currentRankTab === item.id ? 'on' : ''}}" report-submit="true" @submit="getFormId" @tap="switchRankTab" wx:key="index" wx:for="{{rankTab}}">
+                    <form data-tab="{{item.id}}" class="tab-item {{currentRankTab === item.id ? 'on' : ''}}" report-submit="true" data-from="29" @submit="getFormId" @tap="switchRankTab" wx:key="index" wx:for="{{rankTab}}">
                         <button class="btn-formid" hover-class="none" plain="true" form-type="submit">{{item.text}}</button>
                     </form>
                 </view>
@@ -42,7 +42,7 @@
                     <block wx:if="{{currentRankTab === 'train'}}">
                         <block wx:if="{{hasTrainInfo}}">
                             <view class="data-item" wx:key="index" wx:for="{{brief.trainList1}}">
-                                <form class="avatar" report-submit="true" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
+                                <form class="avatar" report-submit="true" data-from="30" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
                                     <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                                         <image src="{{item.avatarUrl}}"></image>
                                     </button>
@@ -63,7 +63,7 @@
                     <block wx:elif="{{currentRankTab === 'rank'}}">
                         <block wx:if="{{hasTrainInfo}}">
                             <view class="data-item" wx:key="index" wx:for="{{brief.trainList2}}">
-                                <form class="avatar" report-submit="true" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
+                                <form class="avatar" report-submit="true" data-from="31" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
                                     <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                                         <image src="{{item.avatarUrl}}"></image>
                                     </button>
@@ -85,7 +85,7 @@
                     <block wx:else>
                         <block wx:if="{{brief.trainList3 && brief.trainList3.length > 0}}">
                             <view class="data-item" wx:key="index" wx:for="{{brief.trainList3}}">
-                                <form class="avatar" report-submit="true" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
+                                <form class="avatar" report-submit="true" data-from="32" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
                                     <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                                         <image src="{{item.avatarUrl}}"></image>
                                     </button>
@@ -115,7 +115,7 @@
                             </view>
 
                             <view class="data-item" wx:key="detailIndex" wx:for="{{item}}" wx:for-index="detailIndex" wx:for-item="detailItem">
-                                <form class="avatar" report-submit="true" data-isMe="{{detailItem.isMe}}" data-id="{{detailItem.userId}}" @submit="gotoExBriefingPage">
+                                <form class="avatar" report-submit="true" data-from="33" data-isMe="{{detailItem.isMe}}" data-id="{{detailItem.userId}}" @submit="gotoExBriefingPage">
                                     <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                                         <image src="{{detailItem.avatarUrl}}"></image>
                                     </button>
@@ -143,7 +143,7 @@
         </view>
 
         <!--操作按钮-->
-        <form report-submit="true" @submit="getFormId">
+        <form report-submit="true" data-from="34" @submit="getFormId">
             <!--简报-->
             <block wx:if="{{currentTab === 'brief'}}">
                 <block wx:if="{{isPending}}">

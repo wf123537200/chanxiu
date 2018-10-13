@@ -2,7 +2,7 @@
     <view class="info-box" wx:if="{{ready && !_error}}">
         <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
 
-        <form report-submit="true" @submit="getFormId">
+        <form report-submit="true" data-from="21" @submit="getFormId">
             <button plain="true" class="field btn-formid" form-type="submit" hover-class="none" @tap="uploadImage('logo')">
                 <text class="label">Logo</text>
                 <view class="content">
@@ -12,7 +12,7 @@
             </button>
         </form>
         <navigator class="" url="/pages/class/update?id={{detail.id}}&action=1">
-            <form report-submit="true" @submit="getFormId">
+            <form report-submit="true" data-from="22" @submit="getFormId">
                 <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
                     <text class="label">名称</text>
                     <view class="content">
@@ -24,7 +24,7 @@
         </navigator>
 
         <navigator url="/pages/class/update?id={{detail.id}}&action=2">
-            <form report-submit="true" @submit="getFormId">
+            <form report-submit="true" data-from="23" @submit="getFormId">
                 <button plain="true" class="field desc btn-formid" form-type="submit" hover-class="none">
                     <view class="header">
                         <text class="label">一句话介绍</text>

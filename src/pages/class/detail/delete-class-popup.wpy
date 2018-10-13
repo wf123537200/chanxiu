@@ -1,6 +1,6 @@
 <template>
     <popup title="确认解散班级">
-        <form report-submit="true" @submit="submit" @reset="reset">
+        <form report-submit="true" data-from="1" @submit="submit" @reset="reset">
             <text>确定解散班级？</text>
 
             <view class="btn-box popup-btn-box">

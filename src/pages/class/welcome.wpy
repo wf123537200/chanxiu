@@ -27,7 +27,7 @@
             </block>
         </view>
 
-        <form class="btn-box" report-submit="true" @submit="getFormId">
+        <form class="btn-box" report-submit="true" data-from="43" @submit="getFormId">
             <button class="btn-primary w-1-2" form-type="submit" @tap="gotoClassListPage">返回首页</button>
             <button class="btn-secondary w-1-2" form-type="submit" @tap="gotoClassDetailPage">查看班级信息</button>
         </form>
