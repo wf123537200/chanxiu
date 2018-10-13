@@ -12,9 +12,7 @@
             </view>
             <view class="wording">
                 <view class="box">
-                    {{userInfo.nickName}}你好，欢迎你加入“{{detail.name}}”，成为我们班级家庭中的一员！\n
-                    希望这个集体能为您的学修带来力量，同时您的每次练习也是对其他同学的一次激励和加持。\n
-                    让我们携手同行，共同成长！
+                    <text space="emsp">  {{userInfo.nickName}}你好，欢迎你加入“{{detail.name}}”，成为我们班级家庭中的一员！\n　　希望这个集体能为您的学修带来力量，同时您的每次练习也是对其他同学的一次激励和加持。\n  让我们携手同行，共同成长！</text>
                 </view>
             </view>
         </view>
@@ -105,6 +103,7 @@
             }
 
             .box {
+                display: block;
                 margin-right: 30rpx;
                 padding: 50rpx 30rpx;
                 background-color: #fff;

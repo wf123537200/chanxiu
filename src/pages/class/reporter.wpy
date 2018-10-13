@@ -1,0 +1,270 @@
+<template>
+    <block wx:if="{{ready && !_error}}">
+        <view class="reporter">
+            <view class="wording">
+                <scroll-view scroll-y="true" class="box">
+                    <text space="nbsp">{{reporterText}}</text>
+                </scroll-view>
+            </view>
+            <image class="avatar" src="{{detail.avatarUrl}}"></image>
+        </view>
+
+        <form class="btn-box actions" report-submit="true" @submit="getFormId">
+            <view class="type">
+                <button class="{{brief.timeType === 1 ? 'active' : ''}}" plain="true" form-type="submit" data-type="1" @tap="switchTimeType">今日</button>
+                <button class="{{brief.timeType === 2 ? 'active' : ''}}" plain="true" form-type="submit" data-type="2" @tap="switchTimeType">本周</button>
+                <button class="{{brief.timeType === 3 ? 'active' : ''}}" plain="true" form-type="submit" data-type="3" @tap="switchTimeType">本月</button>
+            </view>
+            <button class="btn-copy btn-secondary" form-type="submit" @tap="copy">复制简报</button>
+        </form>
+    </block>
+
+    <toast text="复制成功，\n你可以粘贴到群里了"></toast>
+</template>
+
+<style lang="less">
+    @import (reference) "../../static/less/utility";
+
+    page {
+        .flex-v;
+        .full-height;
+        background-color: #eee;
+    }
+
+    .reporter {
+        .flex-1;
+        .flex-h;
+        padding: 40rpx;
+        overflow: hidden;
+
+        .avatar {
+            //float: right;
+            width: 90rpx;
+            height: 90rpx;
+            margin-left: 10rpx;
+            border: 2rpx solid #b0976e;
+        }
+
+        .wording {
+            .flex-1;
+            position: relative;
+            padding-right: 10rpx;
+            overflow: hidden;
+            font-size: 26rpx;
+            line-height: 40rpx;
+            color: #666;
+            box-sizing: border-box;
+
+            &::after {
+                content: "";
+                display: block;
+                position: absolute;
+                top: 20rpx;
+                right: -8rpx;
+                border: 10rpx solid transparent;
+                border-left-color: #fff;
+                z-index: 2;
+            }
+
+            .box {
+                position: absolute;
+                width: auto;
+                left: 0;
+                right: 10rpx;
+                height: 100%;
+                padding: 50rpx 30rpx;
+                background-color: #fff;
+                border-radius: 8rpx;
+                box-sizing: border-box;
+            }
+        }
+    }
+
+    .actions {
+        margin-top: 50rpx;
+        background-color: #fff;
+        text-align: center;
+
+        .type {
+            padding: 20rpx 0;
+            border-top: 2rpx solid #b0976e;
+            border-bottom: 2rpx solid #eee;
+            font-size: 0;
+            line-height: 0;
+
+            button {
+                display: inline-block;
+                vertical-align: middle;
+                width: auto;
+                height: auto;
+                padding: 0 10rpx;
+                margin: 0 20rpx;
+                border: 2rpx solid #b0976e;
+                border-radius: 10rpx;
+                font-size: 22rpx;
+                line-height: 32rpx;
+                color: #b0976e;
+                background-color: #fff;
+
+                &.active {
+                    background-color: #b0976e;
+                    color: #fff;
+                }
+            }
+        }
+
+        .btn-copy {
+            margin: 30rpx auto 40rpx;
+        }
+    }
+</style>
+
+<script>
+    import wepy from "wepy";
+    import ready from "../../mixins/ready";
+    import formIds from "../../mixins/formIds";
+    import boot from "../../mixins/boot";
+    import classInfo from "../../mixins/classInfo";
+    import {getTrainList, getTrainRanks, getInterrupts} from "../../modules/Classes";
+
+    import toast from "../../components/toast";
+
+    export default class extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "欢迎加入班级"
+        };
+
+        components = {
+            toast
+        };
+
+        data = {
+            brief: {
+                timeType: 1
+            },
+            trainInfo: {},
+            trainList: [],
+            trainRanks: [],
+            trainInterrupts: []
+        };
+
+        mixins = [ready, classInfo, formIds, boot];
+
+        methods = {
+            switchTimeType (e) {
+                this.brief.timeType = parseInt(e.currentTarget.dataset.type);
+            },
+            copy() {
+                wx.setClipboardData({
+                    data: this.reporterText,
+                    success: () => {
+                        //this.$invoke("toast", "show");
+                    }
+                });
+            }
+        };
+
+        computed = {
+            reporterText () {
+                const timeType = parseInt(this.brief.timeType);
+                let text = "";
+                let dateText = "今日";
+
+                if (timeType === 2) {
+                    dateText = "本周";
+                }
+                else if (timeType === 3) {
+                    dateText = "本月";
+                }
+
+                text += `【${dateText}简报】\n`;
+
+                if (!this.trainInfo.trainNum || parseInt(this.trainInfo.trainNum) === 0) {
+                    text += "  暂无人参与练习\n"
+                }
+                else {
+                    text += `  共${this.trainInfo.trainNum}人练习，人均${this.trainInfo.averageTime}分钟\n`;
+                }
+
+                if (this.trainList.length > 0) {
+                    text += "\n";
+
+                    text += "【练习名单】\n";
+                    this.trainList.forEach((n) => {
+                        text += `  ${n.nickName}  ${n.trainInfo}\n`;
+                    });
+                }
+
+                if (timeType !== 1) {
+                    if (this.trainRanks.length > 0) {
+                        text += "\n";
+                        text += "【排行榜】\n";
+
+                        this.trainRanks.forEach((n) => {
+                            text += `  ${n.nickName}  ${n.trainInfo}\n`;
+                        });
+                    }
+                }
+
+                if (this.trainInterrupts.length > 0) {
+                    text += "\n";
+                    text += "【中断榜】\n";
+
+                    this.trainInterrupts.forEach((n) => {
+                        text += `  ${n.nickName}  ${n.trainInfo}\n`;
+                    });
+                }
+
+                return text;
+            }
+        };
+
+        watch = {
+            async brief (value, oldValue) {
+                if (parseInt(value.timeType) !== parseInt(oldValue.timeType)) {
+                    wx.showLoading();
+                    await this.getData();
+                    wx.hideLoading();
+                }
+            }
+        };
+
+        async getTrainList () {
+            const {trainInfo, trainList} = await getTrainList.bind(this)();
+
+            this.trainInfo = trainInfo || {};
+            this.trainList = trainList || [];
+            this.$apply();
+        };
+
+        async getTrainRanks () {
+            const {trainInfo, trainList} = await getTrainRanks.bind(this)();
+
+            this.trainInfo = trainInfo || {};
+            this.trainRanks = trainList || [];
+            this.$apply();
+        }
+
+        async getInterrupts () {
+            const {trainList} = await getInterrupts.bind(this)();
+
+            //this.trainInfo = trainInfo || {};
+            this.trainInterrupts = trainList || [];
+            this.$apply();
+        }
+
+        getData () {
+            return Promise.all([this.getTrainList(), this.getTrainRanks(), this.getInterrupts()]);
+        }
+
+        onShow() {
+            this.$parent.getUserInfo((userInfo) => {
+                this.userInfo = Object.assign({}, userInfo);
+                this.addReadyCallback(this.getClassDetail());
+                this.addReadyCallback(this.getData());
+                this.runReadyCallbacks();
+            });
+        }
+    }
+</script>

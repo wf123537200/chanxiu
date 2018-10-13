@@ -272,7 +272,8 @@
         'pages/class/welcome',
         'pages/class/fail',
         'pages/class/qr',
-        'pages/class/wechat-qr'
+        'pages/class/wechat-qr',
+        'pages/class/reporter'
       ],
       window: {
         backgroundTextStyle: 'light',

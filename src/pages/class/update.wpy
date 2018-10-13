@@ -344,7 +344,16 @@
                     return;
                 }
 
-                if (!params.isSupportAdd) {
+                if (params.isSupportAdd) {
+                    if (!params.committee && !params.qrCodeUrl) {
+                        wx.showToast({
+                            title: "请填写群信息"
+                        });
+
+                        return;
+                    }
+                }
+                else {
                     params.committee = "";
                     params.qrCodeUrl = "";
                 }

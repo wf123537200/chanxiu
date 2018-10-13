@@ -1,6 +1,6 @@
 <template>
     <block wx:if="{{ready}}">
-        <text></text>
+        <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
 
         <view class="classes">
             <navigator url="/pages/class/detail?id={{item.id}}" class="class" style="background-image: url({{bgImg}})" wx:key="{{index}}" wx:for="{{myClasses}}">

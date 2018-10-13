@@ -266,8 +266,8 @@
                 }
 
                 .confirm {
-                    background-color: #e70606;
-                    border-color: #e70606;
+                    background-color: #b0976e;
+                    border-color: #b0976e;
                     color: #fff;
                 }
 
@@ -416,18 +416,22 @@
                     this.$apply();
                 };
 
+                clear();
+
                 let confirmType = this.confirm.type;
+
+                wx.showLoading();
 
                 await studentOperate.bind(this)({
                     studentId: this.confirm.studentId,
                     type: confirmType
                 });
 
+                wx.hideLoading();
+
                 wx.showToast({
                     title: "操作成功"
                 });
-
-                clear();
                 this.getClassDetail();
                 this.getStudents();
             },
