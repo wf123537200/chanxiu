@@ -187,22 +187,23 @@
                     text += `  共${this.trainInfo.trainNum}人练习，人均${this.trainInfo.averageTime}分钟\n`;
                 }
 
-                if (this.trainList.length > 0) {
-                    text += "\n";
+                if (timeType === 1) {
+                    if (this.trainList.length > 0) {
+                        text += "\n";
 
-                    text += "【练习名单】\n";
-                    this.trainList.forEach((n) => {
-                        text += `  ${n.nickName}  ${n.trainInfo}\n`;
-                    });
+                        text += "【练习名单】\n";
+                        this.trainList.forEach((n) => {
+                            text += `  ${n.nickName}  ${n.trainInfo}\n`;
+                        });
+                    }
                 }
-
-                if (timeType !== 1) {
+                else {
                     if (this.trainRanks.length > 0) {
                         text += "\n";
                         text += "【排行榜】\n";
 
                         this.trainRanks.forEach((n) => {
-                            text += `  ${n.nickName}  ${n.trainInfo}\n`;
+                            text += `  ${n.rank}、${n.nickName}  ${n.trainInfo}\n`;
                         });
                     }
                 }
