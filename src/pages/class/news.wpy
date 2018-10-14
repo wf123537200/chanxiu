@@ -5,7 +5,7 @@
         <nav :id.sync="classId" nav="news"></nav>
 
         <view class="tab">
-            <form data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" report-submit="true" @submit="getFormId" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
+            <form data-tab="{{item.id}}" class="tab-item {{currentTab === item.id ? 'on' : ''}}" report-submit="true" @submit="getFormId" data-from="28" @tap="switchTab" wx:key="index" wx:for="{{tab}}">
                 <button class="btn-formid" hover-class="none" plain="true" form-type="submit">{{item.text}}</button>
             </form>
         </view>
@@ -32,7 +32,7 @@
                 </view>
 
                 <view class="tab sub">
-                    <form data-tab="{{item.id}}" class="tab-item {{currentRankTab === item.id ? 'on' : ''}}" report-submit="true" @submit="getFormId" @tap="switchRankTab" wx:key="index" wx:for="{{rankTab}}">
+                    <form data-tab="{{item.id}}" class="tab-item {{currentRankTab === item.id ? 'on' : ''}}" report-submit="true" data-from="29" @submit="getFormId" @tap="switchRankTab" wx:key="index" wx:for="{{rankTab}}">
                         <button class="btn-formid" hover-class="none" plain="true" form-type="submit">{{item.text}}</button>
                     </form>
                 </view>
@@ -42,7 +42,11 @@
                     <block wx:if="{{currentRankTab === 'train'}}">
                         <block wx:if="{{hasTrainInfo}}">
                             <view class="data-item" wx:key="index" wx:for="{{brief.trainList1}}">
-                                <image class="avatar" src="{{item.avatarUrl}}"></image>
+                                <form class="avatar" report-submit="true" data-from="30" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
+                                    <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
+                                        <image src="{{item.avatarUrl}}"></image>
+                                    </button>
+                                </form>
                                 <view class="total">
                                     <view class="time">{{item.trainInfo}}</view>
                                     <view class="nick-name">{{item.nickName}}</view>
@@ -59,7 +63,12 @@
                     <block wx:elif="{{currentRankTab === 'rank'}}">
                         <block wx:if="{{hasTrainInfo}}">
                             <view class="data-item" wx:key="index" wx:for="{{brief.trainList2}}">
-                                <image class="avatar" src="{{item.avatarUrl}}"></image>
+                                <form class="avatar" report-submit="true" data-from="31" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
+                                    <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
+                                        <image src="{{item.avatarUrl}}"></image>
+                                    </button>
+                                </form>
+                                <view class="rank">{{item.rank}}</view>
                                 <view class="total">
                                     <view class="time">{{item.trainInfo}}</view>
                                     <view class="nick-name">{{item.nickName}}</view>
@@ -76,7 +85,11 @@
                     <block wx:else>
                         <block wx:if="{{brief.trainList3 && brief.trainList3.length > 0}}">
                             <view class="data-item" wx:key="index" wx:for="{{brief.trainList3}}">
-                                <image class="avatar" src="{{item.avatarUrl}}"></image>
+                                <form class="avatar" report-submit="true" data-from="32" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
+                                    <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
+                                        <image src="{{item.avatarUrl}}"></image>
+                                    </button>
+                                </form>
                                 <view class="total">
                                     <view class="time">{{item.trainInfo}}</view>
                                     <view class="nick-name">{{item.nickName}}</view>
@@ -95,14 +108,18 @@
             <!--记录-->
             <block wx:if="{{currentTab === 'record'}}">
                 <scroll-view class="data-list record flex-1" scroll-y @scrolltolower="getTrainRecords">
-                    <block wx:if="{{trainRecords && trainRecords.length > 0}}">
+                    <block wx:if="{{_trainRecords && _trainRecords.length > 0}}">
                         <block wx:key="index" wx:for-index="index" wx:for-item="item" wx:for="{{trainRecords}}">
                             <view class="date">
                                 <text>{{index}}</text>
                             </view>
 
                             <view class="data-item" wx:key="detailIndex" wx:for="{{item}}" wx:for-index="detailIndex" wx:for-item="detailItem">
-                                <image class="avatar" src="{{detailItem.avatarUrl}}"></image>
+                                <form class="avatar" report-submit="true" data-from="33" data-isMe="{{detailItem.isMe}}" data-id="{{detailItem.userId}}" @submit="gotoExBriefingPage">
+                                    <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
+                                        <image src="{{detailItem.avatarUrl}}"></image>
+                                    </button>
+                                </form>
                                 <view class="total">
                                     <text class="nick-name">{{detailItem.nickName}}</text>
                                     <text class="acction">{{detailItem.title}}</text>
@@ -126,7 +143,7 @@
         </view>
 
         <!--操作按钮-->
-        <form report-submit="true" @submit="getFormId">
+        <form report-submit="true" data-from="34" @submit="getFormId">
             <!--简报-->
             <block wx:if="{{currentTab === 'brief'}}">
                 <block wx:if="{{isPending}}">
@@ -142,16 +159,16 @@
                 </block>
                 <block wx:elif="{{isMonitor || isViceMonitor}}">
                     <view class="btn-box fixed to-bottom" wx:if="{{currentRankTab === 'train'}}">
-                        <!--<button class="btn-primary w-1-2" open-type="getUserInfo">通报到群里</button>-->
-                        <button class="btn-secondary" form-type="submit" open-type="share">邀请新同学</button>
+                        <button class="btn-primary w-1-2" form-type="submit" @tap="gotoReporterPage">通报到群里</button>
+                        <button class="btn-secondary w-1-2" form-type="submit" open-type="share">邀请新同学</button>
                     </view>
                     <view class="btn-box fixed to-bottom" wx:elif="{{currentRankTab === 'rank'}}">
-                        <button class="btn-secondary" form-type="submit" open-type="share">邀请新同学</button>
+                        <button class="btn-primary w-1-2" form-type="submit" @tap="gotoReporterPage">通报到群里</button>
+                        <button class="btn-secondary w-1-2" form-type="submit" open-type="share">邀请新同学</button>
                     </view>
                     <view class="btn-box fixed to-bottom" wx:else>
-                        <!--<button class="btn-primary {{detail.isRemind ? '' : 'w-1-2'}}" open-type="getUserInfo">通报到群里</button>-->
-                        <button class="btn-secondary" form-type="submit" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind && trainRecords && trainRecords.length > 0}}">提醒他们</button>
-                        <button class="btn-secondary" form-type="submit" open-type="share" wx:else>邀请新同学</button>
+                        <button class="btn-primary {{detail.isRemind ? '' : 'w-1-2'}}" form-type="submit" @tap="gotoReporterPage">通报到群里</button>
+                        <button class="btn-primary w-1-2" form-type="submit" open-type="getUserInfo" @getuserinfo="showRemindPopup" wx:if="{{!detail.isRemind && brief.trainList3 && brief.trainList3.length > 0}}">提醒他们</button>
                     </view>
                 </block>
                 <block wx:else>
@@ -260,10 +277,10 @@
 
         .data-list {
             position: absolute;
-            top: 74rpx + 18rpx + 70rpx + 4rpx;
+            top: 74rpx + 18rpx + 70rpx + 2rpx;
             bottom: 0;
             padding-top: 20rpx;
-            padding-bottom: 20rpx;
+            padding-bottom: 140rpx;
             background-color: #fff;
 
             &.record {
@@ -310,16 +327,17 @@
                 .date {
                     margin: 45rpx auto;
                     text-align: center;
-                    line-height: 30rpx;
+                    line-height: 38rpx;
 
                     text {
                         display: inline-block;
                         vertical-align: top;
                         min-width: 90rpx;
-                        padding: 0 30rpx;
+                        padding: 0 20rpx;
                         text-align: center;
                         background-color: #aaa;
-                        font-size: 22rpx;
+                        border-radius: 10rpx;
+                        font-size: 20rpx;
                         color: #fff;
                     }
                 }
@@ -329,6 +347,22 @@
                 position: relative;
                 padding: 20rpx 40rpx;
                 overflow: hidden;
+
+                .rank {
+                    position: absolute;
+                    width: auto;
+                    min-width: 20rpx;
+                    height: 26rpx;
+                    left: 30rpx;
+                    top: 10rpx;
+                    padding: 0 10rpx;
+                    line-height: 26rpx;
+                    border-radius: 100rpx;
+                    background-color: #b0976e;
+                    color: #fff;
+                    font-size: 20rpx;
+                    text-align: center;
+                }
             }
 
             .avatar {
@@ -337,6 +371,13 @@
                 height: 90rpx;
                 margin-right: 20rpx;
                 border: 2rpx solid #b0976e;
+
+                image,
+                button {
+                    display: block;
+                    width: 90rpx;
+                    height: 90rpx;
+                }
             }
 
             .total {
@@ -403,19 +444,20 @@
 
         data = {
             userInfo: {},
-            currentTab: "brief",
+            currentTab: "record",
             tab: [
-                {
-                    id: "brief",
-                    text: "简报"
-                },
                 {
                     id: "record",
                     text: "记录"
+                },
+                {
+                    id: "brief",
+                    text: "简报"
                 }
             ],
             brief: {
                 timeType: 1,
+                trainInfo: {},
                 trainInfo1: {},
                 trainList1: [],
                 trainInfo2: {},
@@ -464,26 +506,28 @@
                 }
             },
             hasTrainInfo () {
-                if (this.currentRankTab === "train") {
-                    return this.brief.trainInfo1 && !!this.brief.trainInfo1.trainNum;
-                }
-                else if (this.currentRankTab === "rank") {
-                    return this.brief.trainInfo2 && !!this.brief.trainInfo2.trainNum;
-                }
-                else {
-                    return this.brief.trainInfo3 && !!this.brief.trainInfo3.trainNum;
-                }
+                return this.brief.trainInfo && !!this.brief.trainInfo.trainNum;
+                // if (this.currentRankTab === "train") {
+                //     return this.brief.trainInfo1 && !!this.brief.trainInfo1.trainNum;
+                // }
+                // else if (this.currentRankTab === "rank") {
+                //     return this.brief.trainInfo2 && !!this.brief.trainInfo2.trainNum;
+                // }
+                // else {
+                //     return this.brief.trainInfo3 && !!this.brief.trainInfo3.trainNum;
+                // }
             },
             briefTrainInfo () {
-                if (this.currentRankTab === "train") {
-                    return this.brief.trainInfo1;
-                }
-                else if (this.currentRankTab === "rank") {
-                    return this.brief.trainInfo2;
-                }
-                else {
-                    return this.brief.trainInfo3;
-                }
+                return this.brief.trainInfo;
+                // if (this.currentRankTab === "train") {
+                //     return this.brief.trainInfo1;
+                // }
+                // else if (this.currentRankTab === "rank") {
+                //     return this.brief.trainInfo2;
+                // }
+                // else {
+                //     return this.brief.trainInfo3;
+                // }
             },
             trainRecords () {
                 let _trainRecords = [...this._trainRecords];
@@ -518,7 +562,14 @@
                             let diffHours = moment().diff(m.strCreateTime, "hours");
 
                             if (diffHours <= 1) {
-                                m.strCreateTime = moment(m.strCreateTime).fromNow();
+                                const diffSeconds = moment().diff(m.strCreateTime, "seconds");
+
+                                if (diffSeconds <= 60) {
+                                    m.strCreateTime = "刚刚";
+                                }
+                                else {
+                                    m.strCreateTime = moment(m.strCreateTime).fromNow();
+                                }
                             }
                             else {
                                 m.strCreateTime = m.strCreateTime.substring(11);
@@ -554,14 +605,33 @@
                 }
             },
             async currentTab (value, oldValue) {
-                if (value === "record" && oldValue !== "record" && !this.hasFetchRecords) {
+                if (value === "brief" && oldValue !== value) {
+                    //wx.showLoading();
+                    await this.getData();
+                    //wx.hideLoading();
+                }
+                else if (value === "record" && oldValue !== value) {
+                    //wx.showLoading();
                     await this.getTrainRecords();
-                    this.hasFetchRecords = true;
+                    //wx.hideLoading();
                 }
             }
         };
 
         methods = {
+            gotoReporterPage () {
+                wx.navigateTo({
+                    url: `/pages/class/reporter?id=${this.classId}`
+                });
+            },
+            gotoExBriefingPage (e) {
+                const id = e.target.dataset.id;
+                this.getFormId(e);
+
+                wx.navigateTo({
+                    url: "/pages/ex-briefing?userId=" + id
+                });
+            },
             login (e) {
                 wx.setStorageSync("token", {});
 
@@ -613,7 +683,8 @@
         async getTrainList () {
             const {trainInfo, trainList} = await getTrainList.bind(this)();
 
-            this.brief.trainInfo1 = trainInfo || {};
+            //this.brief.trainInfo1 = trainInfo || {};
+            this.brief.trainInfo = trainInfo || {};
             this.brief.trainList1 = trainList || [];
             this.$apply();
         }
@@ -621,7 +692,8 @@
         async getTrainRanks () {
             const {trainInfo, trainList} = await getTrainRanks.bind(this)();
 
-            this.brief.trainInfo2 = trainInfo || {};
+            //this.brief.trainInfo2 = trainInfo || {};
+            this.brief.trainInfo = trainInfo || {};
             this.brief.trainList2 = trainList || [];
             this.$apply();
         }
@@ -629,7 +701,8 @@
         async getInterrupts () {
             const {trainInfo, trainList} = await getInterrupts.bind(this)();
 
-            this.brief.trainInfo3 = trainInfo || {};
+            //this.brief.trainInfo3 = trainInfo || {};
+            this.brief.trainInfo = trainInfo || {};
             this.brief.trainList3 = trainList || [];
             this.$apply();
         }
@@ -686,6 +759,8 @@
 
         init () {
             this._trainRecords = [];
+            this.currentTab = "record";
+            this.currentRankTab = "train";
             this.trainRecordRequestCount = 0;
             this.contentHeights = {};
         }
@@ -702,7 +777,7 @@
                 this.init();
                 this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail());
-                this.addReadyCallback(this.getTrainList());
+                this.addReadyCallback(this.getTrainRecords());
                 await this.runReadyCallbacks();
 
                 if (!this._error) {

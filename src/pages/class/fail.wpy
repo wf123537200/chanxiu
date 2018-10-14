@@ -7,7 +7,7 @@
         <view class="feedback">反馈信息：无</view>
         <view class="encourage">请不要气馁，保持精进修习，可以让你找到合适的班级！</view>
 
-        <form class="btn-box" report-submit="true" @submit="getFormId">
+        <form class="btn-box" report-submit="true" data-from="24" @submit="getFormId">
             <button class="btn-primary w-1-2" form-type="submit" @tap="gotoClassListPage">返回首页</button>
             <button class="btn-secondary w-1-2" form-type="submit" @tap="joinClass">重新申请</button>
         </form>

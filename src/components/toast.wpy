@@ -1,0 +1,104 @@
+<style lang="less">
+    @import (reference) "../static/less/utility";
+
+    .toast__mask {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0);
+    }
+
+    .toast__container {
+        .flex-v;
+        justify-content: center;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        padding: 40rpx;
+        min-width: 100rpx;
+        min-height: 100rpx;
+        border-radius: 10rpx;
+        transform: translate3d(-50%, -50%, 0);
+        transform-origin: center;
+        transition: all 0.4s ease;
+        z-index: 11;
+        opacity: 0;
+        overflow: hidden;
+        background: gray;
+        color: #fff;
+        font-size: 24rpx;
+    }
+
+    .toast__show .toast__container {
+        opacity: 1;
+    }
+</style>
+
+<template>
+    <view class="toast {{skin}} {{showPopup ? 'toast__show' : ''}}" wx:if="{{showPopup}}">
+        <view class="toast__mask" @tap="hide"></view>
+        <view class="toast__container">
+            <text>{{text}}</text>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+
+    export default class extends wepy.component {
+        props = {
+            skin: {
+                type: String,
+                default: ""
+            },
+            text: {
+                type: String,
+                default: ""
+            },
+            duration: {
+                type: Number,
+                default: 1500
+            }
+        };
+
+        data = {
+            showPopup: false
+        };
+
+        watch = {
+            showPopup(value, oldValue) {
+                if (value !== oldValue) {
+                    if (value) {
+                        this._t = setTimeout(() => {
+                            this.hide();
+                            this.$apply();
+                        }, this.duration);
+                    }
+                    else {
+                        this._t && clearTimeout(this._t);
+                    }
+                }
+            }
+        };
+
+        methods = {
+            show() {
+                this.show();
+            },
+            hide() {
+                this.hide();
+            }
+        };
+
+        show() {
+            this.showPopup = true;
+        }
+
+        hide() {
+            this.showPopup = false;
+        }
+    }
+</script>

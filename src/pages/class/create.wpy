@@ -1,7 +1,7 @@
 <template>
     <!--<login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>-->
 
-    <form report-submit="true" @submit="submit">
+    <form report-submit="true" data-from="9" @submit="submit">
         <view class="section">
             <view class="section-title">基本信息</view>
 

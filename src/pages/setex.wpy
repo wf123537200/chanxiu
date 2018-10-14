@@ -1238,7 +1238,6 @@
       },
       getUserInfo(e) {
         const that = this
-          debugger
         that.$parent.getUserInfo(userInfo => {
           if (userInfo && userInfo.nickName) {
             that.userInfo = userInfo

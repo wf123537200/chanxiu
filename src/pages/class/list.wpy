@@ -4,7 +4,7 @@
 
         <view class="classes">
             <navigator url="/pages/class/detail?id={{item.id}}" class="class" style="background-image: url({{bgImg}})" wx:key="{{index}}" wx:for="{{myClasses}}">
-                <form report-submit="true" @submit="getFormId">
+                <form report-submit="true" data-from="25" @submit="getFormId">
                     <button plain="true" form-type="submit">
                         <text class="student-num">{{item.studentNum}}人</text>
 
@@ -19,7 +19,7 @@
                 </form>
             </navigator>
             <navigator url="/pages/class/detail?id={{item.id}}" class="class" style="background-image: url({{bgImg}})" wx:key="{{index}}" wx:for="{{openedClasses}}">
-                <form report-submit="true" @submit="getFormId">
+                <form report-submit="true" data-from="26" @submit="getFormId">
                     <button plain="true" form-type="submit">
                         <text class="student-num">{{item.studentNum}}人</text>
 
@@ -35,7 +35,7 @@
             </navigator>
         </view>
 
-        <form report-submit="true" @submit="gotoCreatePage">
+        <form report-submit="true" data-from="27" @submit="gotoCreatePage">
             <view class="fixed to-bottom btn-box">
                 <button class="btn-secondary" form-type="submit">创  建</button>
             </view>

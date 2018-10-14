@@ -1,6 +1,6 @@
 <template>
     <popup title="中断提醒" @onHide.user="clearFormData">
-        <form report-submit="true" @submit="submit" @reset="reset">
+        <form report-submit="true" data-from="8" @submit="submit" @reset="reset">
             <textarea class="textarea" value="{{message}}" name="message" placeholder="跟TA说两句，激励一下TA。最多30字。" @input="updateMessage"></textarea>
 
             <view class="btn-box popup-btn-box">
@@ -28,7 +28,8 @@
         };
 
         data = {
-            message: ""
+            message: "",
+            request_ok: true
         };
 
         mixins = [formIds];
@@ -36,24 +37,22 @@
         methods = {
             async submit (e) {
                 this.getFormId(e);
-                //let msgType = 2;
 
-                // await (collectFormId.bind(this)({
-                //     formId: e.detail.formId,
-                //     page: "/pages/class/students?_f=1&id=" + this.classId,
-                //     type: msgType
-                // })).catch(() =>{});
+                if (this.request_ok) {
+                    this.request_ok = false;
 
-                await this.remind({
-                    message: this.message
-                });
+                    await this.remind({
+                        message: this.message
+                    });
 
-                this.$emit("onSubmit");
-                this.$apply();
-                wx.showToast({
-                    title: "提醒完成"
-                });
-                this.hide();
+                    this.$emit("onSubmit");
+                    this.$apply();
+                    wx.showToast({
+                        title: "提醒完成"
+                    });
+                    this.hide();
+                    this.request_ok = true;
+                }
             },
             reset () {
                 this.hide();

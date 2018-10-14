@@ -2,7 +2,7 @@
     <block wx:if="{{ready && !_error}}">
         <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
 
-        <form report-submit="true" @submit="submit">
+        <form report-submit="true" data-from="41" @submit="submit">
             <view class="section" wx:if="{{action === 1}}">
                 <view class="section-body">
                     <view class="content">
@@ -344,7 +344,16 @@
                     return;
                 }
 
-                if (!params.isSupportAdd) {
+                if (params.isSupportAdd) {
+                    if (!params.committee && !params.qrCodeUrl) {
+                        wx.showToast({
+                            title: "请填写群信息"
+                        });
+
+                        return;
+                    }
+                }
+                else {
                     params.committee = "";
                     params.qrCodeUrl = "";
                 }
