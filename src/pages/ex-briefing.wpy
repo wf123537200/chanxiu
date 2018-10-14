@@ -650,9 +650,8 @@
               {{item.content.length > 63 && !item.readAll ? '查看全文' : ''}}
             </view>
             <view class="process-btns">
-              <image class="process-btn" src="/images/edit.png" wx:if="{{upstateState}}" @tap="edit({{item}})"></image>
-              <image class="process-btn delete-btn" src="/images/delete.png" wx:if="{{upstateState && (item.content || item.afterRecord)}}" @tap="deleteEx({{item}})"></image>
-              <button class="process-btn btn share-briefing-btn" wx:if="{{upstateState}}" id="briefingShare" name="briefingShare" open-type="share">
+              <image class="process-btn delete-btn" src="/images/delete.png" wx:if="{{upstateState && item.afterRecord}}" @tap="deleteEx({{item}})"></image>
+              <button class="process-btn btn share-briefing-btn" wx:if="{{upstateState && item.content}}" id="briefingShare" name="briefingShare" open-type="share">
                 <image src="/images/send.png" class="btn-img"></image>
               </button>
             </view>
@@ -891,7 +890,7 @@
 
               console.log(timeDesc)
               if (timeDesc.indexOf('seconds ago') >= 0) {
-                timeDesc = '刚刚'
+                timeDesc = '1 分钟前'
               } else if (timeDesc.indexOf('minute ago') >= 0) {
                 timeDesc = '1 分钟前'
               }else if (timeDesc.indexOf('hour ago') >= 0) {
