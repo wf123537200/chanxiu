@@ -29,6 +29,7 @@
 
         data = {
             //message: ""
+            request_ok: true
         };
 
         mixins = [formIds];
@@ -37,22 +38,27 @@
             async submit (e) {
                 await this.getFormId(e);
 
-                await deleteClass.bind(this)().catch(() => {
-                    wx.showToast({
-                        title: "操作失败"
+                if (this.request_ok) {
+                    this.request_ok = false;
+                    await deleteClass.bind(this)().catch(() => {
+                        wx.showToast({
+                            title: "操作失败"
+                        });
+
+                        throw "班级解散失败";
                     });
 
-                    throw "班级解散失败";
-                });
+                    wx.showToast({
+                        title: "班级已解散",
+                        complete: () => {
+                            this.request_ok = true;
 
-                wx.showToast({
-                    title: "班级已解散",
-                    complete: () => {
-                        wx.switchTab({
-                            url: "/pages/class/list"
-                        });
-                    }
-                });
+                            wx.switchTab({
+                                url: "/pages/class/list"
+                            });
+                        }
+                    });
+                }
             },
             reset () {
                 this.hide();

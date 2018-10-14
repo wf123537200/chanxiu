@@ -37,13 +37,6 @@
         methods = {
             async submit (e) {
                 this.getFormId(e);
-                //let msgType = 2;
-
-                // await (collectFormId.bind(this)({
-                //     formId: e.detail.formId,
-                //     page: "/pages/class/students?_f=1&id=" + this.classId,
-                //     type: msgType
-                // })).catch(() =>{});
 
                 if (this.request_ok) {
                     this.request_ok = false;

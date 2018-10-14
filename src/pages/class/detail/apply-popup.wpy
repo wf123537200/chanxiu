@@ -31,7 +31,8 @@
         };
 
         data = {
-            reason: ""
+            reason: "",
+            request_ok: true
         };
 
         mixins = [formIds];
@@ -40,15 +41,19 @@
             async submit (e) {
                 this.getFormId(e);
 
-                await this.applyClass({
-                    introduction: this.reason
-                });
+                if (this.request_ok) {
+                    this.request_ok = false;
+                    await this.applyClass({
+                        introduction: this.reason
+                    });
 
-                this.$emit("onSubmit");
-                wx.showToast({
-                    title: "发送成功"
-                });
-                this.hide();
+                    this.$emit("onSubmit");
+                    wx.showToast({
+                        title: "发送成功"
+                    });
+                    this.hide();
+                    this.request_ok = true;
+                }
             },
             reset () {
                 this.hide();
