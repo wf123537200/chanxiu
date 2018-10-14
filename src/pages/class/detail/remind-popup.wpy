@@ -28,7 +28,8 @@
         };
 
         data = {
-            message: ""
+            message: "",
+            request_ok: true
         };
 
         mixins = [formIds];
@@ -44,16 +45,21 @@
                 //     type: msgType
                 // })).catch(() =>{});
 
-                await this.remind({
-                    message: this.message
-                });
+                if (this.request_ok) {
+                    this.request_ok = false;
 
-                this.$emit("onSubmit");
-                this.$apply();
-                wx.showToast({
-                    title: "提醒完成"
-                });
-                this.hide();
+                    await this.remind({
+                        message: this.message
+                    });
+
+                    this.$emit("onSubmit");
+                    this.$apply();
+                    wx.showToast({
+                        title: "提醒完成"
+                    });
+                    this.hide();
+                    this.request_ok = true;
+                }
             },
             reset () {
                 this.hide();

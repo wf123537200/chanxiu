@@ -457,6 +457,7 @@
             ],
             brief: {
                 timeType: 1,
+                trainInfo: {},
                 trainInfo1: {},
                 trainList1: [],
                 trainInfo2: {},
@@ -505,26 +506,28 @@
                 }
             },
             hasTrainInfo () {
-                if (this.currentRankTab === "train") {
-                    return this.brief.trainInfo1 && !!this.brief.trainInfo1.trainNum;
-                }
-                else if (this.currentRankTab === "rank") {
-                    return this.brief.trainInfo2 && !!this.brief.trainInfo2.trainNum;
-                }
-                else {
-                    return this.brief.trainInfo3 && !!this.brief.trainInfo3.trainNum;
-                }
+                return this.brief.trainInfo && !!this.brief.trainInfo.trainNum;
+                // if (this.currentRankTab === "train") {
+                //     return this.brief.trainInfo1 && !!this.brief.trainInfo1.trainNum;
+                // }
+                // else if (this.currentRankTab === "rank") {
+                //     return this.brief.trainInfo2 && !!this.brief.trainInfo2.trainNum;
+                // }
+                // else {
+                //     return this.brief.trainInfo3 && !!this.brief.trainInfo3.trainNum;
+                // }
             },
             briefTrainInfo () {
-                if (this.currentRankTab === "train") {
-                    return this.brief.trainInfo1;
-                }
-                else if (this.currentRankTab === "rank") {
-                    return this.brief.trainInfo2;
-                }
-                else {
-                    return this.brief.trainInfo3;
-                }
+                return this.brief.trainInfo;
+                // if (this.currentRankTab === "train") {
+                //     return this.brief.trainInfo1;
+                // }
+                // else if (this.currentRankTab === "rank") {
+                //     return this.brief.trainInfo2;
+                // }
+                // else {
+                //     return this.brief.trainInfo3;
+                // }
             },
             trainRecords () {
                 let _trainRecords = [...this._trainRecords];
@@ -680,7 +683,8 @@
         async getTrainList () {
             const {trainInfo, trainList} = await getTrainList.bind(this)();
 
-            this.brief.trainInfo1 = trainInfo || {};
+            //this.brief.trainInfo1 = trainInfo || {};
+            this.brief.trainInfo = trainInfo || {};
             this.brief.trainList1 = trainList || [];
             this.$apply();
         }
@@ -688,7 +692,8 @@
         async getTrainRanks () {
             const {trainInfo, trainList} = await getTrainRanks.bind(this)();
 
-            this.brief.trainInfo2 = trainInfo || {};
+            //this.brief.trainInfo2 = trainInfo || {};
+            this.brief.trainInfo = trainInfo || {};
             this.brief.trainList2 = trainList || [];
             this.$apply();
         }
@@ -696,7 +701,8 @@
         async getInterrupts () {
             const {trainInfo, trainList} = await getInterrupts.bind(this)();
 
-            this.brief.trainInfo3 = trainInfo || {};
+            //this.brief.trainInfo3 = trainInfo || {};
+            this.brief.trainInfo = trainInfo || {};
             this.brief.trainList3 = trainList || [];
             this.$apply();
         }
