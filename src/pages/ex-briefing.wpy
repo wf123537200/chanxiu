@@ -658,6 +658,9 @@
           </view>
         </view>
       </repeat>
+      <view  wx:if="{{page > 1 && dynamicDataLoading}}" style="padding: 5px;text-align: center">
+        正在加载
+      </view>
     </view>
 
     <editEx style="width: 100%" class="pr">
@@ -865,9 +868,8 @@
    * 获取动态练习记录
    */
   const dynamicFind = function () {
-    const page = 1
     const pageSize = 10
-
+    this.dynamicDataLoading = true
     ajax({
       ins: this,
       url: '/dynamic/find',
@@ -875,7 +877,7 @@
       params: {
         // findType/查询类型/整型, 1=查询所有，2=查询状态记录，3=查询练习日记
         findType: this.dynamicTimeType,
-        offset: (page - 1) * 10,
+        offset: (this.page - 1) * pageSize,
         count: pageSize,
         userId: this.userId
       },
@@ -910,9 +912,17 @@
 
             d.readAll = false
           }
-          this.dynamicList = data
+          if (data.length) {
+            this.dynamicList = this.dynamicList.concat(data)
+            this.page++
+          }
+          console.log(data.length, pageSize)
+          this.hasData = data.length && data.length >= pageSize
+          this.dynamicDataLoading = false
         } else {
           this.dynamicList = []
+          this.hasData = false
+          this.dynamicDataLoading = false
         }
         this.$apply()
       }
@@ -933,6 +943,8 @@
       method: 'POST',
       success: (d) => {
         this.$invoke('editEx', 'togglePopup')
+        this.page = 1
+        this.hasData = true
         dynamicFind.call(this)
         this.$apply()
       }
@@ -960,13 +972,17 @@
   export default class Tag extends wepy.page {
     config = {
       disableScroll: false,
-      navigationBarTitleText: '练习简报'
+      navigationBarTitleText: '练习简报',
+      enablePullDownRefresh: true
     }
     components = {
       deleteEx: zanPop,
       editEx: zanPop
     }
     data = {
+      page: 1,
+      hasData: true,
+      dynamicDataLoading: false,
       isLoading: false,
       userId: '',
       upstateState: false,
@@ -1014,6 +1030,8 @@
         console.log(dynamicTimeType)
         this.dynamicTimeType = dynamicTimeType
 
+        this.page = 1
+        this.hasData = true
         // 获取历史练习数据
         dynamicFind.call(this)
       },
@@ -1200,9 +1218,20 @@
       console.log(options)
       this.userId = options.userId || ''
     }
-    async onShow(options) {
+    onPullDownRefresh() {
+      console.log('onPullDownRefresh')
+    }
+    onReachBottom() {
+      console.log('onReachBottom' + this.hasData)
+      if (!this.hasData) return
+
+      dynamicFind.call(this)
+    }
+    async onShow() {
       this.isLoading = true
       wx.showLoading({title: '加载中..'})
+      this.page = 1
+      this.hasData = true
       const userId = this.userId
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;

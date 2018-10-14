@@ -110,8 +110,8 @@
 
 <script>
   import wepy from 'wepy'
-  import {ajax} from './components/ajax'
   import 'wepy-async-function';
+  import {ajax} from './components/ajax'
   import moment from "moment";
 
   moment.locale('zh-cn', {
