@@ -15,6 +15,9 @@ export default class extends wepy.mixin {
     methods = {
         gotoClassListPage (e) {
             this.gotoClassListPage(e);
+        },
+        gotoSetExPage (e) {
+            this.gotoSetExPage(e);
         }
     };
 
@@ -22,6 +25,12 @@ export default class extends wepy.mixin {
         wx.removeStorageSync("bootFromMsg");
         wx.switchTab({
             url: "/pages/class/list"
+        });
+    }
+    gotoSetExPage (e) {
+        wx.removeStorageSync("bootFromMsg");
+        wx.switchTab({
+            url: "/pages/setex"
         });
     }
 

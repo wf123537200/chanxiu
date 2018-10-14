@@ -313,6 +313,15 @@
     display: block;
     font-size: 0;
   }
+  .loading-wrap {
+    padding: 5px;
+    text-align: center;
+    width: 100%;
+    font-size: 12px;
+    color: #ccc;
+    line-height: 1;
+    margin-top: -15px;
+  }
 
   .delete-btn {
     width: 19px;
@@ -658,8 +667,8 @@
           </view>
         </view>
       </repeat>
-      <view  wx:if="{{page > 1 && dynamicDataLoading}}" style="padding: 5px;text-align: center">
-        正在加载
+      <view wx:if="{{page > 1 && dynamicDataLoading}}" class="loading-wrap">
+        正在加载...
       </view>
     </view>
 
@@ -717,10 +726,9 @@
         </view>
       </view>
     </view>
-
     <!--返回列表页-->
-    <view class="fixed to-bottom switch-page-btn-box" wx:if="{{userId}}">
-      <button @tap="toHome">首页</button>
+    <view class="fixed to-bottom switch-page-btn-box" wx:if="{{bootFromMsg}}">
+      <button @tap="gotoSetExPage">首页</button>
     </view>
   </view>
 </template>
@@ -730,6 +738,7 @@
   import {ajax} from '../components/ajax.js'
   import zanPop from '../components/zan-popup'
   import moment from 'moment'
+  import share from "../mixins/boot";
 
   const getCt = function() {
     const d = new Date()
@@ -884,39 +893,32 @@
       success: (data) => {
         if (data) {
           for (let d of data) {
-            let timeDesc = ''
+            let timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
 
-            // 一个小时内
-            if (Date.now() - d.createTime < (1000 * 60 * 60)) {
-              timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
+            timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
+            timeDesc = timeDesc.replace('hours ago', '小时前')
+            timeDesc = timeDesc.replace('an hour ago', '1 小时前')
 
-              console.log(timeDesc)
-              if (timeDesc.indexOf('seconds ago') >= 0) {
-                timeDesc = '1 分钟前'
-              } else if (timeDesc.indexOf('minute ago') >= 0) {
-                timeDesc = '1 分钟前'
-              }else if (timeDesc.indexOf('hour ago') >= 0) {
-                timeDesc = '1 小时前'
-              } else {
-                timeDesc = timeDesc.replace('minutes ago', '分钟前')
-              }
-            } else if (Date.now() - d.createTime < (1000 * 60 * 60 * 24)) {
-              // 一天内
-              timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('hour').fromNow()
-              timeDesc = timeDesc.replace('hours ago', '小时前')
-              timeDesc = timeDesc.replace('an hour ago', '1 小时前')
+            if (timeDesc.indexOf('seconds ago') >= 0) {
+              timeDesc = '1 分钟前'
+            } else if (timeDesc.indexOf('minute ago') >= 0) {
+              timeDesc = '1 分钟前'
+            }else if (timeDesc.indexOf('hour ago') >= 0) {
+              timeDesc = '1 小时前'
             } else {
-              timeDesc = moment(d.strCreateTime).format('YYYY-MM-DD HH:mm')
+              timeDesc = timeDesc.replace('minutes ago', '分钟前')
             }
-            d.strCreateTimeStr = timeDesc
 
+            d.strCreateTimeStr = timeDesc
             d.readAll = false
           }
-          if (data.length) {
+          if (data.length && this.page == 1) {
+            this.dynamicList = data
+          } else {
             this.dynamicList = this.dynamicList.concat(data)
-            this.page++
           }
-          console.log(data.length, pageSize)
+
+          this.page++
           this.hasData = data.length && data.length >= pageSize
           this.dynamicDataLoading = false
         } else {
@@ -955,15 +957,18 @@
   /**
    * 删除日记
    */
-  const dynamicDel = function (refId) {
+  const dynamicDel = function (refId, afterRecord) {
+    const url = afterRecord ? '/train/del' : '/diary/del'
     ajax({
       ins: this,
-      url: '/diary/del',
+      url: url,
       method: 'POST',
       params: {
         id: refId
       },
       success: (d) => {
+        this.page = 1
+        this.hasData = true
         dynamicFind.call(this)
       }
     })
@@ -1013,12 +1018,10 @@
       isShowShare: false,
       isShowImage: false
     }
+    mixins = [ share ]
     onGotUserInfo(e) {
     }
     methods = {
-      toHome() {
-        wx.reLaunch({url: '/pages/setex'})
-      },
       timeTypeChange(timeType) {
         console.log(timeType)
         this.timeType = timeType
@@ -1040,7 +1043,7 @@
         let path = '/pages/setex'
 
         if (shareBtnId == 'briefingShare') {
-          path = 'pages/ex-briefing?userId=' + this.userId
+          path = 'pages/ex-briefing?_f=1&userId=' + this.userId
         }
 
         let imageUrl = ''
@@ -1102,7 +1105,7 @@
         this.$invoke('deleteEx', 'togglePopup')
       },
       deleteComfirm() {
-        dynamicDel.apply(this, [this.dynamic.refId])
+        dynamicDel.apply(this, [this.dynamic.refId, this.dynamic.afterRecord])
         this.$invoke('deleteEx', 'togglePopup')
       },
       processShow(item) {
