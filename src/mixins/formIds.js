@@ -29,7 +29,7 @@ export default class extends wepy.mixin {
             let id = {
                 formId,
                 expire,
-                from
+                fromPage: from
             };
 
             formIds.push(id);
