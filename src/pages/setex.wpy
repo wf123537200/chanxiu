@@ -648,7 +648,7 @@
         success: (d) => {
           const strLastTime = d.trainInfo.strLastTime
           if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
-            d.trainInfo.continuousNum = 0
+            d.trainInfo.continuousNum = 1
           }
           Object.assign(this, d.trainInfo)
           getCt.call(this)
@@ -926,7 +926,7 @@
       averageDayTime: 0,
       totalCount: 0,
       singleMostDuration: 0,
-      continuousNum: 0,
+      continuousNum: 1,
       todayTrainCount: 0,
       todayDuration: 0,
       promotionArticleName: '',

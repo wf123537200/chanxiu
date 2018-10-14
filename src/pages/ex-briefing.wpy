@@ -313,6 +313,15 @@
     display: block;
     font-size: 0;
   }
+  .loading-wrap {
+    padding: 5px;
+    text-align: center;
+    width: 100%;
+    font-size: 12px;
+    color: #ccc;
+    line-height: 1;
+    margin-top: -15px;
+  }
 
   .delete-btn {
     width: 19px;
@@ -658,6 +667,9 @@
           </view>
         </view>
       </repeat>
+      <view wx:if="{{page > 1 && dynamicDataLoading}}" class="loading-wrap">
+        正在加载...
+      </view>
     </view>
 
     <editEx style="width: 100%" class="pr">
@@ -714,10 +726,9 @@
         </view>
       </view>
     </view>
-
     <!--返回列表页-->
-    <view class="fixed to-bottom switch-page-btn-box" wx:if="{{userId}}">
-      <button @tap="toHome">首页</button>
+    <view class="fixed to-bottom switch-page-btn-box" wx:if="{{bootFromMsg}}">
+      <button @tap="gotoSetExPage">首页</button>
     </view>
   </view>
 </template>
@@ -727,6 +738,7 @@
   import {ajax} from '../components/ajax.js'
   import zanPop from '../components/zan-popup'
   import moment from 'moment'
+  import share from "../mixins/boot";
 
   const getCt = function() {
     const d = new Date()
@@ -865,9 +877,8 @@
    * 获取动态练习记录
    */
   const dynamicFind = function () {
-    const page = 1
     const pageSize = 10
-
+    this.dynamicDataLoading = true
     ajax({
       ins: this,
       url: '/dynamic/find',
@@ -875,44 +886,45 @@
       params: {
         // findType/查询类型/整型, 1=查询所有，2=查询状态记录，3=查询练习日记
         findType: this.dynamicTimeType,
-        offset: (page - 1) * 10,
+        offset: (this.page - 1) * pageSize,
         count: pageSize,
         userId: this.userId
       },
       success: (data) => {
         if (data) {
           for (let d of data) {
-            let timeDesc = ''
+            let timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
 
-            // 一个小时内
-            if (Date.now() - d.createTime < (1000 * 60 * 60)) {
-              timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
+            timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
+            timeDesc = timeDesc.replace('hours ago', '小时前')
+            timeDesc = timeDesc.replace('an hour ago', '1 小时前')
 
-              console.log(timeDesc)
-              if (timeDesc.indexOf('seconds ago') >= 0) {
-                timeDesc = '1 分钟前'
-              } else if (timeDesc.indexOf('minute ago') >= 0) {
-                timeDesc = '1 分钟前'
-              }else if (timeDesc.indexOf('hour ago') >= 0) {
-                timeDesc = '1 小时前'
-              } else {
-                timeDesc = timeDesc.replace('minutes ago', '分钟前')
-              }
-            } else if (Date.now() - d.createTime < (1000 * 60 * 60 * 24)) {
-              // 一天内
-              timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('hour').fromNow()
-              timeDesc = timeDesc.replace('hours ago', '小时前')
-              timeDesc = timeDesc.replace('an hour ago', '1 小时前')
+            if (timeDesc.indexOf('seconds ago') >= 0) {
+              timeDesc = '1 分钟前'
+            } else if (timeDesc.indexOf('minute ago') >= 0) {
+              timeDesc = '1 分钟前'
+            }else if (timeDesc.indexOf('hour ago') >= 0) {
+              timeDesc = '1 小时前'
             } else {
-              timeDesc = moment(d.strCreateTime).format('YYYY-MM-DD HH:mm')
+              timeDesc = timeDesc.replace('minutes ago', '分钟前')
             }
-            d.strCreateTimeStr = timeDesc
 
+            d.strCreateTimeStr = timeDesc
             d.readAll = false
           }
-          this.dynamicList = data
+          if (data.length && this.page == 1) {
+            this.dynamicList = data
+          } else {
+            this.dynamicList = this.dynamicList.concat(data)
+          }
+
+          this.page++
+          this.hasData = data.length && data.length >= pageSize
+          this.dynamicDataLoading = false
         } else {
           this.dynamicList = []
+          this.hasData = false
+          this.dynamicDataLoading = false
         }
         this.$apply()
       }
@@ -933,6 +945,8 @@
       method: 'POST',
       success: (d) => {
         this.$invoke('editEx', 'togglePopup')
+        this.page = 1
+        this.hasData = true
         dynamicFind.call(this)
         this.$apply()
       }
@@ -943,15 +957,18 @@
   /**
    * 删除日记
    */
-  const dynamicDel = function (refId) {
+  const dynamicDel = function (refId, afterRecord) {
+    const url = afterRecord ? '/train/del' : '/diary/del'
     ajax({
       ins: this,
-      url: '/diary/del',
+      url: url,
       method: 'POST',
       params: {
         id: refId
       },
       success: (d) => {
+        this.page = 1
+        this.hasData = true
         dynamicFind.call(this)
       }
     })
@@ -960,13 +977,17 @@
   export default class Tag extends wepy.page {
     config = {
       disableScroll: false,
-      navigationBarTitleText: '练习简报'
+      navigationBarTitleText: '练习简报',
+      enablePullDownRefresh: true
     }
     components = {
       deleteEx: zanPop,
       editEx: zanPop
     }
     data = {
+      page: 1,
+      hasData: true,
+      dynamicDataLoading: false,
       isLoading: false,
       userId: '',
       upstateState: false,
@@ -997,12 +1018,10 @@
       isShowShare: false,
       isShowImage: false
     }
+    mixins = [ share ]
     onGotUserInfo(e) {
     }
     methods = {
-      toHome() {
-        wx.reLaunch({url: '/pages/setex'})
-      },
       timeTypeChange(timeType) {
         console.log(timeType)
         this.timeType = timeType
@@ -1014,6 +1033,8 @@
         console.log(dynamicTimeType)
         this.dynamicTimeType = dynamicTimeType
 
+        this.page = 1
+        this.hasData = true
         // 获取历史练习数据
         dynamicFind.call(this)
       },
@@ -1022,7 +1043,7 @@
         let path = '/pages/setex'
 
         if (shareBtnId == 'briefingShare') {
-          path = 'pages/ex-briefing?userId=' + this.userId
+          path = 'pages/ex-briefing?_f=1&userId=' + this.userId
         }
 
         let imageUrl = ''
@@ -1084,7 +1105,7 @@
         this.$invoke('deleteEx', 'togglePopup')
       },
       deleteComfirm() {
-        dynamicDel.apply(this, [this.dynamic.refId])
+        dynamicDel.apply(this, [this.dynamic.refId, this.dynamic.afterRecord])
         this.$invoke('deleteEx', 'togglePopup')
       },
       processShow(item) {
@@ -1200,9 +1221,20 @@
       console.log(options)
       this.userId = options.userId || ''
     }
-    async onShow(options) {
+    onPullDownRefresh() {
+      console.log('onPullDownRefresh')
+    }
+    onReachBottom() {
+      console.log('onReachBottom' + this.hasData)
+      if (!this.hasData) return
+
+      dynamicFind.call(this)
+    }
+    async onShow() {
       this.isLoading = true
       wx.showLoading({title: '加载中..'})
+      this.page = 1
+      this.hasData = true
       const userId = this.userId
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
