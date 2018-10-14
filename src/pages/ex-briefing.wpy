@@ -299,9 +299,11 @@
     background-color: transparent;
   }
   .process-btn {
-    width: 20px;
-    height: 20px;
+    width: 21px;
+    height: 21px;
+    padding: 3px;
     margin-left: 30px;
+    box-sizing: border-box;
   }
   .btn-img {
     width: 100%;
@@ -313,9 +315,11 @@
   }
 
   .delete-btn {
-    width: 15px;
-    height: 18px;
+    width: 19px;
+    height: 21px;
+    padding: 3px;
     background-size: 16px 18px;
+    box-sizing: border-box;
   }
   .popup-headerr {
     display: flex;
@@ -646,9 +650,8 @@
               {{item.content.length > 63 && !item.readAll ? '查看全文' : ''}}
             </view>
             <view class="process-btns">
-              <image class="process-btn" src="/images/edit.png" wx:if="{{upstateState}}" @tap="edit({{item}})"></image>
-              <image class="process-btn delete-btn" src="/images/delete.png" wx:if="{{upstateState && (item.content || item.afterRecord)}}" @tap="deleteEx({{item}})"></image>
-              <button class="process-btn btn share-briefing-btn" wx:if="{{upstateState}}" id="briefingShare" name="briefingShare" open-type="share">
+              <image class="process-btn delete-btn" src="/images/delete.png" wx:if="{{upstateState && item.afterRecord}}" @tap="deleteEx({{item}})"></image>
+              <button class="process-btn btn share-briefing-btn" wx:if="{{upstateState && item.content}}" id="briefingShare" name="briefingShare" open-type="share">
                 <image src="/images/send.png" class="btn-img"></image>
               </button>
             </view>
@@ -887,7 +890,7 @@
 
               console.log(timeDesc)
               if (timeDesc.indexOf('seconds ago') >= 0) {
-                timeDesc = '刚刚'
+                timeDesc = '1 分钟前'
               } else if (timeDesc.indexOf('minute ago') >= 0) {
                 timeDesc = '1 分钟前'
               }else if (timeDesc.indexOf('hour ago') >= 0) {
@@ -1193,10 +1196,14 @@
         this.$navigate('./ex-text-mark');
       }
     }
-    async onLoad(options) {
+    onLoad(options) {
+      console.log(options)
+      this.userId = options.userId || ''
+    }
+    async onShow(options) {
       this.isLoading = true
       wx.showLoading({title: '加载中..'})
-      const userId = this.userId = options.userId || ''
+      const userId = this.userId
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
       if (!userId) {
@@ -1214,7 +1221,7 @@
         }
       }
 
-      getUserInfo.call(this, options.userId || '')
+      getUserInfo.call(this, userId || '')
       // 获取历史练习数据
       briefHistoryInfo.call(this)
       // 获取今日练习数据
