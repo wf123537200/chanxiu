@@ -299,9 +299,11 @@
     background-color: transparent;
   }
   .process-btn {
-    width: 20px;
-    height: 20px;
+    width: 21px;
+    height: 21px;
+    padding: 3px;
     margin-left: 30px;
+    box-sizing: border-box;
   }
   .btn-img {
     width: 100%;
@@ -313,9 +315,11 @@
   }
 
   .delete-btn {
-    width: 15px;
-    height: 18px;
+    width: 19px;
+    height: 21px;
+    padding: 3px;
     background-size: 16px 18px;
+    box-sizing: border-box;
   }
   .popup-headerr {
     display: flex;
@@ -1193,10 +1197,14 @@
         this.$navigate('./ex-text-mark');
       }
     }
-    async onLoad(options) {
+    onLoad(options) {
+      console.log(options)
+      this.userId = options.userId || ''
+    }
+    async onShow(options) {
       this.isLoading = true
       wx.showLoading({title: '加载中..'})
-      const userId = this.userId = options.userId || ''
+      const userId = this.userId
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
       if (!userId) {
@@ -1214,7 +1222,7 @@
         }
       }
 
-      getUserInfo.call(this, options.userId || '')
+      getUserInfo.call(this, userId || '')
       // 获取历史练习数据
       briefHistoryInfo.call(this)
       // 获取今日练习数据
