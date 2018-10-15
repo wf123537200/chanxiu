@@ -132,7 +132,7 @@
                                     <view class="content-box {{hasInitContentHeight[detailItem.id] ? 'ready' : ''}}" data-id="{{detailItem.id}}">
                                         <view class="text" data-id="{{detailItem.id}}">{{detailItem.content}}</view>
                                     </view>
-                                    <text class="view-all" data-id="{{detailItem.id}}" @tap="showContent">查看全文</text>
+                                    <text class="view-all" data-id="{{detailItem.id}}" wx:if="{{contentHeights[detailItem.id] && hasInitContentHeight[detailItem.id] && contentHeights[detailItem.id].boxHeight < contentHeights[detailItem.id].textHeight}}" @tap="showContent">查看全文</text>
                                 </view>
                             </view>
                         </block>
@@ -582,13 +582,7 @@
                         __trainRecords["昨天"] = value;
                     }
                     else {
-                        __trainRecords[key.replace("-", "年").replace("-", "月")] = value.map(n => {
-                            let m = Object.assign({}, n);
-
-                            m.content = m.content.repeat(100);
-
-                            return m;
-                        });
+                        __trainRecords[key.replace("-", "年").replace("-", "月")] = value;
                     }
                 }
 
@@ -721,6 +715,7 @@
 
         async getTrainRecords () {
             await getTrainRecords.bind(this)();
+            //this.$apply();
             this.initContentHeight();
         }
 
@@ -752,7 +747,6 @@
                     const id = rect.dataset.id;
                     this.hasInitContentHeight[id] = true;
                 });
-
                 this.$apply();
             });
         }
@@ -762,6 +756,7 @@
             this.currentTab = "record";
             this.currentRankTab = "train";
             this.trainRecordRequestCount = 0;
+            this.hasInitContentHeight = {};
             this.contentHeights = {};
         }
 
@@ -779,6 +774,7 @@
                 this.addReadyCallback(this.getClassDetail());
                 this.addReadyCallback(this.getTrainRecords());
                 await this.runReadyCallbacks();
+                this.initContentHeight();
 
                 if (!this._error) {
                     wx.setNavigationBarTitle({
