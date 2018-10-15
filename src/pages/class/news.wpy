@@ -62,7 +62,7 @@
                     <!--排行榜-->
                     <block wx:elif="{{currentRankTab === 'rank'}}">
                         <block wx:if="{{hasTrainInfo}}">
-                            <view class="data-item" wx:key="index" wx:for="{{brief.trainList2}}">
+                            <view class="data-item {{index === 0 && brief.trainList2[1] && (item.rank !== 1 || item.rank === brief.trainList2[1].rank) ? 'me' : ''}}" wx:key="index" wx:for="{{brief.trainList2}}">
                                 <form class="avatar" report-submit="true" data-from="31" data-isMe="{{item.isMe}}" data-id="{{item.id}}" @submit="gotoExBriefingPage">
                                     <button class="btn-formid" hover-class="none" plain="true" form-type="submit">
                                         <image src="{{item.avatarUrl}}"></image>
@@ -347,6 +347,10 @@
                 position: relative;
                 padding: 20rpx 40rpx;
                 overflow: hidden;
+
+                &.me {
+                    background-color: #ddd;
+                }
 
                 .rank {
                     position: absolute;
