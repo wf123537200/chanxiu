@@ -202,8 +202,10 @@
                         text += "\n";
                         text += "【排行榜】\n";
 
-                        this.trainRanks.forEach((n) => {
-                            text += `  ${n.rank}、${n.nickName}  ${n.trainInfo}\n`;
+                        this.trainRanks.forEach((n, index) => {
+                            if (index !== 0 || (index === 0 && this.trainRanks[0] === 1 && this.trainRanks[0] !== this.trainRanks[1])) {
+                                text += `  ${n.rank}.${n.nickName}  ${n.trainInfo}\n`;
+                            }
                         });
                     }
                 }
