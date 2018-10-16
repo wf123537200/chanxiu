@@ -646,9 +646,10 @@
         url: '/train/summary',
         params: {},
         success: (d) => {
+          d.trainInfo = d.trainInfo || {}
           const strLastTime = d.trainInfo.strLastTime
           if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
-            d.trainInfo.continuousNum = 1
+            d.trainInfo.continuousNum = 0
           }
           Object.assign(this, d.trainInfo)
           getCt.call(this)
@@ -850,12 +851,17 @@
       this.minute = this.oMinute = setTimeL.minute
       this.isFinite = this.hour === '00' && this.minute === '00'
     }
+
     if(exTypeL) {
       this.type1 = exTypeL.type1
       this.type30 = exTypeL.type30
       this.type31 = exTypeL.type31
       this.type4 = exTypeL.type4
-      this.exList = exTypeL.exList.split(' ')
+      if (exTypeL.exList && exTypeL.exList.length) {
+        this.exList = exTypeL.exList.split(' ')
+      } else {
+        this.exList = ''
+      }
     }
 
     this.backgroundImage = this.$parent.globalData.backgroundImage;
@@ -867,8 +873,8 @@
     }, 1000)
 
     initAjax.call(this)
-
     initMethods.call(this)
+
     // 音乐类型
     ajax({
       ins: this,
@@ -926,7 +932,7 @@
       averageDayTime: 0,
       totalCount: 0,
       singleMostDuration: 0,
-      continuousNum: 1,
+      continuousNum: 0,
       todayTrainCount: 0,
       todayDuration: 0,
       promotionArticleName: '',

@@ -259,7 +259,7 @@
     typeList.forEach((t, index) => {
       trainMethodIds.push(this['typeList' + (index + 1)][t].id)
     })
-    const strEndTime = [date, time].join(' ')
+    const strEndTime = [date, time + ':00'].join(' ')
 
     return {
       // 练习时长(秒)/整型

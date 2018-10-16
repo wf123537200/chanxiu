@@ -9,7 +9,7 @@ export const ajax = function ({ins, url, params = {}, method = 'GET', success, f
 
   const d = wx.getStorageSync('token')
   //const token = url !== '/weixin/token' ? ins.accessToken || (ins.$parent ? ins.$parent.accessToken || d.accessToken || '' : '') : '';
-    const token = url !== '/weixin/token' ? _global.ins.accessToken || d.accessToken : "";
+  let token = url !== '/weixin/token' ? _global.ins.accessToken || d.accessToken : "";
 
   wx.getNetworkType({
     success: async (res) => {
