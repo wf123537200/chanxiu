@@ -273,7 +273,8 @@
         'pages/class/fail',
         'pages/class/qr',
         'pages/class/wechat-qr',
-        'pages/class/reporter'
+        'pages/class/reporter',
+          'pages/class/rules'
       ],
       window: {
         backgroundTextStyle: 'light',

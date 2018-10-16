@@ -216,6 +216,13 @@
             this.bgImg = `${ajaxPerfix}/res/app/train.png`;
         }
 
+        onShareAppMessage () {
+            return {
+                title: `${this.userInfo.nickName}邀请你加入班级`,
+                path: "/pages/class/list"
+            }
+        }
+
         async onShow() {
             this.$parent.getUserInfo((userInfo) => {
                 this.userInfo = Object.assign({}, userInfo);
