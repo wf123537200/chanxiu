@@ -85,6 +85,17 @@
                     <image class="more" src="/images/more-gray.png" wx:if="{{isMyClass && detail.isSupportAdd}}"></image>
                 </button>
             </form>
+
+            <navigator url="/pages/class/rules" wx:if="{{isMonitor || isViceMonitor}}">
+                <form report-submit="true" data-from="16" @submit="getFormId">
+                    <button plain="true" class="field btn-formid" form-type="submit" hover-class="none">
+                        <text class="label">班干部管理手册</text>
+                        <view class="content"></view>
+                        <image class="more" src="/images/more-gray.png"></image>
+                    </button>
+                </form>
+            </navigator>
+
         </view>
 
         <view class="intro">

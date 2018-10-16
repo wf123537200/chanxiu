@@ -128,11 +128,12 @@
                                     <view class="time">{{detailItem.strCreateTime}}</view>
                                     <view class="every">{{detailItem.secondTitle}}</view>
                                 </view>
-                                <view class="diary {{contentVisibleInfo[detailItem.id] || (contentHeights[detailItem.id] && hasInitContentHeight[detailItem.id] && contentHeights[detailItem.id].boxHeight >= contentHeights[detailItem.id].textHeight) ? 'show' : ''}}" wx:if="{{detailItem.content}}">
+                                <!--<view class="diary {{detailItem.type !== 2 || contentVisibleInfo[detailItem.id] || (contentHeights[detailItem.id] && hasInitContentHeight[detailItem.id] && contentHeights[detailItem.id].boxHeight >= contentHeights[detailItem.id].textHeight) ? 'show' : ''}}" wx:if="{{detailItem.content}}">-->
+                                <view class="diary {{detailItem.type !== 2 || (contentHeights[detailItem.id] && hasInitContentHeight[detailItem.id] && contentHeights[detailItem.id].boxHeight >= contentHeights[detailItem.id].textHeight) ? 'show' : ''}}" wx:if="{{detailItem.content}}">
                                     <view class="content-box {{hasInitContentHeight[detailItem.id] ? 'ready' : ''}}" data-id="{{detailItem.id}}">
                                         <view class="text" data-id="{{detailItem.id}}">{{detailItem.content}}</view>
                                     </view>
-                                    <text class="view-all" data-id="{{detailItem.id}}" wx:if="{{contentHeights[detailItem.id] && hasInitContentHeight[detailItem.id] && contentHeights[detailItem.id].boxHeight < contentHeights[detailItem.id].textHeight}}" @tap="showContent">查看全文</text>
+                                    <text class="view-all" data-id="{{detailItem.id}}" data-content="{{detailItem.content}}" data-title="{{detailItem.title}}" data-refId="{{detailItem.refId}}" wx:if="{{detailItem.type === 2 && contentHeights[detailItem.id] && hasInitContentHeight[detailItem.id] && contentHeights[detailItem.id].boxHeight < contentHeights[detailItem.id].textHeight}}" @tap="showContent">查看全文</text>
                                 </view>
                             </view>
                         </block>
@@ -511,27 +512,9 @@
             },
             hasTrainInfo () {
                 return this.brief.trainInfo && !!this.brief.trainInfo.trainNum;
-                // if (this.currentRankTab === "train") {
-                //     return this.brief.trainInfo1 && !!this.brief.trainInfo1.trainNum;
-                // }
-                // else if (this.currentRankTab === "rank") {
-                //     return this.brief.trainInfo2 && !!this.brief.trainInfo2.trainNum;
-                // }
-                // else {
-                //     return this.brief.trainInfo3 && !!this.brief.trainInfo3.trainNum;
-                // }
             },
             briefTrainInfo () {
                 return this.brief.trainInfo;
-                // if (this.currentRankTab === "train") {
-                //     return this.brief.trainInfo1;
-                // }
-                // else if (this.currentRankTab === "rank") {
-                //     return this.brief.trainInfo2;
-                // }
-                // else {
-                //     return this.brief.trainInfo3;
-                // }
             },
             trainRecords () {
                 let _trainRecords = [...this._trainRecords];
@@ -663,7 +646,13 @@
                 this.$invoke("remindPopup", "show");
             },
             showContent (e) {
-                this.contentVisibleInfo[e.currentTarget.dataset.id] = true;
+                const {title, content, refId} = e.currentTarget.dataset;
+                this.$parent.globalData.diaryTitle = title.slice(1, -1);
+                this.$parent.globalData.diaryContent = content;
+                this.$parent.globalData.diaryId = refId;
+                this.$parent.globalData.readOnly = true;
+                this.$navigate("/pages/ex-diary");
+                //this.contentVisibleInfo[e.currentTarget.dataset.id] = true;
             },
             markRemind () {
                 this.detail.isRemind = true;

@@ -1,0 +1,22 @@
+<template>
+    <web-view src="{{promotionArticleUrl}}"></web-view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+
+    export default class Tag extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: '班干部管理手册'
+        };
+
+        data = {
+            promotionArticleUrl: "https://mp.weixin.qq.com/s/evnfIbsRO7Cx-JzDVJd_1w"
+        };
+
+        onLoad(params) {
+            this.promotionArticleUrl = params.promotionArticleUrl;
+        }
+    }
+</script>
