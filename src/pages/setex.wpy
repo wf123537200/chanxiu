@@ -843,7 +843,6 @@
   }
 
   const initPage = async function() {
-    console.log('setex init 3')
     // 缓存
     const setTimeL = wx.getStorageSync('setTime');
     const exTypeL = wx.getStorageSync('exType');
@@ -852,18 +851,22 @@
       this.minute = this.oMinute = setTimeL.minute
       this.isFinite = this.hour === '00' && this.minute === '00'
     }
+
     if(exTypeL) {
       this.type1 = exTypeL.type1
       this.type30 = exTypeL.type30
       this.type31 = exTypeL.type31
       this.type4 = exTypeL.type4
-      this.exList = exTypeL.exList.split(' ')
+      if (exTypeL.exList && exTypeL.exList.length) {
+        this.exList = exTypeL.exList.split(' ')
+      } else {
+        this.exList = ''
+      }
     }
 
     this.backgroundImage = this.$parent.globalData.backgroundImage;
     this.resPirfix = this.$parent.globalData.resPerfix;
 
-    console.log('setex init 4')
     setTimeout(t => {
       this.hourIndex = [this.hours.findIndex(t => t === this.hour)]
       this.minuteIndex = [this.minutes.findIndex(t => t === this.minute)]
@@ -872,7 +875,6 @@
     initAjax.call(this)
     initMethods.call(this)
 
-    console.log('setex init 5')
     // 音乐类型
     ajax({
       ins: this,
@@ -891,20 +893,16 @@
       }
     })
 
-    console.log('setex init 6')
     ajax({
       ins: this,
       url: '/push/article',
       params: {},
       success: (d) => {
-        console.log('setex init 5')
-        console.log(JSON.stringify(d))
         Object.assign(this, {
           promotionArticleName: d.name,
           promotionArticleUrl: d.url,
           promotionArticleBrief: d.brief,
         })
-        console.log('setex init 6')
         wx.hideLoading()
         this.$apply()
       }
@@ -1013,9 +1011,7 @@
     onLoad() {
       const that = this
       wx.showLoading({title: '加载中..'})
-      console.log('setex init')
       that.$parent.getUserInfo((userInfo) => {
-        console.log('setex init 2')
         if (userInfo && userInfo.nickName) {
           that.userInfo = userInfo
         }
