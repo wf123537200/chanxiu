@@ -815,6 +815,7 @@
         this.upstateState = d.isMe || !userId
         this.isMe = d.isMe
         this.userInfo = d
+        this.queryUserId = ''
         this.$apply()
       }
     })
@@ -1221,7 +1222,7 @@
     }
     onLoad(options) {
       console.log(options)
-      this.userId = options.userId || ''
+      this.queryUserId = options.userId || ''
     }
     onPullDownRefresh() {
       console.log('onPullDownRefresh')
@@ -1237,7 +1238,7 @@
       wx.showLoading({title: '加载中..'})
       this.page = 1
       this.hasData = true
-      const userId = this.userId
+      const userId = this.queryUserId
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
       if (!userId) {
