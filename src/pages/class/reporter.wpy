@@ -163,9 +163,11 @@
                         wx.showToast({
                             title: "复制成功",
                             complete: () =>{
-                                wx.redirectTo({
-                                    url: "/pages/class/news?id=" + this.classId
-                                });
+                                setTimeout(() => {
+                                    wx.redirectTo({
+                                        url: "/pages/class/news?id=" + this.classId
+                                    });
+                                }, 1500);
                             }
                         });
                     }
@@ -192,7 +194,7 @@
                     text += "  暂无人参与练习\n"
                 }
                 else {
-                    text += `  共${this.trainInfo.trainNum}人练习，人均每日${this.trainInfo.averageTime}分钟\n`;
+                    text += `  共${this.trainInfo.trainNum}人练习，人均${this.trainInfo.averageTime}分钟\n`;
                 }
 
                 if (timeType === 1) {

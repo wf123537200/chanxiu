@@ -27,7 +27,7 @@
                         </view>
                     </view>
 
-                    <text class="total" wx:if="{{hasTrainInfo}}">共{{briefTrainInfo.trainNum}}人参与，人均每日{{briefTrainInfo.averageTime}}分钟</text>
+                    <text class="total" wx:if="{{hasTrainInfo}}">共{{briefTrainInfo.trainNum}}人参与，人均{{briefTrainInfo.averageTime}}分钟</text>
                     <text class="total" wx:else>暂无人参与练习</text>
                 </view>
 
