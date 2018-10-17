@@ -40,19 +40,12 @@
 
                 if (this.request_ok) {
                     this.request_ok = false;
-                    await deleteClass.bind(this)().catch(() => {
-                        wx.showToast({
-                            title: "操作失败"
-                        });
+                    await deleteClass.bind(this)();
 
-                        throw "班级解散失败";
-                    });
-
+                    this.request_ok = true;
                     wx.showToast({
                         title: "班级已解散",
                         complete: () => {
-                            this.request_ok = true;
-
                             wx.switchTab({
                                 url: "/pages/class/list"
                             });

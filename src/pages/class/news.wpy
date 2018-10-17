@@ -27,7 +27,7 @@
                         </view>
                     </view>
 
-                    <text class="total" wx:if="{{hasTrainInfo}}">共{{briefTrainInfo.trainNum}}人参与，人均{{briefTrainInfo.averageTime}}分钟</text>
+                    <text class="total" wx:if="{{hasTrainInfo}}">共{{briefTrainInfo.trainNum}}人参与，人均每日{{briefTrainInfo.averageTime}}分钟</text>
                     <text class="total" wx:else>暂无人参与练习</text>
                 </view>
 
@@ -449,7 +449,7 @@
 
         data = {
             userInfo: {},
-            currentTab: "record",
+            currentTab: "",
             tab: [
                 {
                     id: "record",
@@ -474,6 +474,7 @@
             _trainRecords: [],
             trainRecordCount: 10,
             trainRecordRequestCount: 0,
+            hasFetchTrainInfo: false,
             hasFetchRecords: false,
             //trainRecords: [],
             contentHeights: {},
@@ -586,14 +587,14 @@
                 }
             },
             async currentTab (value, oldValue) {
-                if (value === "brief" && oldValue !== value) {
-                    //wx.showLoading();
-                    await this.getData();
-                    //wx.hideLoading();
-                }
-                else if (value === "record" && oldValue !== value) {
+                if (value === "record" && oldValue !== value && !this.hasFetchRecords) {
                     //wx.showLoading();
                     await this.getTrainRecords();
+                    //wx.hideLoading();
+                }
+                else if (value === "brief" && oldValue !== value && !this.hasFetchTrainInfo) {
+                    //wx.showLoading();
+                    await this.getData();
                     //wx.hideLoading();
                 }
             }
@@ -704,11 +705,14 @@
             else {
                 await this.getInterrupts();
             }
+
+            this.hasFetchTrainInfo = true;
         }
 
         async getTrainRecords () {
             await getTrainRecords.bind(this)();
             //this.$apply();
+            this.hasFetchRecords = true;
             this.initContentHeight();
         }
 
@@ -745,12 +749,16 @@
         }
 
         init () {
-            this._trainRecords = [];
-            this.currentTab = "record";
-            this.currentRankTab = "train";
-            this.trainRecordRequestCount = 0;
-            this.hasInitContentHeight = {};
-            this.contentHeights = {};
+            this.currentTab = this.currentTab || "record";
+            // 初始化
+            //console.log("clear");
+            // this._trainRecords = [];
+            // this.currentTab = "record";
+            // this.currentRankTab = "train";
+            // this.trainRecordRequestCount = 0;
+            // this.hasFetchTrainInfo = false;
+            // this.hasInitContentHeight = {};
+            // this.contentHeights = {};
         }
 
         onShareAppMessage () {
@@ -765,7 +773,7 @@
                 this.init();
                 this.userInfo = Object.assign({}, userInfo);
                 this.addReadyCallback(this.getClassDetail());
-                this.addReadyCallback(this.getTrainRecords());
+                // this.addReadyCallback(this.getTrainRecords());
                 await this.runReadyCallbacks();
                 this.initContentHeight();
 

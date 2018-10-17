@@ -15,7 +15,7 @@
                 <button class="{{brief.timeType === 2 ? 'active' : ''}}" plain="true" form-type="submit" data-type="2" @tap="switchTimeType">本周</button>
                 <button class="{{brief.timeType === 3 ? 'active' : ''}}" plain="true" form-type="submit" data-type="3" @tap="switchTimeType">本月</button>
             </view>
-            <button class="btn-copy btn-secondary" form-type="submit" @tap="copy">复制简报</button>
+            <button class="btn-copy btn-primary" form-type="submit" @tap="copy">复制简报</button>
         </form>
     </block>
 
@@ -132,7 +132,7 @@
     export default class extends wepy.page {
         config = {
             disableScroll: true,
-            navigationBarTitleText: "欢迎加入班级"
+            navigationBarTitleText: "通报到群"
         };
 
         components = {
@@ -160,6 +160,14 @@
                     data: this.reporterText,
                     success: () => {
                         //this.$invoke("toast", "show");
+                        wx.showToast({
+                            title: "复制成功",
+                            complete: () =>{
+                                wx.redirectTo({
+                                    url: "/pages/class/news?id=" + this.classId
+                                });
+                            }
+                        });
                     }
                 });
             }
@@ -203,7 +211,7 @@
                         text += "【排行榜】\n";
 
                         this.trainRanks.forEach((n, index) => {
-                            if (index !== 0 || (index === 0 && this.trainRanks[0] === 1 && this.trainRanks[0] !== this.trainRanks[1])) {
+                            if (index !== 0 || (index === 0 && !this.trainRanks[1] || n.rank === 1 && n.rank !== this.trainRanks[1].rank)) {
                                 text += `  ${n.rank}.${n.nickName}  ${n.trainInfo}\n`;
                             }
                         });
