@@ -180,7 +180,7 @@
       }
     })
 
-    playAudio(this.$parent.globalData.resPerfix + 'res/music/end.mp3', 'end')
+    playAudio(this.$parent.globalData.resPerfix + '/res/music/end.mp3', 'end')
 
     // 跳转
     this.$parent.globalData.musicUrl = ''
@@ -236,7 +236,7 @@
 
       this.$parent.globalData.isInex = true
       wx.hideShareMenu()
-      playAudio(this.$parent.globalData.resPerfix + 'res/music/begin.mp3', 'begin', () => {
+      playAudio(this.$parent.globalData.resPerfix + '/res/music/begin.mp3', 'begin', () => {
         if(this.$parent.globalData.musicUrl) {
           playAudio(this.$parent.globalData.musicUrl, this.$parent.globalData.musicTitle)
         }
