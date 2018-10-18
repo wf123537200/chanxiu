@@ -59,7 +59,7 @@
       <input class="ex-diary-title" bindinput="timeSetInput" value="{{title}}"
              maxlength="30" type="text" placeholder="请输入日记标题"/>
       <textarea class="ex-diary-content" bindinput="experienceInput"
-                value="{{content}}" maxlength="3000" auto-focus placeholder="请输入日记内容" />
+                value="{{content}}" maxlength="3000" placeholder="请输入日记内容" />
 
       <view class="footer">
         <view class="cancel-btn mr-20" @tap="cancelFn">取消</view>
@@ -70,9 +70,9 @@
       <view class="ex-diary-title">
         {{title}}
       </view>
-      <view class="ex-diary-content">
+      <text class="ex-diary-content">
         {{content}}
-      </view>
+      </text>
     </view>
   </view>
 </template>
@@ -166,11 +166,10 @@
       }
     }
     onShow() {
-      console.log('onShow')
-      this.title = this.$parent.globalData.diaryTitle || this.title
+      const title = this.$parent.globalData.diaryTitle || this.title || ''
+      this.title = title.replace('《', '').replace('》', '')
       this.content = this.$parent.globalData.diaryContent
       this.readOnly = this.$parent.globalData.readOnly
-      console.log('onShow')
 
       const strCreateTime = this.$parent.globalData.diaryStrCreateTime
       if (strCreateTime && strCreateTime.split(' ') && strCreateTime.split(' ').length >= 2) {
