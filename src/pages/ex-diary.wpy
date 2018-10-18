@@ -166,12 +166,10 @@
       }
     }
     onShow() {
-      console.log('onShow')
       const title = this.$parent.globalData.diaryTitle || this.title || ''
       this.title = title.replace('《', '').replace('》', '')
       this.content = this.$parent.globalData.diaryContent
       this.readOnly = this.$parent.globalData.readOnly
-      console.log('onShow')
 
       const strCreateTime = this.$parent.globalData.diaryStrCreateTime
       if (strCreateTime && strCreateTime.split(' ') && strCreateTime.split(' ').length >= 2) {
