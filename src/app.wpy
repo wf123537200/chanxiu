@@ -40,6 +40,9 @@
   background-color: transparent;
   padding: 0;
   height: auto;
+  line-height: inherit;
+  font-size:inherit;
+  color: inherit;
 }
 
 .login-fixed-wrap {
@@ -328,8 +331,8 @@
       hasNetwork: true,
       authInfo: null,
       userInfo: null,
-      ajaxPerfix: `http${__NODE_ENV__ === "prod" ? 's': ''}://m.duding.xin`,
-      resPerfix: `http${__NODE_ENV__ === "prod" ? 's': ''}://m.duding.xin`,
+      ajaxPerfix: `http${__NODE_ENV__ === "prod" ? 's': 's'}://m.duding.xin`,
+      resPerfix: `http${__NODE_ENV__ === "prod" ? 's': 's'}://m.duding.xin`,
       diaryTitle: '',
       diaryContent: '',
       diaryStrCreateTime: '',
