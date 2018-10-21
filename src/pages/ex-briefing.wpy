@@ -1129,7 +1129,6 @@
             console.log(e)
           }
         }
-        console.log(shareParam)
 
         return shareParam
       },
