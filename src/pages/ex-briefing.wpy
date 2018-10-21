@@ -767,7 +767,7 @@
       params: {
         // timeType/分类/整型 1=查询本周，2=查询本月，3=查询全
         timeType: this.timeType,
-        userId: this.userId
+        userId: this.queryUserId
       },
       success: (d) => {
         const trainInfo = d.trainInfo || {}
@@ -784,7 +784,7 @@
     ajax({
       ins: this,
       url: '/brief/today/info',
-      params: { userId: this.userId },
+      params: { userId: this.queryUserId },
       success: (d) => {
         const trainInfo = d.trainInfo || {}
         if (trainInfo) {
@@ -815,7 +815,6 @@
         this.upstateState = d.isMe || !userId
         this.isMe = d.isMe
         this.userInfo = d
-        this.queryUserId = ''
         this.$apply()
       }
     })
@@ -891,7 +890,7 @@
         findType: this.dynamicTimeType,
         offset: (this.page - 1) * pageSize,
         count: pageSize,
-        userId: this.userId
+        userId: this.queryUserId
       },
       success: (data) => {
         if (data) {
@@ -1019,7 +1018,8 @@
       },
       picUrl: '',
       isShowShare: false,
-      isShowImage: false
+      isShowImage: false,
+      queryUserId: '',
     }
     mixins = [ share ]
     onGotUserInfo(e) {
@@ -1221,7 +1221,7 @@
       }
     }
     onLoad(options) {
-      console.log(options)
+      console.log('queryUserId', options)
       this.queryUserId = options.userId || ''
     }
     onPullDownRefresh() {
