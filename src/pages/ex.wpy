@@ -87,7 +87,6 @@
 <script>
   import wepy from 'wepy'
   import moment from 'moment'
-  import {ajax} from '../components/ajax.js'
 
   function setTime({hour, minute, second = 0, isFinite}) {
     let cHour = parseInt(hour, 10)
@@ -216,9 +215,11 @@
       navigationBarTitleText: '练习'
     }
     data = {
+        leftSeconds: "",
+        totalSeconds: "",
       showTime: '',
       isEnd: false,
-      isPause: false,
+      isPause: "",
       backgroundImage: '',
       isFinite: false,
       curTime: {
@@ -226,67 +227,108 @@
         minute: 0
       }
     }
+
+    needPowerManager = false;
+
+    watch = {
+        curTime (value) {
+            if (!this.isFinite) {
+                const seconds = value.hour * 60 * 60 + value.minute * 60 + value.second;
+
+                if (this.totalSeconds === "") {
+                    this.totalSeconds = seconds;
+                }
+
+                this.leftSeconds = seconds;
+
+                if(this.leftSeconds === 0) {
+                    clearInterval(this.timer)
+                    this.timer = "";
+                    onEnd.call(this)
+                }
+            }
+
+            this.showTime = setTime(Object.assign(value, {isFinite: this.isFinite}));
+            this.$apply();
+        },
+        isPause (value, oldValue) {
+            // if (value) {
+            //     wx.getScreenBrightness({
+            //         success: (o) => {
+            //             this.screenBrightness = o.value;
+            //             this.dark = setTimeout(() => {
+            //                 wx.setScreenBrightness({
+            //                     value: 0
+            //                 });
+            //             }, 10000);
+            //         }
+            //     });
+            // }
+            // else {
+            //
+            // }
+        }
+    }
+
+    onShow () {
+    }
+
     onHide() {
       // onTapStop.call(this)
     }
     onLoad(params) {
-      wx.setKeepScreenOn({
-        keepScreenOn: true,
-      })
+      // wx.setKeepScreenOn({
+      //   keepScreenOn: true,
+      // })
 
+        this.leftSeconds = "";
+        this.totalSeconds = "";
+        this.isPause = false;
       this.$parent.globalData.isInex = true
       wx.hideShareMenu()
       playAudio(this.$parent.globalData.resPerfix + '/res/music/begin.mp3', 'begin', () => {
         if(this.$parent.globalData.musicUrl) {
           playAudio(this.$parent.globalData.musicUrl, this.$parent.globalData.musicTitle)
         }
-      })
+      });
       this.params = params;
       this._d = null;
       const hour = parseInt(this.params.hour, 10)
       this.params.isFinite = this.isFinite = this.params.isFinite === 'true'
       this.backgroundImage = this.$parent.globalData.backgroundImage;
-      this.showTime = setTime(this.params)
+      this.showTime = setTime(this.params);
 
-      if(this.timer) clearInterval(this.timer)
+      if(this.timer) clearInterval(this.timer);
       this.timer = setInterval(() => {
         if(!this._d) this._d = new Date([d.getFullYear(), d.getMonth(), d.getDate()].join('/') + ' ' + ((hour > 0 || this.isFinite) ? this.showTime : ('00:' + this.showTime)))
-        const minusTime = this.curTime = this.isFinite ? getPlusTime.call(this, this._d) : getMinusTime.call(this, this._d)
-        // 如果都是0结束
-        if(minusTime.hour === 0 && minusTime.minute === 0 && minusTime.second === 0) {
-          clearInterval(this.timer)
-          this.timer = ''
-          onEnd.call(this)
-        }
-        this.showTime = setTime(Object.assign(minusTime, {isFinite: this.isFinite}))
-        this.$apply()
-      }, TIME)
+        this.curTime = this.isFinite ? getPlusTime.call(this, this._d) : getMinusTime.call(this, this._d);
+        this.$apply();
+      }, TIME);
     }
     methods = {
       onTapStop() {
-        onTapStop.call(this)
+        onTapStop.call(this);
       },
       onGoon() {
-        if(this.timer) return
-        const hour = parseInt(this.params.hour, 10)
-        wx.playBackgroundAudio()
+        if(this.timer) return;
+        wx.playBackgroundAudio();
 
-        const timer = setInterval(() => {
+        this.isPause = false;
+        this.timer = setInterval(() => {
           let dVal = [d.getFullYear(), d.getMonth(), d.getDate()].join('/') + ' ' + ((this.showTime.length > 5 || this.isFinite) ? this.showTime : ('00:' + this.showTime))
-          this._d = new Date(dVal)
-          const minusTime = this.curTime = this.isFinite ? getPlusTime.call(this, this._d) : getMinusTime.call(this, this._d)
-          // 如果都是0结束
-          if(minusTime.hour === 0 && minusTime.minute === 0 && minusTime.second === 0) {
-            clearInterval(this.timer)
-            this.timer = ''
-            onEnd.call(this)
-          }
-          this.showTime = setTime(Object.assign(minusTime, {isFinite: this.isFinite}))
-          this.$apply()
-        }, TIME)
-
-        this.timer = timer
-        this.isPause = false
+          this._d = new Date(dVal);
+          this.curTime = this.isFinite ? getPlusTime.call(this, this._d) : getMinusTime.call(this, this._d);
+          //console.log(this.curTime);
+          // // 如果都是0结束
+          // if(minusTime.hour === 0 && minusTime.minute === 0 && minusTime.second === 0) {
+          //   clearInterval(this.timer)
+          //   this.timer = ''
+          //   onEnd.call(this)
+          // }
+          // this.showTime = setTime(Object.assign(minusTime, {isFinite: this.isFinite}))
+          // this.$apply()
+            this.$apply();
+        }, TIME);
       },
       onEnd() {
         onEnd.call(this)
