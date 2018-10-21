@@ -1109,7 +1109,7 @@
         if (shareBtnId && shareBtnId.indexOf('briefingShare5') >= 0) {
           const arr = shareBtnId.split('_')
           if (arr.length == 2 && !isNaN(arr[1])) {
-            title = nickName + '的《' + (this.dynamicList[parseInt(arr[1])].title || '') + '》'
+            title = nickName + '的' + (this.dynamicList[parseInt(arr[1])].title || '')
           }
         } else if (shareBtnId && shareBtnId.indexOf('briefingShare') >= 0) {
           // 其它练习状态
