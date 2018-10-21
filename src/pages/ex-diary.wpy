@@ -22,8 +22,8 @@
   }
   .ex-diary-content {
     flex: 1;
-    font-size: 13px;
-    color: $gray-dark;
+    font-size: 16px;
+    color: $black;
     width: 100%;
     line-height: 1.5;
     box-sizing: border-box;
@@ -59,7 +59,7 @@
       <input class="ex-diary-title" bindinput="timeSetInput" value="{{title}}"
              maxlength="30" type="text" placeholder="请输入日记标题"/>
       <textarea class="ex-diary-content" bindinput="experienceInput"
-                value="{{content}}" maxlength="3000" placeholder="请输入日记内容" />
+                value="{{content}}" maxlength="3000" placeholder="你可以记录一天中，各时段的正念状态，或者你希望改善的某些行为习惯" />
 
       <view class="footer">
         <view class="cancel-btn mr-20" @tap="cancelFn">取消</view>

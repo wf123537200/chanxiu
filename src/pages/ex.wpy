@@ -106,7 +106,7 @@
     }
   }
 
-  const TIME = 1000;
+  const TIME = 100;
   function getMinusTime(d) {
     const dx = this._d = new Date(d.setSeconds(d.getSeconds() - 1))
     return {hour: dx.getHours(), minute: d.getMinutes(), second: d.getSeconds()}
