@@ -64,22 +64,28 @@
     <view class="btn-wrap {{isPause ? '' : 'hide'}}">
       <view>
         <view class="btn shadow left-btn"></view>
-        <view class="btn left-btn" @tap.stop="onGoon">
-          <view class="image">
-            <image class="btn-image" src="/images/go-on.png"></image>
-          </view>
-          <view class="text">继续</view>
-        </view>
+
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button btn left-btn" form-type="submit" @tap.stop="onGoon">
+            <view class="image">
+              <image class="btn-image" src="/images/go-on.png"></image>
+            </view>
+            <view class="text">继续</view>
+          </button>
+        </form>
       </view>
       <view>
         <view class="btn shadow right-btn"></view>
-        <view class="btn right-btn" @tap.stop="onEnd">
-          <view class="image">
-            <image class="btn-image" style="margin-left: 11px;" src="/images/stop-btn.png"></image>
-          </view>
-          <view class="text">结束</view>
-        </view>
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button btn right-btn" form-type="submit" @tap.stop="onEnd">
+            <view class="image">
+              <image class="btn-image" style="margin-left: 11px;" src="/images/stop-btn.png"></image>
+            </view>
+            <view class="text">结束</view>
+          </button>
+        </form>
       </view>
+
     </view>
   </view>
 </template>
@@ -87,6 +93,7 @@
 <script>
   import wepy from 'wepy'
   import moment from 'moment'
+  import formIds from "../mixins/formIds"
   import {ajax} from '../components/ajax.js'
 
   function setTime({hour, minute, second = 0, isFinite}) {
@@ -226,6 +233,7 @@
         minute: 0
       }
     }
+    mixins = [ formIds ]
     onHide() {
       // onTapStop.call(this)
     }
