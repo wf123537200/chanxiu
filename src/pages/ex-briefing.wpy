@@ -955,7 +955,9 @@
           this.hasData = data.length && data.length >= pageSize
           this.dynamicDataLoading = false
         } else {
-          this.dynamicList = []
+          if (this.page == 1) {
+            this.dynamicList = []
+          }
           this.hasData = false
           this.dynamicDataLoading = false
         }
