@@ -253,6 +253,19 @@
   import {ajax} from '../components/ajax.js'
   import formIds from "../mixins/formIds"
 
+  const getUserId = function() {
+    let params = {}
+
+    ajax({
+      ins: this,
+      url: '/brief/user/info',
+      params,
+      success: (d) => {
+        this.userId = d.id
+      }
+    })
+  }
+
   export default class End extends wepy.page {
     config = {
       disableScroll: true,
@@ -262,6 +275,7 @@
     }
     data = {
       userInfo: {},
+      userId: '',
       isShowTips: false,
       isShowShare: false,
       tips: '',
@@ -332,6 +346,8 @@
           this.$apply()
         }
       })
+
+      getUserId.call(this)
     }
     methods = {
       onTapStop() {
@@ -399,10 +415,11 @@
         })
       },
       onShareAppMessage (res) {
-        console.log('分享图片路径为： ' + this.resPerfix + this.shareUrl)
+        let path = 'pages/ex-briefing?_f=1&userId=' + this.userId
+
         return {
-          title: this.userInfo.nickName + '今天' + this.extype + this.exTime + '分钟，连续第' + this.continuousNum + '天',
-          path: '/pages/setex',
+          title: this.userInfo.nickName + this.extype + this.exTime + '分钟，连续第' + this.continuousNum + '天',
+          path,
           imageUrl: this.resPerfix + this.shareUrl + '?' + Date.now(),
           complete: (e) => {
             console.log(e)
