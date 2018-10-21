@@ -590,9 +590,21 @@
     <!-- 数据 -->
     <view class="wrap ex">
       <view class="condition-pannel pl-20">
-        <view class="default-btn {{timeType == 1 ? 'condition-btn' : ''}}" @tap="timeTypeChange(1)">本周</view>
-        <view class="default-btn {{timeType == 2 ? 'condition-btn' : ''}}" @tap="timeTypeChange(2)">本月</view>
-        <view class="default-btn {{timeType == 3 ? 'condition-btn' : ''}}"  @tap="timeTypeChange(3)">全部</view>
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button default-btn {{timeType == 1 ? 'condition-btn' : ''}}" form-type="submit" @tap="timeTypeChange(1)">
+            本周
+          </button>
+        </form>
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button default-btn {{timeType == 2 ? 'condition-btn' : ''}}" form-type="submit" @tap="timeTypeChange(2)">
+            本月
+          </button>
+        </form>
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button default-btn {{timeType == 3 ? 'condition-btn' : ''}}" form-type="submit" @tap="timeTypeChange(3)">
+            全部
+          </button>
+        </form>
       </view>
       <view class="header-banner-wrap">
         <view class="header-cols">
@@ -640,9 +652,21 @@
     </view>
     <view class="ex-list-pannel">
       <view class="condition-pannel pl-20">
-        <view class="default-btn {{dynamicTimeType == 1 ? 'condition-btn' : ''}}" @tap="dynamicTimeTypeChange(1)">所有</view>
-        <view class="default-btn {{dynamicTimeType == 2 ? 'condition-btn' : ''}}" @tap="dynamicTimeTypeChange(2)">状态记录</view>
-        <view class="default-btn {{dynamicTimeType == 3 ? 'condition-btn' : ''}}" @tap="dynamicTimeTypeChange(3)">练习日记</view>
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button default-btn {{dynamicTimeType == 1 ? 'condition-btn' : ''}}" form-type="submit" @tap="dynamicTimeTypeChange(1)">
+            所有
+          </button>
+        </form>
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button default-btn {{dynamicTimeType == 2 ? 'condition-btn' : ''}}" form-type="submit" @tap="dynamicTimeTypeChange(2)">
+            状态记录
+          </button>
+        </form>
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button default-btn {{dynamicTimeType == 3 ? 'condition-btn' : ''}}" form-type="submit" @tap="dynamicTimeTypeChange(3)">
+            练习日记
+          </button>
+        </form>
       </view>
       <repeat for="{{dynamicList}}" key="index" index="index" item="item">
         <view class="ex-content">
@@ -657,12 +681,12 @@
           <text class="flex-r m-l-35 line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">{{item.content}}</text>
           <view class="ex-process-pannel">
             <view class="read-all" @tap="readAllContent({{item}}, {{index}})">
-              {{item.content.length > 63 && !item.readAll ? '查看全文' : ''}}
+              {{item.type == 2 && !item.readAll ? '查看全文' : ''}}
             </view>
             <view class="process-btns">
               <image class="process-btn" src="/images/edit.png" wx:if="{{upstateState && item.iconType == 5}}" @tap="edit({{item}})"></image>
               <image class="process-btn delete-btn" src="/images/delete.png" wx:if="{{upstateState && (item.afterRecord || item.iconType == 5)}}" @tap="deleteEx({{item}})"></image>
-              <button class="process-btn btn share-briefing-btn" wx:if="{{upstateState && item.content}}" id="briefingShare" name="briefingShare" open-type="share">
+              <button class="process-btn btn share-briefing-btn" wx:if="{{upstateState && item.content}}" id="briefingShare{{item.iconType}}_{{index}}" name="briefingShare" open-type="share">
                 <image src="/images/send.png" class="btn-img"></image>
               </button>
             </view>
@@ -690,11 +714,11 @@
     <deleteEx>
       <view class="popup-headerr">
         <view class="flex-1">
-          删除练习状态确认
+          删除练习{{dynamic.iconType == 5 ? '日记' : '状态'}}确认
         </view>
         <image class="close-icon" src="/images/close-icon.png" @tap="deleteExCancel"/>
       </view>
-      <view class="delete-ex-desc">确定删除这条练习状态吗？</view>
+      <view class="delete-ex-desc">确定删除这条练习{{dynamic.iconType == 5 ? '日记' : '状态'}}吗？</view>
       <view class="popup-footer">
         <view class="cancel-btn mr-20" @tap="deleteExCancel">取消</view>
         <view class="cancel-btn confirm-btn" @tap="deleteComfirm">删除</view>
@@ -739,6 +763,7 @@
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
   import zanPop from '../components/zan-popup'
+  import formIds from "../mixins/formIds"
   import moment from 'moment'
   import share from "../mixins/boot";
 
@@ -767,11 +792,17 @@
       params: {
         // timeType/分类/整型 1=查询本周，2=查询本月，3=查询全
         timeType: this.timeType,
-        userId: this.userId
+        userId: this.queryUserId
       },
       success: (d) => {
-        const trainInfo = d.trainInfo || {}
-        Object.assign(this, d.trainInfo)
+        const trainInfo = d.trainInfo || {
+          totalTrainDay: 0,
+          averageDayTime: 0,
+          totalCount: 0,
+          averageEveryTime: 0,
+          singleMostDuration: 0
+        }
+        Object.assign(this, trainInfo)
         this.$apply()
       }
     })
@@ -784,7 +815,7 @@
     ajax({
       ins: this,
       url: '/brief/today/info',
-      params: { userId: this.userId },
+      params: { userId: this.queryUserId },
       success: (d) => {
         const trainInfo = d.trainInfo || {}
         if (trainInfo) {
@@ -815,7 +846,6 @@
         this.upstateState = d.isMe || !userId
         this.isMe = d.isMe
         this.userInfo = d
-        this.queryUserId = ''
         this.$apply()
       }
     })
@@ -891,10 +921,10 @@
         findType: this.dynamicTimeType,
         offset: (this.page - 1) * pageSize,
         count: pageSize,
-        userId: this.userId
+        userId: this.queryUserId
       },
       success: (data) => {
-        if (data) {
+        if (data && data.length) {
           for (let d of data) {
             let timeDesc = moment(d.strCreateTime, 'YYYY-MM-DD HH:mm:ss').startOf('minute').fromNow()
 
@@ -925,7 +955,9 @@
           this.hasData = data.length && data.length >= pageSize
           this.dynamicDataLoading = false
         } else {
-          this.dynamicList = []
+          if (this.page == 1) {
+            this.dynamicList = []
+          }
           this.hasData = false
           this.dynamicDataLoading = false
         }
@@ -1019,9 +1051,10 @@
       },
       picUrl: '',
       isShowShare: false,
-      isShowImage: false
+      isShowImage: false,
+      queryUserId: '',
     }
-    mixins = [ share ]
+    mixins = [ share, formIds ]
     onGotUserInfo(e) {
     }
     methods = {
@@ -1041,28 +1074,63 @@
         // 获取历史练习数据
         dynamicFind.call(this)
       },
+      /**
+       1、从简报页右上角直接转发，
+       标题：“XXX的练习简报”
+       链接：练习简报
+       2、有今日数据那的去打卡，
+       标题：“用户昵称+“练习方法”+ 分钟数 + “分钟，” + “连续第N天””
+       链接：练习简报
+       3、有练习记录区的某条练习记录转发
+       标题：“用户昵称+“练习方法”+ 分钟数 + “分钟，” + “连续第N天””
+       链接：练习简报
+       4、有练习日记转发
+       标题：“XXX的《”+日记名称+“》”。
+       链接：日记查询页面（日记查询接口）
+       * @param res
+       * @return {{title: string, path: string, imageUrl: string, complete: complete}}
+       */
       onShareAppMessage (res) {
         const shareBtnId = res.target ? res.target.id : ''
-        let path = '/pages/setex'
+        const nickName = this.userInfo.nickName
 
-        if (shareBtnId == 'briefingShare') {
-          path = 'pages/ex-briefing?_f=1&userId=' + this.userId
+        console.log(shareBtnId)
+
+        // 从简报页右上角直接转发
+        let path = 'pages/ex-briefing?_f=1&userId=' + this.userId
+        let title = nickName + '的练习简报'
+        // path = '/pages/setex'
+
+        // 去打卡
+        if (shareBtnId == 'wxBtn') {
+          title = nickName + `今天练习${this.todayInfo.todayTrainCount}次，共${this.todayInfo.todayDuration}分钟`
+        }
+        // 日记分享
+        if (shareBtnId && shareBtnId.indexOf('briefingShare5') >= 0) {
+          const arr = shareBtnId.split('_')
+          if (arr.length == 2 && !isNaN(arr[1])) {
+            title = nickName + '的' + (this.dynamicList[parseInt(arr[1])].title || '')
+          }
+        } else if (shareBtnId && shareBtnId.indexOf('briefingShare') >= 0) {
+          // 其它练习状态
+          title = nickName + `今天练习${this.todayInfo.todayTrainCount}次，共${this.todayInfo.todayDuration}分钟`
         }
 
         let imageUrl = ''
         if (this.shareUrl) {
           imageUrl = this.resPerfix + this.shareUrl + '?' + Date.now()
         }
-        console.log('分享的path：' + path)
 
-        return {
-          title: this.userInfo.nickName + `今天练习${this.todayInfo.todayTrainCount}次，共${this.todayInfo.todayDuration}分钟`,
+        const shareParam = {
+          title,
           path,
           imageUrl: imageUrl,
           complete: (e) => {
             console.log(e)
           }
         }
+
+        return shareParam
       },
       contentInput(e) {
         this.dynamic.content = e.detail.value
@@ -1221,7 +1289,7 @@
       }
     }
     onLoad(options) {
-      console.log(options)
+      console.log('queryUserId', options)
       this.queryUserId = options.userId || ''
     }
     onPullDownRefresh() {

@@ -52,6 +52,9 @@
   .ml10p {
     margin-left: 10%;
   }
+  .lineh1 {
+    line-height: 1;
+  }
   .pd5 {
     padding:5px 0;
   }
@@ -412,75 +415,90 @@
     <login :userInfo.sync="userInfo" @login.user="login" wx:if="{{!userInfo || !userInfo.nickName}}"></login>
 
     <!-- 展示栏 -->
-    <view class="wrap" @tap="toBriefing">
-      <view class="header-banner-wrap">
-        <view class="header-banner">
-          <view>总天数</view>
-          <view class="inline num">{{totalTrainDay}}</view><view class="inline">天</view>
-          <hr class="hry" style="left:115rpx;"/>
+    <form report-submit="true" @submit="getFormId" style="width: 100%">
+      <button class="reset-button wrap" form-type="submit" @tap="toBriefing">
+        <view class="header-banner-wrap">
+          <view class="header-banner">
+            <view>总天数</view>
+            <view class="inline num">{{totalTrainDay}}</view><view class="inline">天</view>
+            <hr class="hry" style="left:115rpx;"/>
+          </view>
+          <view class="header-banner">
+            <view>日均时长</view>
+            <view class="inline num">{{averageDayTime}}</view><view class="inline">分钟</view>
+            <hr class="hry" style="left:150rpx;"/>
+          </view>
+          <view class="header-banner">
+            <view>单次最多</view>
+            <view class="inline num">{{singleMostDuration}}</view><view class="inline">分钟</view>
+          </view>
+          <image class="header-arrow" src="/images/more.png"></image>
         </view>
-        <view class="header-banner">
-          <view>日均时长</view>
-          <view class="inline num">{{averageDayTime}}</view><view class="inline">分钟</view>
-          <hr class="hry" style="left:150rpx;"/>
-        </view>
-        <view class="header-banner">
-          <view>单次最多</view>
-          <view class="inline num">{{singleMostDuration}}</view><view class="inline">分钟</view>
-        </view>
-        <image class="header-arrow" src="/images/more.png"></image>
-      </view>
 
-      <view class="continue-time {{ct === 1 ? 'orange' : 'hide'}}">连续练习{{continuousNum}}天</view>
-      <view class="continue-time {{ct === 0 ? '' : 'hide'}}">连续练习{{continuousNum}}天,今天{{todayDuration || 0}}分钟</view>
-      <view class="continue-time {{ct > 1 ? 'red' : 'hide'}}">已中断{{ct}}天</view>
-    </view>
+        <view class="continue-time {{ct === 1 ? 'orange' : 'hide'}}">连续练习{{continuousNum}}天</view>
+        <view class="continue-time {{ct === 0 ? '' : 'hide'}}">连续练习{{continuousNum}}天,今天{{todayDuration || 0}}分钟</view>
+        <view class="continue-time {{ct > 1 ? 'red' : 'hide'}}">已中断{{ct}}天</view>
+      </button>
+    </form>
     <!-- 展示栏 end -->
 
     <!-- 入门指南-->
-    <view class="wrap pr" style="height: 75px" @tap="onJumpX">
-      <view class="ml10p" style="padding-top:10px; color: #fff">{{promotionArticleName}}</view>
-      <view class="ml10p font09" style="color: #ccc;padding-bottom:10px; font-size: 0.8rem;">{{promotionArticleBrief}}</view>
-      <view>
-        <image class="arrow pd5" src="/images/more.png"></image>
-      </view>
-    </view>
+    <form report-submit="true" @submit="getFormId" style="width: 100%">
+      <button class="reset-button wrap pr" form-type="submit" @tap="onJumpX">
+        <view class="ml10p" style="padding-top:10px; color: #fff">{{promotionArticleName}}</view>
+        <view class="ml10p font09" style="color: #ccc;padding-bottom:10px; font-size: 0.8rem;">{{promotionArticleBrief}}</view>
+        <view>
+          <image class="arrow pd5" src="/images/more.png"></image>
+        </view>
+      </button>
+    </form>
     <!-- 入门指南 end-->
 
     <!-- 设置-->
     <view class="wrap" style="height: 80%;padding:0;">
-      <view class="m10 pr" @tap="onShowSetTime">
-        <view class="ml10p pd5 font09">时间设置</view>
-        <view class="ml10p pd5 set-x {{hour === '00' && minute === '00' ? 'hide' : ''}}">{{hour === '00' ? '' : showHour + '小时'}}{{showMinute}}分钟</view>
-        <view class="ml10p pd5 set-x {{hour === '00' && minute === '00' ? '' : 'hide'}}">不限时</view>
-        <view>
-          <image class="arrow pd5" src="/images/more.png"></image>
-        </view>
-      </view>
+
+      <form report-submit="true" @submit="getFormId" style="width: 100%">
+        <button class="reset-button m10 pr" form-type="submit" @tap="onShowSetTime">
+          <view class="ml10p pd5 font09">时间设置</view>
+          <view class="ml10p pd5 set-x {{hour === '00' && minute === '00' ? 'hide' : ''}}">{{hour === '00' ? '' : showHour + '小时'}}{{showMinute}}分钟</view>
+          <view class="ml10p pd5 set-x {{hour === '00' && minute === '00' ? '' : 'hide'}}">不限时</view>
+          <view>
+            <image class="arrow pd5" src="/images/more.png"></image>
+          </view>
+        </button>
+      </form>
+
       <hr class="hrx"/>
-      <view class="m10 pr" @tap="onShowSetExType">
-        <view class="ml10p pd5 font09">练习方法</view>
-        <view class="ml10p pd5 set-x">
-          <repeat for="{{exList}}" key="index" index="index" item="item">
-            <view class="tag {{item ? '' : 'hide'}}">{{item}}</view>
-          </repeat>
-        </view>
-        <view>
-          <image class="arrow pd5" src="/images/more.png"></image>
-        </view>
-      </view>
+      <form report-submit="true" @submit="getFormId" style="width: 100%">
+        <button class="reset-button m10 pr" form-type="submit" @tap="onShowSetExType">
+          <view class="ml10p pd5 font09">练习方法</view>
+          <view class="ml10p pd5 set-x">
+            <repeat for="{{exList}}" key="index" index="index" item="item">
+              <view class="tag {{item ? '' : 'hide'}}">{{item}}</view>
+            </repeat>
+          </view>
+          <view>
+            <image class="arrow pd5" src="/images/more.png"></image>
+          </view>
+        </button>
+      </form>
       <hr class="hrx"/>
-      <view class="m10 pr" @tap="onShowSetMusic">
-        <view class="ml10p pd5 font09">引导音乐</view>
-        <view class="ml10p pd5 set-x">{{music}}</view>
-        <view>
-          <image class="arrow pd5" src="/images/more.png"></image>
-        </view>
-      </view>
+
+      <form report-submit="true" @submit="getFormId" style="width: 100%">
+        <button class="reset-button m10 pr" form-type="submit" @tap="onShowSetMusic">
+          <view class="ml10p pd5 font09">引导音乐</view>
+          <view class="ml10p pd5 set-x">{{music}}</view>
+          <view>
+            <image class="arrow pd5" src="/images/more.png"></image>
+          </view>
+        </button>
+      </form>
       <hr class="hrx"/>
 
       <view>
-        <view class="btn-image" @tap="onJump2Ex"></view>
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button btn-image" form-type="submit" @tap="onJump2Ex"></button>
+        </form>
       </view>
     </view>
     <!-- 设置 end-->
@@ -518,7 +536,11 @@
         <view class="time-text">分</view>
       </view>
       <view class="time-notice {{hour == '00' && minute == '00' ? 'v-hidden' : ''}}">练习时请勿关闭屏幕或者退出小程序</view>
-      <view class="ok-btn" @tap="onSetTime">确定</view>
+      <form report-submit="true" @submit="getFormId">
+        <button class="reset-button ok-btn" form-type="submit" @tap="onSetTime">
+          确定
+        </button>
+      </form>
     </setTime>
 
     <setExType style="width: 100%" class="pr">
@@ -559,7 +581,11 @@
         </repeat>
       </view>
       <view class="ok-btn-wrap">
-        <view class="type-ok-btn" @tap="onSetExType">确定</view>
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button type-ok-btn" form-type="submit" @tap="onSetExType">
+            确定
+          </button>
+        </form>
       </view>
     </setExType>
 
@@ -601,7 +627,11 @@
       </view>
       <view class="music-footer">
         <view class="music-over {{isMusicStopOnOver ? 'music-over-active' : ''}}" @tap="onMusicOver">播完后结束练习</view>
-        <view class="ok-btn" style="bottom:16px;" @tap="onSetMusic">确定</view>
+        <form report-submit="true" @submit="getFormId">
+          <button class="reset-button ok-btn" style="bottom:16px;" form-type="submit" @tap="onSetMusic">
+            确定
+          </button>
+        </form>
       </view>
     </setMusic>
   </view>
@@ -610,6 +640,7 @@
 <script>
   import wepy from 'wepy'
   import moment from 'moment'
+  import formIds from "../mixins/formIds"
   import zanPop from '../components/zan-popup'
   import {ajax} from '../components/ajax.js'
 
@@ -1002,6 +1033,7 @@
       },
       isShowUserInfo: false
     }
+    mixins = [ formIds ]
     onShow() {
       const self = this
 

@@ -40,6 +40,9 @@
   background-color: transparent;
   padding: 0;
   height: auto;
+  line-height: inherit;
+  font-size:inherit;
+  color: inherit;
 }
 
 .login-fixed-wrap {
@@ -228,8 +231,6 @@
 
   const getUserInfoByCache = function (cb, userinfo) {
     const that = this
-    console.log('userinfo1 :: ')
-    console.log(userinfo)
     userinfo = userinfo|| {userInfo: {}}
 
     if (userinfo && userinfo.userInfo && userinfo.userInfo.nickName) {
@@ -237,8 +238,6 @@
       that.globalData.userInfo = userinfo.userInfo
     } else {
       userinfo = wx.getStorageSync('userinfo') || {}
-      console.log('userinfo :: ')
-      console.log(userinfo)
       if (userinfo && userinfo.userInfo && userinfo.userInfo.nickName) {
         that.globalData.authInfo = userinfo
         that.globalData.userInfo = userinfo.userInfo
@@ -324,7 +323,7 @@
     }
 
     globalData = {
-      version: '1.1',
+      version: '2.0',
       hasNetwork: true,
       authInfo: null,
       userInfo: null,

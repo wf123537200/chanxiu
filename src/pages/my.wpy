@@ -220,7 +220,7 @@
 <script>
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
-  import formIds from "../mixins/formIds";
+  import formIds from "../mixins/formIds"
 
   const getCt = function() {
     const d = new Date()
