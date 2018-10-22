@@ -480,8 +480,7 @@
                 })
               }
               cb && cb(userInfo);
-            })
-
+            });
           } else {
             getUserInfoByCache.apply(that, [cb])
           }

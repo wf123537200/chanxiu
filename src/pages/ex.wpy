@@ -1,338 +1,360 @@
 <style lang='css'>
-  page {
-    height: 100%
-  }
-  .timer {
-    font-size:80px;
-    color:#fff;
-    margin-top:30%;
-  }
-  .btn {
-    width:70px;
-    height:70px;
-    background-repeat:no-repeat;
-    background-color: #B0976E;
-    background-position:50% 50%;
-    border-radius:50%;
-    position:absolute;
-    left:50%;
-    transform: translateX(-50%);
-    margin-top:30px;
-  }
-  .shadow {
-    width:80px;
-    height:80px;
-    opacity:0.6;
-    margin-top:25px;
-  }
-  .btn-wrap {
-    width:100%;
-    height:200px;
-    position:relative;
-  }
-  .left-btn {
-    margin-left:-100px;
-  }
-  .right-btn {
-    margin-left:100px;
-  }
-  .btn-image {
-    width:22px;
-    height:30px;
-    margin-top:3px;
-    margin-left:9px;
-  }
-  .image {
-    height:30px;
-    width:30px;
-    background-repeat:no-repeat;
-    margin-left:15px;
-    margin-top: 5px;
-    background-size: cover;
-  }
-  .text {
-    font-size:16px;
-    text-align:center;
-    color:#fff;
-    margin-top:5px;
-  }
+    page {
+        height: 100%
+    }
+
+    .timer {
+        font-size: 80px;
+        color: #fff;
+        margin-top: 30%;
+    }
+
+    .btn {
+        width: 70px;
+        height: 70px;
+        background-repeat: no-repeat;
+        background-color: #B0976E;
+        background-position: 50% 50%;
+        border-radius: 50%;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: 30px;
+    }
+
+    .shadow {
+        width: 80px;
+        height: 80px;
+        opacity: 0.6;
+        margin-top: 25px;
+    }
+
+    .btn-wrap {
+        width: 100%;
+        height: 200px;
+        position: relative;
+    }
+
+    .left-btn {
+        margin-left: -100px;
+    }
+
+    .right-btn {
+        margin-left: 100px;
+    }
+
+    .btn-image {
+        width: 22px;
+        height: 30px;
+        margin-top: 3px;
+        margin-left: 9px;
+    }
+
+    .image {
+        height: 30px;
+        width: 30px;
+        background-repeat: no-repeat;
+        margin-left: 15px;
+        margin-top: 5px;
+        background-size: cover;
+    }
+
+    .text {
+        font-size: 16px;
+        text-align: center;
+        color: #fff;
+        margin-top: 5px;
+    }
 </style>
 
 <template>
-  <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" @tap="onTapStop">
-    <view class="timer">{{showTime}}</view>
-    <view class="btn-wrap {{isPause ? '' : 'hide'}}">
-      <view>
-        <view class="btn shadow left-btn"></view>
-        <view class="btn left-btn" @tap.stop="onGoon">
-          <view class="image">
-            <image class="btn-image" src="/images/go-on.png"></image>
-          </view>
-          <view class="text">继续</view>
+    <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})"
+          @tap="pause">
+        <view class="timer">{{showTime}}</view>
+        <view class="btn-wrap {{isPause ? '' : 'hide'}}">
+            <view>
+                <view class="btn shadow left-btn"></view>
+
+                <form report-submit="true" @submit="getFormId">
+                    <button class="reset-button btn left-btn" form-type="submit" @tap.stop="goon">
+                        <view class="image">
+                            <image class="btn-image" src="/images/go-on.png"></image>
+                        </view>
+                        <view class="text">继续</view>
+                    </button>
+                </form>
+            </view>
+            <view>
+                <view class="btn shadow right-btn"></view>
+                <form report-submit="true" @submit="getFormId">
+                    <button class="reset-button btn right-btn" form-type="submit" @tap.stop="end">
+                        <view class="image">
+                            <image class="btn-image" style="margin-left: 11px;" src="/images/stop-btn.png"></image>
+                        </view>
+                        <view class="text">结束</view>
+                    </button>
+                </form>
+            </view>
+
         </view>
-      </view>
-      <view>
-        <view class="btn shadow right-btn"></view>
-        <view class="btn right-btn" @tap.stop="onEnd">
-          <view class="image">
-            <image class="btn-image" style="margin-left: 11px;" src="/images/stop-btn.png"></image>
-          </view>
-          <view class="text">结束</view>
-        </view>
-      </view>
     </view>
-  </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import moment from 'moment'
+    import wepy from 'wepy';
+    import formIds from "../mixins/formIds";
 
-  function setTime({hour, minute, second = 0, isFinite}) {
-    let cHour = parseInt(hour, 10)
-
-    if(cHour > 0 || isFinite) {
-      return moment.utc().startOf('day').add({ seconds: hour * 3600 + minute * 60 + second}).format('HH:mm:ss');
-    } else {
-      return moment.utc().startOf('day').add({ seconds: hour * 3600 + minute * 60 + second}).format('mm:ss');
-    }
-  }
-
-  const TIME = 1000;
-  function getMinusTime(d) {
-    const dx = this._d = new Date(d.setSeconds(d.getSeconds() - 1))
-    return {hour: dx.getHours(), minute: d.getMinutes(), second: d.getSeconds()}
-  }
-
-  function getPlusTime(d) {
-    const dx = this._d = new Date(d.setSeconds(d.getSeconds() + 1))
-    return {hour: dx.getHours(), minute: d.getMinutes(), second: d.getSeconds()}
-  }
-
-  /**
-   * 获取练习时长
-   * @param params
-   * @param hour
-   * @param minute
-   * @returns {number}
-   */
-  function getExTime({params, hour, minute}) {
-    let oHour = parseInt(params.hour, 10)
-    let oMinute = parseInt(params.minute, 10)
-    let cMinute = parseInt(minute, 10)
-    let cHour = parseInt(hour, 10)
-    let isFinite = params.isFinite
-    let res = 0
-
-    if(isFinite) {
-      res += (cHour - oHour) * 60 + cMinute - oMinute
-    } else {
-      if(cMinute - oMinute < 0) {
-        cHour -= 1
-        cMinute += 60
-      }
-
-      res += (oHour - cHour) * 60 + oMinute - cMinute
+    function playAudio(src, title, onEnded) {
+        console.log(src + '' + title)
+        const am = wx.getBackgroundAudioManager()
+        am.onError((e) => {
+            console.error(e)
+        })
+        am.onPlay(() => {
+        })
+        am.onEnded(() => {
+            onEnded && onEnded()
+        })
+        am.title = title || src
+        am.src = src
     }
 
-    let second = 0
-    if (this._d) {
-      second = this._d.getSeconds()
-    } else {
-      return 0
-    }
+    export default class Tag extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "练习"
+        };
 
-    return res >= 1 && second !== 0 ? isFinite ? res : res - 1 : res
-  }
+        mixins = [formIds];
 
-  function onEnd() {
-    // 保存结果
-    this.isEnd = true;
-    const exTime = this.$parent.globalData.exTime = getExTime.call(this, {params: this.params, hour: this.curTime.hour, minute: this.curTime.minute})
-    wx.stopBackgroundAudio()
+        data = {
+            cost: 0,
+            total: "",
+            backgroundImage: "",
+            isFinite: false,
+            duration: 1,
+            inBackground: false,
+            needPowerManager: true,
+            //started: false,
+            isPause: "",
+            screenBrightness: ""
+        };
 
-    const submitData = this.$parent.globalData.submitData = {
-      timeSet: exTime * 60,
-      trainMethodIds: this.$parent.globalData.trainMethodIds,
-      musicId: this.$parent.globalData.musicId,
-      addDuration: 0
-    }
-
-    wx.getNetworkType({
-      success: (res) => {
-        const networkType = res.networkType
-        if(networkType === 'none' || networkType === 'unkonwn') {
-          const etoaArr = wx.getStorageSync('exTimeOfflineArray') || []
-          const extentObj = etoaArr.find(e => e.timeSet == submitData.timeSet && e.trainMethodIds == submitData.trainMethodIds)
-          if (!extentObj) {
-            etoaArr.push(submitData)
-
-            wx.setStorage({
-              key: 'exTimeOfflineArray',
-              data: etoaArr,
-              success: function(res){
-                console.log('本地存储 exTimeOfflineArray 成功')
-              }
-            })
-          }
-        }
-      }
-    })
-
-    playAudio(this.$parent.globalData.resPerfix + '/res/music/end.mp3', 'end')
-
-    // 跳转
-    this.$parent.globalData.musicUrl = ''
-    this.$parent.globalData.musicTitle = ''
-    this.$redirect('./end')
-  }
-
-  function playAudio(src, title, onEnded) {
-    console.log(src + '' + title)
-    const am = wx.getBackgroundAudioManager()
-    am.onError((e) => {
-      console.error(e)
-    })
-    am.onPlay(() => {
-    })
-    am.onEnded(() => {
-      onEnded && onEnded()
-    })
-    am.title = title || src
-    am.src = src
-  }
-  const onTapStop = function() {
-    this.isPause = true
-    clearInterval(this.timer)
-    this.timer = ''
-    wx.pauseBackgroundAudio()
-  }
-
-  const d = new Date()
-  export default class Tag extends wepy.page {
-    config = {
-      disableScroll: true,
-      navigationBarTitleText: '练习'
-    }
-    data = {
-        leftSeconds: "",
-        totalSeconds: "",
-      showTime: '',
-      isEnd: false,
-      isPause: "",
-      backgroundImage: '',
-      isFinite: false,
-      curTime: {
-        hour: 0,
-        minute: 0
-      }
-    }
-
-    needPowerManager = false;
-
-    watch = {
-        curTime (value) {
-            if (!this.isFinite) {
-                const seconds = value.hour * 60 * 60 + value.minute * 60 + value.second;
-
-                if (this.totalSeconds === "") {
-                    this.totalSeconds = seconds;
+        computed = {
+            showTime () {
+                if (!this.isFinite && this.cost >= this.total) {
+                    return "00:00";
                 }
 
-                this.leftSeconds = seconds;
+                let time = this.isFinite ? this.cost : this.total - this.cost;
+                let h = Math.floor(time / 3600);
+                time -= h * 3600;
+                let m = Math.floor(time / 60);
+                time -= m * 60;
+                let s = time;
 
-                if(this.leftSeconds === 0) {
-                    clearInterval(this.timer)
-                    this.timer = "";
-                    onEnd.call(this)
+                let t = "";
+
+                if (h > 0) {
+                    t = ("00" + h + ":").substr(-3);
+                }
+
+                t += ("00" + m + ":").substr(-3);
+                t += ("00" + s).substr(-2);
+
+                return t;
+            }
+        };
+
+        watch = {
+            isPause(value, oldValue) {
+                if (oldValue !== value) {
+                    // 暂停
+                    if (value) {
+                        clearTimeout(this.dark);
+                        wx.setScreenBrightness({
+                            value: this.screenBrightness
+                        });
+                    }
+                    // 开始
+                    else {
+                        wx.getScreenBrightness({
+                            success: (o) => {
+                                this.screenBrightness = o.value;
+                                this.dark = setTimeout(() => {
+                                    wx.setScreenBrightness({
+                                        value: 0
+                                    });
+                                }, 10000);
+                            }
+                        });
+                    }
                 }
             }
+        };
 
-            this.showTime = setTime(Object.assign(value, {isFinite: this.isFinite}));
-            this.$apply();
-        },
-        isPause (value, oldValue) {
-            // if (value) {
-            //     wx.getScreenBrightness({
-            //         success: (o) => {
-            //             this.screenBrightness = o.value;
-            //             this.dark = setTimeout(() => {
-            //                 wx.setScreenBrightness({
-            //                     value: 0
-            //                 });
-            //             }, 10000);
-            //         }
-            //     });
-            // }
-            // else {
-            //
-            // }
+        methods = {
+            pause () {
+                //if (this.started) {
+                this.isPause = true;
+                this.stopTiming();
+                //}
+            },
+            goon () {
+                wx.playBackgroundAudio();
+                this.isPause = false;
+                this.timing();
+            },
+            end () {
+
+            }
+        };
+
+        timing(immediate) {
+            let run = () => {
+                if (!this.isFinite && this.total - this.cost <= 0) {
+                    this.end();
+                }
+                else {
+                    this.stopTiming();
+                    this.cost += this.duration;
+                    this.timing();
+                }
+
+                this.$apply();
+            };
+
+            if (immediate) {
+                run();
+            }
+            else {
+                this.timer = setTimeout(run, this.duration * 1000);
+            }
+        }
+
+        stopTiming () {
+            wx.pauseBackgroundAudio();
+            clearTimeout(this.timer);
+        }
+
+        end () {
+            let hour;
+            let minute;
+            let second;
+            let cost = this.cost;
+
+            hour = Math.floor(cost / 3600);
+            cost -= hour * 3600;
+            minute = Math.floor(cost / 60);
+            cost -= minute * 60;
+            second = cost;
+
+            const exTime = this.$parent.globalData.exTime = hour * 60 + minute;
+
+            const submitData = this.$parent.globalData.submitData = {
+                timeSet: exTime * 60,
+                trainMethodIds: this.$parent.globalData.trainMethodIds,
+                musicId: this.$parent.globalData.musicId,
+                addDuration: 0
+            };
+
+            wx.getNetworkType({
+                success: (res) => {
+                    const networkType = res.networkType
+                    if (networkType === 'none' || networkType === 'unkonwn') {
+                        const etoaArr = wx.getStorageSync('exTimeOfflineArray') || []
+                        const extentObj = etoaArr.find(e => e.timeSet == submitData.timeSet && e.trainMethodIds == submitData.trainMethodIds)
+                        if (!extentObj) {
+                            etoaArr.push(submitData)
+
+                            wx.setStorage({
+                                key: 'exTimeOfflineArray',
+                                data: etoaArr,
+                                success: function (res) {
+                                    console.log('本地存储 exTimeOfflineArray 成功')
+                                }
+                            })
+                        }
+                    }
+                }
+            });
+            wx.stopBackgroundAudio();
+
+            this.stopTiming();
+            playAudio(this.$parent.globalData.resPerfix + '/res/music/end.mp3', 'end');
+
+            // 跳转
+            this.$parent.globalData.musicUrl = '';
+            this.$parent.globalData.musicTitle = '';
+            this.$redirect('./end');
+        }
+
+        onShow() {
+            clearTimeout(this.inBackgroundTimer);
+            let exStorage = wx.getStorageSync("ex_background");
+
+            if (exStorage) {
+                this.cost = exStorage.cost;
+                this.isPause = exStorage.isPause;
+
+                if (!this.isPause) {
+                    const now = new Date().getTime();
+                    this.cost += Math.floor((now - exStorage.time) / 1000);
+                    this.duration = 1;
+                    this.$apply();
+                    this.timing();
+                    wx.playBackgroundAudio();
+                }
+
+                wx.removeStorage({
+                    key: "ex_background"
+                });
+            }
+            else {
+                this.timing();
+
+                playAudio(this.$parent.globalData.resPerfix + '/res/music/begin.mp3', 'begin', () => {
+                    this.playBackgroundAudio();
+                });
+            }
+        }
+
+        onHide() {
+            //this.inBackground = true;
+            this.inBackgroundTimer = setTimeout(() => {
+                this.stopTiming();
+
+                wx.setStorage({
+                    key: "ex_background",
+                    data: {
+                        time: (new Date()).getTime(),
+                        isPause: this.isPause,
+                        cost: this.cost
+                    }
+                });
+            }, 10000);
+        }
+
+        onLoad(params) {
+            this.params = params;
+            this.backgroundImage = this.$parent.globalData.backgroundImage;
+            this.$parent.globalData.isInex = true;
+            this.isPause = false;
+            wx.hideShareMenu();
+
+            if (this.params.isFinite === "true") {
+                this.isFinite = true;
+            }
+            else {
+                this.total = (parseInt(this.params.hour) || 0) * 3600 + (parseInt(this.params.minute) || 0) * 60 + (parseInt(this.params.second) || 0);
+                //this.needPowerManager = this.total >= 5 * 60;//超过五分钟
+            }
+        }
+
+        playBackgroundAudio () {
+            if (this.$parent.globalData.musicUrl) {
+                playAudio(this.$parent.globalData.musicUrl, this.$parent.globalData.musicTitle)
+            }
         }
     }
-
-    onShow () {
-    }
-
-    onHide() {
-      // onTapStop.call(this)
-    }
-    onLoad(params) {
-      // wx.setKeepScreenOn({
-      //   keepScreenOn: true,
-      // })
-
-        this.leftSeconds = "";
-        this.totalSeconds = "";
-        this.isPause = false;
-      this.$parent.globalData.isInex = true
-      wx.hideShareMenu()
-      playAudio(this.$parent.globalData.resPerfix + '/res/music/begin.mp3', 'begin', () => {
-        if(this.$parent.globalData.musicUrl) {
-          playAudio(this.$parent.globalData.musicUrl, this.$parent.globalData.musicTitle)
-        }
-      });
-      this.params = params;
-      this._d = null;
-      const hour = parseInt(this.params.hour, 10)
-      this.params.isFinite = this.isFinite = this.params.isFinite === 'true'
-      this.backgroundImage = this.$parent.globalData.backgroundImage;
-      this.showTime = setTime(this.params);
-
-      if(this.timer) clearInterval(this.timer);
-      this.timer = setInterval(() => {
-        if(!this._d) this._d = new Date([d.getFullYear(), d.getMonth(), d.getDate()].join('/') + ' ' + ((hour > 0 || this.isFinite) ? this.showTime : ('00:' + this.showTime)))
-        this.curTime = this.isFinite ? getPlusTime.call(this, this._d) : getMinusTime.call(this, this._d);
-        this.$apply();
-      }, TIME);
-    }
-    methods = {
-      onTapStop() {
-        onTapStop.call(this);
-      },
-      onGoon() {
-        if(this.timer) return;
-        wx.playBackgroundAudio();
-
-        this.isPause = false;
-        this.timer = setInterval(() => {
-          let dVal = [d.getFullYear(), d.getMonth(), d.getDate()].join('/') + ' ' + ((this.showTime.length > 5 || this.isFinite) ? this.showTime : ('00:' + this.showTime))
-          this._d = new Date(dVal);
-          this.curTime = this.isFinite ? getPlusTime.call(this, this._d) : getMinusTime.call(this, this._d);
-          //console.log(this.curTime);
-          // // 如果都是0结束
-          // if(minusTime.hour === 0 && minusTime.minute === 0 && minusTime.second === 0) {
-          //   clearInterval(this.timer)
-          //   this.timer = ''
-          //   onEnd.call(this)
-          // }
-          // this.showTime = setTime(Object.assign(minusTime, {isFinite: this.isFinite}))
-          // this.$apply()
-            this.$apply();
-        }, TIME);
-      },
-      onEnd() {
-        onEnd.call(this)
-      }
-    }
-  }
 </script>
