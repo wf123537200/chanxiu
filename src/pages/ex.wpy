@@ -167,41 +167,42 @@
         };
 
         watch = {
-            isPause(value, oldValue) {
-                if (oldValue !== value) {
-                    // 暂停
-                    if (value) {
-                        clearTimeout(this.dark);
-                        wx.setScreenBrightness({
-                            value: this.screenBrightness
-                        });
-                    }
-                    // 开始
-                    else {
-                        wx.getScreenBrightness({
-                            success: (o) => {
-                                this.screenBrightness = o.value;
-                                this.dark = setTimeout(() => {
-                                    wx.setScreenBrightness({
-                                        value: 0
-                                    });
-                                }, 10000);
-                            }
-                        });
-                    }
-                }
-            }
+            // isPause(value, oldValue) {
+            //     if (oldValue !== value) {
+            //         // 暂停
+            //         if (value) {
+            //             clearTimeout(this.dark);
+            //             wx.setScreenBrightness({
+            //                 value: this.screenBrightness
+            //             });
+            //         }
+            //         // 开始
+            //         else {
+            //             wx.getScreenBrightness({
+            //                 success: (o) => {
+            //                     this.screenBrightness = o.value;
+            //                     this.dark = setTimeout(() => {
+            //                         wx.setScreenBrightness({
+            //                             value: 0
+            //                         });
+            //                     }, 10000);
+            //                 }
+            //             });
+            //         }
+            //     }
+            // }
         };
 
         methods = {
             pause () {
                 //if (this.started) {
+                wx.pauseBackgroundAudio();
                 this.isPause = true;
                 this.stopTiming();
                 //}
             },
             goon () {
-                wx.playBackgroundAudio();
+                this.playBackgroundAudio();
                 this.isPause = false;
                 this.timing();
             },
@@ -233,7 +234,7 @@
         }
 
         stopTiming () {
-            wx.pauseBackgroundAudio();
+            //wx.pauseBackgroundAudio();
             clearTimeout(this.timer);
         }
 
@@ -303,7 +304,8 @@
                     this.duration = 1;
                     this.$apply();
                     this.timing();
-                    wx.playBackgroundAudio();
+                    this.playBackgroundAudio();
+                    console.log(`切换到前台时已练习${this.cost}秒`);
                 }
 
                 wx.removeStorage({
@@ -322,12 +324,14 @@
         onHide() {
             //this.inBackground = true;
             this.inBackgroundTimer = setTimeout(() => {
+                const time = new Date().getTime();
                 this.stopTiming();
+                console.log(`切换到后台时已练习${this.cost}秒`);
 
                 wx.setStorage({
                     key: "ex_background",
                     data: {
-                        time: (new Date()).getTime(),
+                        time,
                         isPause: this.isPause,
                         cost: this.cost
                     }
