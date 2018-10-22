@@ -66,13 +66,14 @@
     height:80px;
     display:block;
     background:rgba(0,0,0,0.3);
-    margin:0 4%;
+    margin:0 5%;
     width:90%;
     position:absolute;
     bottom:85px;
-    font-size:14px;
+    font-size:16px;
     color:#fff;
-    padding: 1%;
+    padding: 2%;
+    box-sizing: border-box;
     z-index: 500;
   }
   .bg-hide {
@@ -98,11 +99,11 @@
 
   .text-btn {
     position:absolute;
-    bottom:30px;
-    font-size:0.7rem;
+    bottom: 30px;
+    font-size: 0.8rem;
     color:#eee;
     background:#B0976E;
-    padding:2px 7px;
+    padding: 5px 15px;
     border-radius:3px;
   }
 
@@ -213,10 +214,12 @@
       <image class="tips-icon {{isShowTips || (!isShowTips && tips) ? 'hide' : 'editor-active'}}" src="/images/editor-default.png" @tap.stop="onShowEditor"></image>
       <image class="tips-icon {{isShowTips ? 'back-active hide' : 'back-active back'}}" src="/images/back.png" @tap="onBackHome"></image>
       <view class="tips-wrap {{isShowImage ? 'hide' : ''}}">
-        <textarea class="tips-text {{isShowTips || tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}" @blur="onEndText" @tap.stop="onStop" value="{{tips}}" placeholder="记录练习状态和疑问，以便得到别人的指导，及回顾总结"></textarea>
+        <textarea class="tips-text {{isShowTips || tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}"
+                  adjust-position="true"
+                  @blur="onEndText" @tap.stop="onStop" value="{{tips}}" placeholder="记录练习状态和疑问，以便得到别人的指导，及回顾总结"></textarea>
         <view class="tips-text {{!isShowTips && tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}" style="z-index: 510"></view>
-        <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 15px;" @tap="onSetOk">提交</view>
-        <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 70px;" @tap="onCancel">取消</view>
+        <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 5%;" @tap="onSetOk">提交</view>
+        <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 35%;" @tap="onCancel">取消</view>
       </view>
     </view>
 
@@ -248,6 +251,20 @@
   import moment from 'moment'
   import wepy from 'wepy'
   import {ajax} from '../components/ajax.js'
+  import formIds from "../mixins/formIds"
+
+  const getUserId = function() {
+    let params = {}
+
+    ajax({
+      ins: this,
+      url: '/brief/user/info',
+      params,
+      success: (d) => {
+        this.userId = d.id
+      }
+    })
+  }
 
   export default class End extends wepy.page {
     config = {
@@ -258,6 +275,7 @@
     }
     data = {
       userInfo: {},
+      userId: '',
       isShowTips: false,
       isShowShare: false,
       tips: '',
@@ -269,6 +287,7 @@
       picUrl: '',
       isCover: false
     }
+    mixins = [ formIds ]
     onLoad() {
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
@@ -327,6 +346,8 @@
           this.$apply()
         }
       })
+
+      getUserId.call(this)
     }
     methods = {
       onTapStop() {
@@ -394,10 +415,11 @@
         })
       },
       onShareAppMessage (res) {
-        console.log('分享图片路径为： ' + this.resPerfix + this.shareUrl)
+        let path = 'pages/ex-briefing?_f=1&userId=' + this.userId
+
         return {
           title: this.userInfo.nickName + this.extype + this.exTime + '分钟，连续第' + this.continuousNum + '天',
-          path: '/pages/setex',
+          path,
           imageUrl: this.resPerfix + this.shareUrl + '?' + Date.now(),
           complete: (e) => {
             console.log(e)
