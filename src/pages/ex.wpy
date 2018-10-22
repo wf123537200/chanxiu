@@ -136,6 +136,7 @@
             inBackground: false,
             needPowerManager: true,
             //started: false,
+            //hasPlayBeginMusic: false,
             isPause: "",
             screenBrightness: ""
         };
@@ -207,7 +208,7 @@
                 this.timing();
             },
             end () {
-
+                this.end();
             }
         };
 
@@ -217,11 +218,12 @@
                     this.end();
                 }
                 else {
-                    this.stopTiming();
+                    //this.stopTiming();
                     this.cost += this.duration;
                     this.timing();
                 }
 
+                console.log(`正在计时：已练习${this.cost}秒`);
                 this.$apply();
             };
 
@@ -235,6 +237,7 @@
 
         stopTiming () {
             //wx.pauseBackgroundAudio();
+            console.log("停止计时");
             clearTimeout(this.timer);
         }
 
@@ -290,6 +293,13 @@
             this.$redirect('./end');
         }
 
+        removeExStorage () {
+            console.log("练习后台计时已被清除");
+            wx.removeStorage({
+                key: "ex_background"
+            });
+        }
+
         onShow() {
             clearTimeout(this.inBackgroundTimer);
             let exStorage = wx.getStorageSync("ex_background");
@@ -308,16 +318,18 @@
                     console.log(`切换到前台时已练习${this.cost}秒`);
                 }
 
-                wx.removeStorage({
-                    key: "ex_background"
-                });
+                this.removeExStorage();
             }
             else {
                 this.timing();
 
-                playAudio(this.$parent.globalData.resPerfix + '/res/music/begin.mp3', 'begin', () => {
-                    this.playBackgroundAudio();
-                });
+                if (!this.hasPlayMusic) {
+                    this.hasPlayMusic = true;
+
+                    playAudio(this.$parent.globalData.resPerfix + '/res/music/begin.mp3', 'begin', () => {
+                        this.playBackgroundAudio();
+                    });
+                }
             }
         }
 
