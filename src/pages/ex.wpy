@@ -301,7 +301,6 @@
         }
 
         onShow() {
-            clearTimeout(this.inBackgroundTimer);
             let exStorage = wx.getStorageSync("ex_background");
 
             if (exStorage) {
@@ -310,8 +309,8 @@
 
                 if (!this.isPause) {
                     const now = new Date().getTime();
-                    this.cost += Math.floor((now - exStorage.time) / 1000);
                     this.duration = 1;
+                    this.cost += Math.floor((now - exStorage.time) / 1000);
                     this.$apply();
                     this.timing();
                     this.playBackgroundAudio();
@@ -335,20 +334,18 @@
 
         onHide() {
             //this.inBackground = true;
-            this.inBackgroundTimer = setTimeout(() => {
-                const time = new Date().getTime();
-                this.stopTiming();
-                console.log(`切换到后台时已练习${this.cost}秒`);
+            const time = new Date().getTime();
+            this.stopTiming();
+            console.log(`切换到后台时已练习${this.cost}秒`);
 
-                wx.setStorage({
-                    key: "ex_background",
-                    data: {
-                        time,
-                        isPause: this.isPause,
-                        cost: this.cost
-                    }
-                });
-            }, 10000);
+            wx.setStorage({
+                key: "ex_background",
+                data: {
+                    time,
+                    isPause: this.isPause,
+                    cost: this.cost
+                }
+            });
         }
 
         onLoad(params) {
