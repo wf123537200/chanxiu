@@ -68,8 +68,7 @@
 </style>
 
 <template>
-    <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})"
-          @tap="pause">
+    <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" @tap="pause">
         <view class="timer">{{showTime}}</view>
         <view class="btn-wrap {{isPause ? '' : 'hide'}}">
             <view>
@@ -132,13 +131,7 @@
             total: "",
             backgroundImage: "",
             isFinite: false,
-            duration: 1,
-            inBackground: false,
-            needPowerManager: true,
-            //started: false,
-            //hasPlayBeginMusic: false,
-            isPause: "",
-            screenBrightness: ""
+            isPause: ""
         };
 
         computed = {
@@ -167,52 +160,77 @@
             }
         };
 
-        watch = {
-            // isPause(value, oldValue) {
-            //     if (oldValue !== value) {
-            //         // 暂停
-            //         if (value) {
-            //             clearTimeout(this.dark);
-            //             wx.setScreenBrightness({
-            //                 value: this.screenBrightness
-            //             });
-            //         }
-            //         // 开始
-            //         else {
-            //             wx.getScreenBrightness({
-            //                 success: (o) => {
-            //                     this.screenBrightness = o.value;
-            //                     this.dark = setTimeout(() => {
-            //                         wx.setScreenBrightness({
-            //                             value: 0
-            //                         });
-            //                     }, 10000);
-            //                 }
-            //             });
-            //         }
-            //     }
-            // }
-        };
-
         methods = {
             pause () {
                 //if (this.started) {
                 wx.pauseBackgroundAudio();
                 this.isPause = true;
                 this.stopTiming();
+                this.wake();
+                console.log("pause:", this.isPause);
                 //}
             },
             goon () {
                 this.playBackgroundAudio();
                 this.isPause = false;
+                this.duration = 1;
+                console.log("继续，重新计时");
+                this.sleep();
                 this.timing();
+                console.log("goon:", this.isPause);
             },
             end () {
                 this.end();
             }
         };
 
-        timing(immediate) {
+        // 亮度降低，计时频率改成20秒一次
+        sleep () {
+            wx.getScreenBrightness({
+                success: (o) => {
+                    this.screenBrightness = o.value;
+                    console.log(`${this.sleepTimeout}秒后休眠：屏幕亮度${this.screenBrightness}`);
+                    this.sleepTimer = setTimeout(() => {
+                        wx.setScreenBrightness({
+                            value: o.value <= 0.05 ? o.value : 0.05,
+                            success: () => {
+                                console.log("休眠后重新调整计时");
+                                this.stopTiming();
+                                //this.setAutoEndTimer();
+                                this.duration = this.sleepDuration;
+                                this.timing();
+                                wx.getScreenBrightness({
+                                    success: (o) => {
+                                        console.log(`进入休眠，屏幕亮度${o.value}`);
+                                    }
+                                });
+                            }
+                        });
+                    }, (this.sleepTimeout) * 1000);
+                }
+            });
+        }
+
+        // 恢复亮度，计时频率恢复为1秒
+        wake () {
+            if (this.screenBrightness !== "") {
+                wx.setScreenBrightness({
+                    value: this.screenBrightness,
+                    success: () => {
+                        clearTimeout(this.sleepTimer);
+                        this.duration = 1;
+                        console.log(`唤醒后设置屏幕亮度:${this.screenBrightness}`);
+                        wx.getScreenBrightness({
+                            success: (o) => {
+                                console.log(`唤醒后，屏幕亮度${o.value}`);
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        timing(immediate, retiming) {
             let run = () => {
                 if (!this.isFinite && this.total - this.cost <= 0) {
                     this.end();
@@ -224,8 +242,15 @@
                 }
 
                 console.log(`正在计时：已练习${this.cost}秒`);
+//                if (!this.isFinite) {
+//                    console.log(`正在计时：剩余${this.total - this.cost}秒`);
+//                }
                 this.$apply();
             };
+
+            if (retiming && this.timer) {
+                clearTimeout(this.timer);
+            }
 
             if (immediate) {
                 run();
@@ -285,6 +310,7 @@
             wx.stopBackgroundAudio();
 
             this.stopTiming();
+            this.wake();
             playAudio(this.$parent.globalData.resPerfix + '/res/music/end.mp3', 'end');
 
             // 跳转
@@ -303,6 +329,14 @@
         onShow() {
             let exStorage = wx.getStorageSync("ex_background");
 
+            // 清除自动结束计时器
+            if (!this.isFinite && this.autoEndTimer) {
+                clearTimeout(this.autoEndTimer);
+                this.autoEndTimer = null;
+            }
+
+            this.wake();
+
             if (exStorage) {
                 this.cost = exStorage.cost;
                 this.isPause = exStorage.isPause;
@@ -312,7 +346,9 @@
                     this.duration = 1;
                     this.cost += Math.floor((now - exStorage.time) / 1000);
                     this.$apply();
+                    console.log("后台切换到前台重新开始计时");
                     this.timing();
+                    this.sleep();
                     this.playBackgroundAudio();
                     console.log(`切换到前台时已练习${this.cost}秒`);
                 }
@@ -320,7 +356,10 @@
                 this.removeExStorage();
             }
             else {
+                //this.isPause = false;
+                console.log("计时");
                 this.timing();
+                this.sleep();
 
                 if (!this.hasPlayMusic) {
                     this.hasPlayMusic = true;
@@ -332,27 +371,49 @@
             }
         }
 
+        setAutoEndTimer () {
+            // 时间到，自动结束
+            if (!this.isFinite) {
+                clearTimeout(this.autoEndTimer);
+
+                this.autoEndTimer = setTimeout(() => {
+                    this.end();
+                }, (this.total - this.cost) * 1000);
+            }
+        }
+
         onHide() {
             //this.inBackground = true;
             const time = new Date().getTime();
             this.stopTiming();
             console.log(`切换到后台时已练习${this.cost}秒`);
 
+            // 时间到，自动结束
+            this.setAutoEndTimer();
+
+            //this.sleep();
+
             wx.setStorage({
                 key: "ex_background",
                 data: {
                     time,
                     isPause: this.isPause,
-                    cost: this.cost
+                    cost: this.cost,
+                    bright: this.screenBrightness
                 }
             });
         }
 
         onLoad(params) {
+            this.duration = 1;
+            this.sleepDuration = 10;
+            this.sleepTimeout = 5;
+            this.screenBrightness = "";
+            this.hasPlayMusic = false;
             this.params = params;
             this.backgroundImage = this.$parent.globalData.backgroundImage;
             this.$parent.globalData.isInex = true;
-            this.isPause = false;
+            //this.isPause = false;
             wx.hideShareMenu();
 
             if (this.params.isFinite === "true") {
