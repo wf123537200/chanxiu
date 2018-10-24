@@ -85,7 +85,7 @@
     <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" @tap="onTapStop">
         <view class="timer-box">
             <view class="timer">{{showTime}}</view>
-            <view class="tip" wx:if="{{sleeping}}">练习中，每{{duration}}秒更新练习时间以减少耗电。</view>
+            <view class="tip" wx:if="{{sleeping}}">每{{duration}}秒更新练习时间，以减少耗电。</view>
         </view>
         <view class="btn-wrap {{isPause ? '' : 'hide'}}">
             <view>
@@ -442,8 +442,8 @@
 
         onLoad(params) {
             this.duration = 1;
-            this.sleepDuration = 10;
-            this.sleepTimeout = 5;
+            this.sleepDuration = 15;
+            this.sleepTimeout = 20;
             this.screenBrightness = "";
             this.sleepTimer = false;
             this.costBeforeSleep = 0;
