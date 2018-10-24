@@ -1,304 +1,479 @@
 <style lang='css'>
-  page {
-    height: 100%
-  }
-  .timer {
-    font-size:80px;
-    color:#fff;
-    margin-top:30%;
-  }
-  .btn {
-    width:70px;
-    height:70px;
-    background-repeat:no-repeat;
-    background-color: #B0976E;
-    background-position:50% 50%;
-    border-radius:50%;
-    position:absolute;
-    left:50%;
-    transform: translateX(-50%);
-    margin-top:30px;
-  }
-  .shadow {
-    width:80px;
-    height:80px;
-    opacity:0.6;
-    margin-top:25px;
-  }
-  .btn-wrap {
-    width:100%;
-    height:200px;
-    position:relative;
-  }
-  .left-btn {
-    margin-left:-100px;
-  }
-  .right-btn {
-    margin-left:100px;
-  }
-  .btn-image {
-    width:22px;
-    height:30px;
-    margin-top:3px;
-    margin-left:9px;
-  }
-  .image {
-    height:30px;
-    width:30px;
-    background-repeat:no-repeat;
-    margin-left:15px;
-    margin-top: 5px;
-    background-size: cover;
-  }
-  .text {
-    font-size:16px;
-    text-align:center;
-    color:#fff;
-    margin-top:5px;
-  }
+    page {
+        height: 100%
+    }
+
+    .timer-box {
+        width: 100%;
+        margin-top: 30%;
+        text-align: center;
+    }
+
+    .timer {
+        font-size: 80px;
+        color: #fff;
+    }
+
+    .tip {
+        padding: 30rpx;
+        margin: 30rpx;
+        background-color: rgba(176,151,110, 0.5);
+        color: #fff;
+        font-size: 28rpx;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        width: 70px;
+        height: 70px;
+        background-repeat: no-repeat;
+        background-color: #B0976E;
+        background-position: 50% 50%;
+        border-radius: 50%;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: 30px;
+    }
+
+    .shadow {
+        width: 80px;
+        height: 80px;
+        opacity: 0.6;
+        margin-top: 25px;
+    }
+
+    .btn-wrap {
+        width: 100%;
+        height: 200px;
+        position: relative;
+    }
+
+    .left-btn {
+        margin-left: -100px;
+    }
+
+    .right-btn {
+        margin-left: 100px;
+    }
+
+    .btn-image {
+        width: 22px;
+        height: 30px;
+        margin-top: 3px;
+        margin-left: 9px;
+    }
+
+    .image {
+        height: 30px;
+        width: 30px;
+        background-repeat: no-repeat;
+        margin-left: 15px;
+        margin-top: 5px;
+        background-size: cover;
+    }
+
+    .text {
+        font-size: 16px;
+        text-align: center;
+        color: #fff;
+        margin-top: 5px;
+    }
 </style>
 
 <template>
-  <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" @tap="onTapStop">
-    <view class="timer">{{showTime}}</view>
-    <view class="btn-wrap {{isPause ? '' : 'hide'}}">
-      <view>
-        <view class="btn shadow left-btn"></view>
+    <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" @tap="onTapStop">
+        <view class="timer-box">
+            <view class="timer">{{showTime}}</view>
+            <view class="tip" wx:if="{{sleeping}}">每{{duration}}秒更新计时，以减少耗电。</view>
+        </view>
+        <view class="btn-wrap {{isPause ? '' : 'hide'}}">
+            <view>
+                <view class="btn shadow left-btn"></view>
 
-        <form report-submit="true" @submit="getFormId">
-          <button class="reset-button btn left-btn" form-type="submit" @tap.stop="onGoon">
-            <view class="image">
-              <image class="btn-image" src="/images/go-on.png"></image>
+                <form report-submit="true" @submit="getFormId">
+                    <button class="reset-button btn left-btn" form-type="submit" @tap.stop="goon">
+                        <view class="image">
+                            <image class="btn-image" src="/images/go-on.png"></image>
+                        </view>
+                        <view class="text">继续</view>
+                    </button>
+                </form>
             </view>
-            <view class="text">继续</view>
-          </button>
-        </form>
-      </view>
-      <view>
-        <view class="btn shadow right-btn"></view>
-        <form report-submit="true" @submit="getFormId">
-          <button class="reset-button btn right-btn" form-type="submit" @tap.stop="onEnd">
-            <view class="image">
-              <image class="btn-image" style="margin-left: 11px;" src="/images/stop-btn.png"></image>
+            <view>
+                <view class="btn shadow right-btn"></view>
+                <form report-submit="true" @submit="getFormId">
+                    <button class="reset-button btn right-btn" form-type="submit" @tap.stop="end">
+                        <view class="image">
+                            <image class="btn-image" style="margin-left: 11px;" src="/images/stop-btn.png"></image>
+                        </view>
+                        <view class="text">结束</view>
+                    </button>
+                </form>
             </view>
-            <view class="text">结束</view>
-          </button>
-        </form>
-      </view>
 
+        </view>
     </view>
-  </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import moment from 'moment'
-  import formIds from "../mixins/formIds"
-  import {ajax} from '../components/ajax.js'
+    import wepy from 'wepy';
+    import formIds from "../mixins/formIds";
 
-  function setTime({hour, minute, second = 0, isFinite}) {
-    let cHour = parseInt(hour, 10)
-
-    if(cHour > 0 || isFinite) {
-      return moment.utc().startOf('day').add({ seconds: hour * 3600 + minute * 60 + second}).format('HH:mm:ss');
-    } else {
-      return moment.utc().startOf('day').add({ seconds: hour * 3600 + minute * 60 + second}).format('mm:ss');
-    }
-  }
-
-  const TIME = 1000;
-  function getMinusTime(d) {
-    const dx = this._d = new Date(d.setSeconds(d.getSeconds() - 1))
-    return {hour: dx.getHours(), minute: d.getMinutes(), second: d.getSeconds()}
-  }
-
-  function getPlusTime(d) {
-    const dx = this._d = new Date(d.setSeconds(d.getSeconds() + 1))
-    return {hour: dx.getHours(), minute: d.getMinutes(), second: d.getSeconds()}
-  }
-
-  /**
-   * 获取练习时长
-   * @param params
-   * @param hour
-   * @param minute
-   * @returns {number}
-   */
-  function getExTime({params, hour, minute}) {
-    let oHour = parseInt(params.hour, 10)
-    let oMinute = parseInt(params.minute, 10)
-    let cMinute = parseInt(minute, 10)
-    let cHour = parseInt(hour, 10)
-    let isFinite = params.isFinite
-    let res = 0
-
-    if(isFinite) {
-      res += (cHour - oHour) * 60 + cMinute - oMinute
-    } else {
-      if(cMinute - oMinute < 0) {
-        cHour -= 1
-        cMinute += 60
-      }
-
-      res += (oHour - cHour) * 60 + oMinute - cMinute
+    function playAudio(src, title, onEnded) {
+        console.log(src + '' + title)
+        const am = wx.getBackgroundAudioManager()
+        am.onError((e) => {
+            console.error(e)
+        })
+        am.onPlay(() => {
+        })
+        am.onEnded(() => {
+            onEnded && onEnded()
+        })
+        am.title = title || src
+        am.src = src
     }
 
-    let second = 0
-    if (this._d) {
-      second = this._d.getSeconds()
-    } else {
-      return 0
+    function logBright () {
+        wx.getScreenBrightness({
+            success: (o) => {
+                console.log(`屏幕亮度${o.value}`);
+            }
+        });
     }
 
-    return res >= 1 && second !== 0 ? isFinite ? res : res - 1 : res
-  }
+    export default class Tag extends wepy.page {
+        config = {
+            disableScroll: true,
+            navigationBarTitleText: "练习"
+        };
 
-  function onEnd() {
-    // 保存结果
-    this.isEnd = true;
-    const exTime = this.$parent.globalData.exTime = getExTime.call(this, {params: this.params, hour: this.curTime.hour, minute: this.curTime.minute})
-    wx.stopBackgroundAudio()
+        mixins = [formIds];
 
-    const submitData = this.$parent.globalData.submitData = {
-      timeSet: exTime * 60,
-      trainMethodIds: this.$parent.globalData.trainMethodIds,
-      musicId: this.$parent.globalData.musicId,
-      addDuration: 0
-    }
+        data = {
+            cost: 0,
+            total: "",
+            backgroundImage: "",
+            isFinite: false,
+            isPause: "",
+            duration: 1,
+            sleeping: false
+        };
 
-    wx.getNetworkType({
-      success: (res) => {
-        const networkType = res.networkType
-        if(networkType === 'none' || networkType === 'unkonwn') {
-          const etoaArr = wx.getStorageSync('exTimeOfflineArray') || []
-          const extentObj = etoaArr.find(e => e.timeSet == submitData.timeSet && e.trainMethodIds == submitData.trainMethodIds)
-          if (!extentObj) {
-            etoaArr.push(submitData)
+        computed = {
+            showTime () {
+                if (!this.isFinite && this.cost >= this.total) {
+                    return "00:00";
+                }
+
+                let time = this.isFinite ? this.cost : this.total - this.cost;
+                let h = Math.floor(time / 3600);
+                time -= h * 3600;
+                let m = Math.floor(time / 60);
+                time -= m * 60;
+                let s = time;
+
+                let t = "";
+
+                if (h > 0) {
+                    t = ("00" + h + ":").substr(-3);
+                }
+
+                t += ("00" + m + ":").substr(-3);
+                t += ("00" + s).substr(-2);
+
+                return t;
+            }
+        };
+
+        methods = {
+//            pause () {
+//                this.pause();
+//            },
+            goon () {
+                this.goon();
+            },
+            end () {
+                this.end();
+            },
+            onTapStop () {
+                this.wake();
+                this.pause();
+            }
+        };
+
+        pause () {
+            wx.pauseBackgroundAudio();
+            this.isPause = true;
+            this.stopTiming();
+            this.clearSleepTimer();
+        }
+
+        goon () {
+            this.playBackgroundAudio();
+            this.isPause = false;
+            this.timing(true, false, 1);
+            this.setSleepTimer(true);
+        }
+
+        setSleepTimer (paused) {
+            this.sleepTimer = true;
+            this.costBeforeSleep = this.cost;
+            this.bePaused = paused;
+            console.log("休眠定时被设置");
+        }
+
+        clearSleepTimer () {
+            this.sleepTimer = false;
+            this.costBeforeSleep = 0;
+            console.log("休眠定时被清除");
+        }
+
+        sleep () {
+            console.log("即将休眠");
+            this.sleepTimer = false;
+            this.sleeping = true;
+            this.bePaused = false;
+            this.duration = this.sleepDuration;
+
+            wx.getScreenBrightness({
+                success: (o) => {
+                    console.log(`休眠前：屏幕亮度${o.value}`);
+
+                    this.screenBrightness = o.value;
+
+                    wx.setScreenBrightness({
+                        value: o.value < 0.05 ? o.value : 0.05,
+                        success: () => {
+                            wx.setKeepScreenOn({
+                                keepScreenOn: true
+                            });
+
+                            console.log("进入休眠");
+                            logBright();
+                        }
+                    });
+                }
+            });
+        }
+
+        // 恢复亮度，计时频率恢复为1秒
+        wake () {
+            console.log("唤醒");
+            this.sleeping = false;
+            this.duration = 1;
+
+            if (this.screenBrightness !== "") {
+                wx.setScreenBrightness({
+                    value: this.screenBrightness,
+                    success: () => {
+                        wx.setKeepScreenOn({
+                            keepScreenOn: false
+                        });
+
+                        logBright();
+                    }
+                });
+            }
+        }
+
+        timing(reset, immediate, duration) {
+            let run = () => {
+                if (!this.isFinite && this.total - this.cost <= 0) {
+                    this.end();
+                }
+                else {
+                    let diff = 0;
+                    this.cost += this.duration;
+
+                    console.log(`正在计时：已练习${this.cost}秒`);
+
+                    //
+                    if (this.bePaused) {
+                        diff = 10 - this.costBeforeSleep % 10;
+                    }
+
+                    if (this.sleepTimer && this.cost >= this.costBeforeSleep + diff + this.sleepTimeout) {
+                        this.sleep();
+                    }
+
+                    this.timing();
+                }
+
+                this.$apply();
+            };
+
+            if (reset && this.timer) {
+                console.log("计时被清除");
+                clearTimeout(this.timer);
+            }
+
+            if (duration) {
+                this.duration = duration;
+            }
+
+            if (immediate) {
+                run();
+            }
+            else {
+                this.timer = setTimeout(run, this.duration * 1000);
+            }
+        }
+
+        stopTiming () {
+            console.log("停止计时");
+            clearTimeout(this.timer);
+        }
+
+        end () {
+            let hour;
+            let minute;
+            let second;
+            let cost = this.cost;
+
+            hour = Math.floor(cost / 3600);
+            cost -= hour * 3600;
+            minute = Math.floor(cost / 60);
+            cost -= minute * 60;
+            second = cost;
+
+            const exTime = this.$parent.globalData.exTime = hour * 60 + minute;
+
+            const submitData = this.$parent.globalData.submitData = {
+                timeSet: exTime * 60,
+                trainMethodIds: this.$parent.globalData.trainMethodIds,
+                musicId: this.$parent.globalData.musicId,
+                addDuration: 0
+            };
+
+            wx.getNetworkType({
+                success: (res) => {
+                    const networkType = res.networkType
+                    if (networkType === 'none' || networkType === 'unkonwn') {
+                        const etoaArr = wx.getStorageSync('exTimeOfflineArray') || []
+                        const extentObj = etoaArr.find(e => e.timeSet == submitData.timeSet && e.trainMethodIds == submitData.trainMethodIds)
+                        if (!extentObj) {
+                            etoaArr.push(submitData)
+
+                            wx.setStorage({
+                                key: 'exTimeOfflineArray',
+                                data: etoaArr,
+                                success: function (res) {
+                                    console.log('本地存储 exTimeOfflineArray 成功')
+                                }
+                            })
+                        }
+                    }
+                }
+            });
+            wx.stopBackgroundAudio();
+
+            this.stopTiming();
+            this.wake();
+            playAudio(this.$parent.globalData.resPerfix + '/res/music/end.mp3', 'end');
+
+            // 跳转
+            this.$parent.globalData.musicUrl = '';
+            this.$parent.globalData.musicTitle = '';
+            this.$redirect('./end');
+        }
+
+        removeExStorage () {
+            console.log("练习后台计时已被清除");
+            wx.removeStorage({
+                key: "ex_background"
+            });
+        }
+
+        setAutoEndTimer () {
+            // 时间到，自动结束
+            if (!this.isFinite) {
+                clearTimeout(this.autoEndTimer);
+
+                this.autoEndTimer = setTimeout(() => {
+                    this.end();
+                }, (this.total - this.cost) * 1000);
+            }
+        }
+
+        onShow() {
+            let exStorage = wx.getStorageSync("ex_background");
+
+            // 清除自动结束计时器
+            if (!this.isFinite && this.autoEndTimer) {
+                clearTimeout(this.autoEndTimer);
+                this.autoEndTimer = null;
+            }
+
+            if (exStorage) {
+                this.cost = exStorage.cost;
+                this.isPause = exStorage.isPause;
+
+                if (!this.isPause) {
+                    this.cost += Math.floor((new Date().getTime() - exStorage.time) / 1000);
+                    this.timing(true, false, 1);
+                    this.setSleepTimer();
+                }
+
+                this.removeExStorage();
+            }
+            else {
+                console.log("初始化计时");
+                this.timing(true, false, 1);
+                this.setSleepTimer();
+
+                if (!this.hasPlayMusic) {
+                    this.hasPlayMusic = true;
+
+                    playAudio(this.$parent.globalData.resPerfix + '/res/music/begin.mp3', 'begin', () => {
+                        this.playBackgroundAudio();
+                    });
+                }
+            }
+        }
+
+        onHide() {
+            this.setAutoEndTimer();
+            this.stopTiming();
+            this.clearSleepTimer();
 
             wx.setStorage({
-              key: 'exTimeOfflineArray',
-              data: etoaArr,
-              success: function(res){
-                console.log('本地存储 exTimeOfflineArray 成功')
-              }
-            })
-          }
+                key: "ex_background",
+                data: {
+                    time: new Date().getTime(),
+                    isPause: this.isPause,
+                    cost: this.cost,
+                    bright: this.screenBrightness
+                }
+            });
         }
-      }
-    })
 
-    playAudio(this.$parent.globalData.resPerfix + '/res/music/end.mp3', 'end')
+        onLoad(params) {
+            this.duration = 1;
+            this.sleepDuration = 15;
+            this.sleepTimeout = 20;
+            this.screenBrightness = "";
+            this.sleepTimer = false;
+            this.costBeforeSleep = 0;
+            this.hasPlayMusic = false;
+            this.params = params;
+            this.backgroundImage = this.$parent.globalData.backgroundImage;
+            this.$parent.globalData.isInex = true;
+            wx.hideShareMenu();
 
-    // 跳转
-    this.$parent.globalData.musicUrl = ''
-    this.$parent.globalData.musicTitle = ''
-    this.$redirect('./end')
-  }
-
-  function playAudio(src, title, onEnded) {
-    console.log(src + '' + title)
-    const am = wx.getBackgroundAudioManager()
-    am.onError((e) => {
-      console.error(e)
-    })
-    am.onPlay(() => {
-    })
-    am.onEnded(() => {
-      onEnded && onEnded()
-    })
-    am.title = title || src
-    am.src = src
-  }
-  const onTapStop = function() {
-    this.isPause = true
-    clearInterval(this.timer)
-    this.timer = ''
-    wx.pauseBackgroundAudio()
-  }
-
-  const d = new Date()
-  export default class Tag extends wepy.page {
-    config = {
-      disableScroll: true,
-      navigationBarTitleText: '练习'
-    }
-    data = {
-      showTime: '',
-      isEnd: false,
-      isPause: false,
-      backgroundImage: '',
-      isFinite: false,
-      curTime: {
-        hour: 0,
-        minute: 0
-      }
-    }
-    mixins = [ formIds ]
-    onHide() {
-      // onTapStop.call(this)
-    }
-    onLoad(params) {
-      wx.setKeepScreenOn({
-        keepScreenOn: true,
-      })
-
-      this.$parent.globalData.isInex = true
-      wx.hideShareMenu()
-      playAudio(this.$parent.globalData.resPerfix + '/res/music/begin.mp3', 'begin', () => {
-        if(this.$parent.globalData.musicUrl) {
-          playAudio(this.$parent.globalData.musicUrl, this.$parent.globalData.musicTitle)
+            if (this.params.isFinite === "true") {
+                this.isFinite = true;
+            }
+            else {
+                this.total = (parseInt(this.params.hour) || 0) * 3600 + (parseInt(this.params.minute) || 0) * 60 + (parseInt(this.params.second) || 0);
+            }
         }
-      })
-      this.params = params;
-      this._d = null;
-      const hour = parseInt(this.params.hour, 10)
-      this.params.isFinite = this.isFinite = this.params.isFinite === 'true'
-      this.backgroundImage = this.$parent.globalData.backgroundImage;
-      this.showTime = setTime(this.params)
 
-      if(this.timer) clearInterval(this.timer)
-      this.timer = setInterval(() => {
-        if(!this._d) this._d = new Date([d.getFullYear(), d.getMonth(), d.getDate()].join('/') + ' ' + ((hour > 0 || this.isFinite) ? this.showTime : ('00:' + this.showTime)))
-        const minusTime = this.curTime = this.isFinite ? getPlusTime.call(this, this._d) : getMinusTime.call(this, this._d)
-        // 如果都是0结束
-        if(minusTime.hour === 0 && minusTime.minute === 0 && minusTime.second === 0) {
-          clearInterval(this.timer)
-          this.timer = ''
-          onEnd.call(this)
+        playBackgroundAudio () {
+            if (this.$parent.globalData.musicUrl) {
+                playAudio(this.$parent.globalData.musicUrl, this.$parent.globalData.musicTitle)
+            }
         }
-        this.showTime = setTime(Object.assign(minusTime, {isFinite: this.isFinite}))
-        this.$apply()
-      }, TIME)
     }
-    methods = {
-      onTapStop() {
-        onTapStop.call(this)
-      },
-      onGoon() {
-        if(this.timer) return
-        const hour = parseInt(this.params.hour, 10)
-        wx.playBackgroundAudio()
-
-        const timer = setInterval(() => {
-          let dVal = [d.getFullYear(), d.getMonth(), d.getDate()].join('/') + ' ' + ((this.showTime.length > 5 || this.isFinite) ? this.showTime : ('00:' + this.showTime))
-          this._d = new Date(dVal)
-          const minusTime = this.curTime = this.isFinite ? getPlusTime.call(this, this._d) : getMinusTime.call(this, this._d)
-          // 如果都是0结束
-          if(minusTime.hour === 0 && minusTime.minute === 0 && minusTime.second === 0) {
-            clearInterval(this.timer)
-            this.timer = ''
-            onEnd.call(this)
-          }
-          this.showTime = setTime(Object.assign(minusTime, {isFinite: this.isFinite}))
-          this.$apply()
-        }, TIME)
-
-        this.timer = timer
-        this.isPause = false
-      },
-      onEnd() {
-        onEnd.call(this)
-      }
-    }
-  }
 </script>

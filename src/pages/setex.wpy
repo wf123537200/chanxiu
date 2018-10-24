@@ -1264,6 +1264,7 @@
           console.error('数据组装错误')
         }
 
+        wx.removeStorageSync("ex_background");
         this.$redirect('./ex', {hour: this.hour, minute: this.minute, isFinite: this.isFinite});
 
         wx.setStorage({

@@ -313,13 +313,13 @@
     }
 
     onShow = () => {
-        wx.setKeepScreenOn({
-            keepScreenOn: true,
-        })
+        // wx.setKeepScreenOn({
+        //     keepScreenOn: true,
+        // })
     }
 
     onHide = () => {
-      wx.pauseBackgroundAudio()
+      //wx.pauseBackgroundAudio()
     }
 
     globalData = {
@@ -480,8 +480,7 @@
                 })
               }
               cb && cb(userInfo);
-            })
-
+            });
           } else {
             getUserInfoByCache.apply(that, [cb])
           }
