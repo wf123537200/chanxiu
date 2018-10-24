@@ -85,7 +85,7 @@
     <view class="container ex" style="background-size:cover; background-image: url({{backgroundImage}})" @tap="onTapStop">
         <view class="timer-box">
             <view class="timer">{{showTime}}</view>
-            <view class="tip" wx:if="{{sleeping}}">每{{duration}}秒更新练习时间，以减少耗电。</view>
+            <view class="tip" wx:if="{{sleeping}}">每{{duration}}秒更新计时，以减少耗电。</view>
         </view>
         <view class="btn-wrap {{isPause ? '' : 'hide'}}">
             <view>
@@ -214,12 +214,13 @@
             this.playBackgroundAudio();
             this.isPause = false;
             this.timing(true, false, 1);
-            this.setSleepTimer();
+            this.setSleepTimer(true);
         }
 
-        setSleepTimer () {
+        setSleepTimer (paused) {
             this.sleepTimer = true;
             this.costBeforeSleep = this.cost;
+            this.bePaused = paused;
             console.log("休眠定时被设置");
         }
 
@@ -233,6 +234,7 @@
             console.log("即将休眠");
             this.sleepTimer = false;
             this.sleeping = true;
+            this.bePaused = false;
             this.duration = this.sleepDuration;
 
             wx.getScreenBrightness({
@@ -248,7 +250,8 @@
                                 keepScreenOn: true
                             });
 
-                            //logBright();
+                            console.log("进入休眠");
+                            logBright();
                         }
                     });
                 }
@@ -281,11 +284,17 @@
                     this.end();
                 }
                 else {
+                    let diff = 0;
                     this.cost += this.duration;
 
                     console.log(`正在计时：已练习${this.cost}秒`);
 
-                    if (this.sleepTimer && this.cost >= this.costBeforeSleep + this.sleepTimeout) {
+                    //
+                    if (this.bePaused) {
+                        diff = 10 - this.costBeforeSleep % 10;
+                    }
+
+                    if (this.sleepTimer && this.cost >= this.costBeforeSleep + diff + this.sleepTimeout) {
                         this.sleep();
                     }
 
