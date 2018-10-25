@@ -428,9 +428,11 @@
         success: (d) => {
           d.trainInfo = d.trainInfo || {}
           const strLastTime = d.trainInfo.strLastTime
+          /*
           if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
             d.trainInfo.continuousNum = 0
           }
+          */
 
           Object.assign(this, d.trainInfo)
           getCt.call(this)
