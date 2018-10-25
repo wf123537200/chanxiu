@@ -72,10 +72,14 @@ export function end (inExPage, cost) {
     wx.removeStorageSync("ex_background");
 
     if (inExPage) {
-        this.$redirect('./end');
+        wx.redirectTo({
+            url: "/pages/end"
+        });
     }
     else {
-        this.$navigate("./end");
+        wx.navigateTo({
+            url: "/pages/end"
+        });
     }
 }
 

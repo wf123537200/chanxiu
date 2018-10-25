@@ -387,7 +387,7 @@
               }
               else {
                   wx.navigateTo({
-                      url: "./ex"
+                      url: "/pages/ex"
                   });
               }
           }
