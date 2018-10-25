@@ -70,7 +70,13 @@ export function end (inExPage, cost) {
     target.globalData.musicUrl = '';
     target.globalData.musicTitle = '';
     wx.removeStorageSync("ex_background");
-    this.$redirect('./end');
+
+    if (inExPage) {
+        this.$redirect('./end');
+    }
+    else {
+        this.$navigate("./end");
+    }
 }
 
 export function playAudio (src, title, onEnded) {

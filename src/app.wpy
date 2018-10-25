@@ -364,8 +364,6 @@
       let ex_background = wx.getStorageSync("ex_background");
       let bootBySharePage = options && options._f && parseInt(options._f) === 1;
 
-        console.log(this);
-
       if (ex_background) {
           if (bootBySharePage) {
               wx.removeStorage({
@@ -373,7 +371,6 @@
               });
           }
           else {
-              console.log("重新启动APP");
               let {time, isPause, cost, total} = ex_background;
               let _cost = 0;
 
