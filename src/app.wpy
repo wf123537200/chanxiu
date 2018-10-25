@@ -364,15 +364,17 @@
       let ex_background = wx.getStorageSync("ex_background");
       let bootBySharePage = options && options._f && parseInt(options._f) === 1;
 
-      console.log("启动时检测到缓存：", ex_background);
-
       if (ex_background) {
+          console.log("启动时检测到缓存：", ex_background);
+
           if (bootBySharePage) {
+              console.log("从分享页打开，移除缓存。");
               wx.removeStorage({
                   key: "ex_background"
               });
           }
           else {
+              console.log("跳转结果页或计时页");
               let {time, isPause, cost, total} = ex_background;
               let _cost = 0;
 
@@ -384,9 +386,14 @@
                   end.call(this, false, cost + _cost);
               }
               else {
-                  this.$navigate("./ex");
+                  wx.navigateTo({
+                      url: "./ex"
+                  });
               }
           }
+      }
+      else {
+          console.log("未检测到缓存");
       }
     }
 
