@@ -398,6 +398,15 @@
                     bright: this.screenBrightness
                 }
             });
+
+            console.log("进入后台，缓存数据：", {
+                time: new Date().getTime(),
+                isPause: !!this.isPause,
+                isFinite: !!this.isFinite,
+                cost: this.cost || 0,
+                total: this.total || 0,
+                bright: this.screenBrightness
+            });
         }
 
         onLoad(params) {

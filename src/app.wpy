@@ -364,6 +364,8 @@
       let ex_background = wx.getStorageSync("ex_background");
       let bootBySharePage = options && options._f && parseInt(options._f) === 1;
 
+      console.log("启动时检测到缓存：", ex_background);
+
       if (ex_background) {
           if (bootBySharePage) {
               wx.removeStorage({
