@@ -678,7 +678,7 @@
             </view>
             <view class="ex-date">{{item.strCreateTimeStr}}</view>
           </view>
-          <text class="flex-r m-l-35 line-2 {{!item.readAll && item.content.length > 63 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">{{item.content}}</text>
+          <text class="flex-r m-l-35 line-2 {{!item.readAll && item.content.length > 63 && item.type == 2 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">{{item.content}}</text>
           <view class="ex-process-pannel">
             <view class="read-all" @tap="readAllContent({{item}}, {{index}})">
               {{item.type == 2 && !item.readAll ? '查看全文' : ''}}
