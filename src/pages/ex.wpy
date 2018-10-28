@@ -119,21 +119,7 @@
 <script>
     import wepy from 'wepy';
     import formIds from "../mixins/formIds";
-
-    function playAudio(src, title, onEnded) {
-        console.log(src + '' + title)
-        const am = wx.getBackgroundAudioManager()
-        am.onError((e) => {
-            console.error(e)
-        })
-        am.onPlay(() => {
-        })
-        am.onEnded(() => {
-            onEnded && onEnded()
-        })
-        am.title = title || src
-        am.src = src
-    }
+    import ex from "../mixins/ex";
 
     function logBright () {
         wx.getScreenBrightness({
@@ -149,7 +135,7 @@
             navigationBarTitleText: "练习"
         };
 
-        mixins = [formIds];
+        mixins = [formIds, ex];
 
         data = {
             cost: 0,
@@ -195,7 +181,7 @@
                 this.goon();
             },
             end () {
-                this.end();
+                this.end(true);
             },
             onTapStop () {
                 this.wake();
@@ -281,7 +267,7 @@
         timing(reset, immediate, duration) {
             let run = () => {
                 if (!this.isFinite && this.total - this.cost <= 0) {
-                    this.end();
+                    this.end(true);
                 }
                 else {
                     let diff = 0;
@@ -289,7 +275,7 @@
 
                     console.log(`正在计时：已练习${this.cost}秒`);
 
-                    //
+                    // 修正计时：整10
                     if (this.bePaused) {
                         diff = 10 - this.costBeforeSleep % 10;
                     }
@@ -326,59 +312,6 @@
             clearTimeout(this.timer);
         }
 
-        end () {
-            let hour;
-            let minute;
-            let second;
-            let cost = this.cost;
-
-            hour = Math.floor(cost / 3600);
-            cost -= hour * 3600;
-            minute = Math.floor(cost / 60);
-            cost -= minute * 60;
-            second = cost;
-
-            const exTime = this.$parent.globalData.exTime = hour * 60 + minute;
-
-            const submitData = this.$parent.globalData.submitData = {
-                timeSet: exTime * 60,
-                trainMethodIds: this.$parent.globalData.trainMethodIds,
-                musicId: this.$parent.globalData.musicId,
-                addDuration: 0
-            };
-
-            wx.getNetworkType({
-                success: (res) => {
-                    const networkType = res.networkType
-                    if (networkType === 'none' || networkType === 'unkonwn') {
-                        const etoaArr = wx.getStorageSync('exTimeOfflineArray') || []
-                        const extentObj = etoaArr.find(e => e.timeSet == submitData.timeSet && e.trainMethodIds == submitData.trainMethodIds)
-                        if (!extentObj) {
-                            etoaArr.push(submitData)
-
-                            wx.setStorage({
-                                key: 'exTimeOfflineArray',
-                                data: etoaArr,
-                                success: function (res) {
-                                    console.log('本地存储 exTimeOfflineArray 成功')
-                                }
-                            })
-                        }
-                    }
-                }
-            });
-            wx.stopBackgroundAudio();
-
-            this.stopTiming();
-            this.wake();
-            playAudio(this.$parent.globalData.resPerfix + '/res/music/end.mp3', 'end');
-
-            // 跳转
-            this.$parent.globalData.musicUrl = '';
-            this.$parent.globalData.musicTitle = '';
-            this.$redirect('./end');
-        }
-
         removeExStorage () {
             console.log("练习后台计时已被清除");
             wx.removeStorage({
@@ -392,8 +325,27 @@
                 clearTimeout(this.autoEndTimer);
 
                 this.autoEndTimer = setTimeout(() => {
-                    this.end();
+                    this.end(true);
                 }, (this.total - this.cost) * 1000);
+            }
+        }
+
+        dealStorage (exStorage, cb, noStorage) {
+            if (exStorage) {
+                this.cost = exStorage.cost;
+                this.isPause = exStorage.isPause;
+                this.isFinite = exStorage.isFinite;
+
+                if (!this.isPause) {
+                    this.cost += Math.floor((new Date().getTime() - exStorage.time) / 1000);
+                }
+
+                cb(exStorage);
+
+                this.removeExStorage();
+            }
+            else {
+                noStorage && noStorage();
             }
         }
 
@@ -406,30 +358,27 @@
                 this.autoEndTimer = null;
             }
 
-            if (exStorage) {
-                this.cost = exStorage.cost;
-                this.isPause = exStorage.isPause;
-
-                if (!this.isPause) {
-                    this.cost += Math.floor((new Date().getTime() - exStorage.time) / 1000);
+            this.dealStorage(
+                exStorage,
+                () => {
+                    if (!this.isPause) {
+                        this.timing(true, false, 1);
+                        this.setSleepTimer();
+                    }
+                },
+                () => {
+                    console.log("初始化计时");
                     this.timing(true, false, 1);
                     this.setSleepTimer();
                 }
+            );
 
-                this.removeExStorage();
-            }
-            else {
-                console.log("初始化计时");
-                this.timing(true, false, 1);
-                this.setSleepTimer();
+            if (!this.hasPlayMusic) {
+                this.hasPlayMusic = true;
 
-                if (!this.hasPlayMusic) {
-                    this.hasPlayMusic = true;
-
-                    playAudio(this.$parent.globalData.resPerfix + '/res/music/begin.mp3', 'begin', () => {
-                        this.playBackgroundAudio();
-                    });
-                }
+                this.playAudio(this.$parent.globalData.resPerfix + '/res/music/begin.mp3', 'begin', () => {
+                    this.playBackgroundAudio();
+                });
             }
         }
 
@@ -442,37 +391,73 @@
                 key: "ex_background",
                 data: {
                     time: new Date().getTime(),
-                    isPause: this.isPause,
-                    cost: this.cost,
+                    isPause: !!this.isPause,
+                    isFinite: !!this.isFinite,
+                    cost: this.cost || 0,
+                    total: this.total || 0,
                     bright: this.screenBrightness
                 }
+            });
+
+            console.log("进入后台，缓存数据：", {
+                time: new Date().getTime(),
+                isPause: !!this.isPause,
+                isFinite: !!this.isFinite,
+                cost: this.cost || 0,
+                total: this.total || 0,
+                bright: this.screenBrightness
             });
         }
 
         onLoad(params) {
-            this.duration = 1;
+            //this.duration = 1;
+            let storage = wx.getStorageSync("ex_background");
+            wx.hideShareMenu();
+
             this.sleepDuration = 15;
             this.sleepTimeout = 20;
             this.screenBrightness = "";
             this.sleepTimer = false;
             this.costBeforeSleep = 0;
-            this.hasPlayMusic = false;
-            this.params = params;
             this.backgroundImage = this.$parent.globalData.backgroundImage;
             this.$parent.globalData.isInex = true;
-            wx.hideShareMenu();
+            this.params = params || {};
 
-            if (this.params.isFinite === "true") {
-                this.isFinite = true;
-            }
-            else {
-                this.total = (parseInt(this.params.hour) || 0) * 3600 + (parseInt(this.params.minute) || 0) * 60 + (parseInt(this.params.second) || 0);
-            }
+            this.dealStorage(
+                storage,
+                (storage) => {
+                    this.hasPlayMusic = true;
+
+                    if (storage.isFinite) {
+                        this.params.isFinite = true;
+                        this.isFinite = true;
+                    }
+                    else {
+                        let total = storage.total;
+                        let {hour, minute} = this.getTimeInfo(total);
+
+                        this.total = total;
+                        this.params.hour = hour;
+                        this.params.minute = minute;
+                    }
+                },
+                () => {
+                    this.hasPlayMusic = false;
+
+                    if (this.params.isFinite === "true") {
+                        this.isFinite = true;
+                    }
+                    else {
+                        this.total = (parseInt(this.params.hour) || 0) * 3600 + (parseInt(this.params.minute) || 0) * 60 + (parseInt(this.params.second) || 0);
+                    }
+                }
+            );
+
         }
 
         playBackgroundAudio () {
             if (this.$parent.globalData.musicUrl) {
-                playAudio(this.$parent.globalData.musicUrl, this.$parent.globalData.musicTitle)
+                this.playAudio(this.$parent.globalData.musicUrl, this.$parent.globalData.musicTitle)
             }
         }
     }

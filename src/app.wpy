@@ -114,7 +114,8 @@
 <script>
   import wepy from 'wepy'
   import 'wepy-async-function';
-  import {ajax} from './components/ajax'
+  import {ajax} from './components/ajax';
+  import {end} from "./components/ex";
   import moment from "moment";
 
   moment.locale('zh-cn', {
@@ -360,8 +361,40 @@
     }
 
     onLaunch(options) {
-      this.globalData.scene = options.scene;
-      console.log("场景值：", this.globalData.scene);
+      let ex_background = wx.getStorageSync("ex_background");
+      let bootBySharePage = options && options._f && parseInt(options._f) === 1;
+
+      if (ex_background) {
+          console.log("启动时检测到缓存：", ex_background);
+
+          if (bootBySharePage) {
+              console.log("从分享页打开，移除缓存。");
+              wx.removeStorage({
+                  key: "ex_background"
+              });
+          }
+          else {
+              console.log("跳转结果页或计时页");
+              let {time, isPause, cost, total} = ex_background;
+              let _cost = 0;
+
+              if (!isPause) {
+                  _cost = Math.floor((new Date().getTime() - time) / 1000);
+              }
+
+              if (cost + _cost >= total) {
+                  end.call(this, false, cost + _cost);
+              }
+              else {
+                  wx.navigateTo({
+                      url: "/pages/ex"
+                  });
+              }
+          }
+      }
+      else {
+          console.log("未检测到缓存");
+      }
     }
 
     getUserInfo(cb, user) {

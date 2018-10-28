@@ -18,8 +18,6 @@
             <button class="btn-copy btn-primary" form-type="submit" @tap="copy">复制简报</button>
         </form>
     </block>
-
-    <toast text="复制成功，\n你可以粘贴到群里了"></toast>
 </template>
 
 <style lang="less">
@@ -127,16 +125,10 @@
     import classInfo from "../../mixins/classInfo";
     import {getTrainList, getTrainRanks, getInterrupts} from "../../modules/Classes";
 
-    import toast from "../../components/toast";
-
     export default class extends wepy.page {
         config = {
             disableScroll: true,
             navigationBarTitleText: "通报到群"
-        };
-
-        components = {
-            toast
         };
 
         data = {
