@@ -216,6 +216,7 @@
       <view class="tips-wrap {{isShowImage ? 'hide' : ''}}">
         <textarea class="tips-text {{isShowTips || tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}"
                   adjust-position="true"
+                  cursor-spacing="80"
                   @blur="onEndText" @tap.stop="onStop" value="{{tips}}" placeholder="记录练习状态和疑问，以便得到别人的指导，及回顾总结"></textarea>
         <view class="tips-text {{!isShowTips && tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}" style="z-index: 510"></view>
         <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 5%;" @tap="onSetOk">提交</view>

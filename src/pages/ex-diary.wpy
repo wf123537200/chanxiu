@@ -103,7 +103,7 @@
       return '日记内容必录'
     }
     if (content.replace(/[^\x00-\xff]/g, "00").length > 3000) {
-      return '内容长度过长'
+      return '最多1500字'
     }
 
     return null
