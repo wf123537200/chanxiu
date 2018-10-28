@@ -255,12 +255,12 @@
   .line-2 {
     line-height: 2;
   }
-  .line-3-content {
-    height:68px;
-    overflow:hidden;
+  .line-4-content {
+    height: 90px;
+    overflow: hidden;
     line-height: 1.7;
     overflow: hidden;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 4;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -678,7 +678,7 @@
             </view>
             <view class="ex-date">{{item.strCreateTimeStr}}</view>
           </view>
-          <text class="flex-r m-l-35 line-2 {{!item.readAll && item.content.length > 63 && item.type == 2 ? 'line-3-content' : ''}} {{!!item.content ? '' : 'hide'}}">{{item.content}}</text>
+          <text class="flex-r m-l-35 line-2 {{!item.readAll && item.type == 2 ? 'line-4-content' : ''}} {{!!item.content ? '' : 'hide'}}">{{item.content}}</text>
           <view class="ex-process-pannel">
             <view class="read-all" @tap="readAllContent({{item}}, {{index}})">
               {{item.type == 2 && !item.readAll ? '查看全文' : ''}}
