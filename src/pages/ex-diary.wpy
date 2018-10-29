@@ -26,6 +26,7 @@
     height: 5%;
   }
   .ex-diary-content {
+    flex: 1;
     font-size: 16px;
     color: $black;
     width: 100%;
@@ -76,7 +77,7 @@
         </view>
         <scroll-view scroll-y style="height: 100%;">
           <view style="margin-top:-25px;">
-            <text class="ex-diary-content">
+            <text space="nbsp" class="ex-diary-content">
               {{content}}
             </text>
           </view>
@@ -102,7 +103,7 @@
       return '日记内容必录'
     }
     if (content.replace(/[^\x00-\xff]/g, "00").length > 3000) {
-      return '内容长度过长'
+      return '最多1500字'
     }
 
     return null
@@ -170,7 +171,9 @@
         })
       },
       cancelFn: function() {
-        this.$navigate('./ex-briefing');
+        wx.navigateBack({
+          delta: 1
+        })
       }
     }
     onShow() {
