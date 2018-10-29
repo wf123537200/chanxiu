@@ -536,7 +536,8 @@
                 let m = now.getMonth() + 1;
                 let d = now.getDate();
 
-                for (let [key, value] of Object.entries(trainRecords)) {
+                for (let key of Object.keys(trainRecords)) {
+                    let value = trainRecords[key];
                     let _key = key.split("-");
                     let _y = _key[0] - 0;
                     let _m = _key[1] - 0;
