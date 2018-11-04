@@ -216,7 +216,6 @@
   }
   const confirmValid = function () {
     const timeSet = this.timeSet
-    const experience = this.experience
     const date = this.date
     const time = this.time
     const type1 = this.type1
@@ -247,8 +246,8 @@
     return null
   }
   const buildConfirmParam = function () {
-    const timeSet = this.timeSet
-    const experience = this.experience
+    const timeSet = this.timeSet || ''
+    const experience = this.experience || ''
     const date = this.date
     const time = this.time
     const type1 = this.type1

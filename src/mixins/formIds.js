@@ -28,9 +28,12 @@ export default class extends wepy.mixin {
         if (formId !== "the formId is a mock one") {
             let id = {
                 formId,
-                expire,
-                fromPage: from
+                expire
             };
+
+            if (from) {
+              id.fromPage = from
+            }
 
             formIds.push(id);
             ins.globalData.formIds = formIds;
