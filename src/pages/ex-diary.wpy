@@ -144,8 +144,8 @@
           return
         }
 
-        const title = this.title
-        const content = this.content
+        const title = this.title || ''
+        const content = this.content || ''
         const id = this.$parent.globalData.diaryId
         let url = '/diary/add'
 
