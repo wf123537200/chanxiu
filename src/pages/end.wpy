@@ -283,7 +283,7 @@
       backgroundImage: '',
       extype: '',
       exTime: 0,
-      continuousNum: 0,
+      continuousNum: 1,
       isShowImage: false,
       picUrl: '',
       isCover: false
@@ -292,7 +292,7 @@
     onLoad() {
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
-      this.extype = this.$parent.globalData['setExType']
+      this.extype = this.$parent.globalData['setExType'] || ''
       this.exTime = Math.abs(this.$parent.globalData['exTime'])
       this.$parent.getUserInfo((userInfo) => {
         if (userInfo) {
@@ -339,7 +339,7 @@
           d.trainInfo = d.trainInfo || {}
           const strLastTime = d.trainInfo.strLastTime
           if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
-            d.trainInfo.continuousNum = 1
+            d.trainInfo.continuousNum += 1
           }
 
           this.continuousNum = d.trainInfo.continuousNum || 1

@@ -1094,8 +1094,6 @@
         const shareBtnId = res.target ? res.target.id : ''
         const nickName = this.userInfo.nickName
 
-        console.log(shareBtnId)
-
         // 从简报页右上角直接转发
         let path = 'pages/ex-briefing?_f=1&userId=' + this.userId
         let title = nickName + '的练习简报'
