@@ -302,6 +302,7 @@
         this.$apply()
       })
       const submitData = this.$parent.globalData.submitData
+      submitData.musicId = submitData.musicId || 0
       ajax({
         ins: this,
         url: '/train/submit',
