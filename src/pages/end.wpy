@@ -426,7 +426,7 @@
         let path = 'pages/ex-briefing?_f=1&userId=' + this.userId
 
         return {
-          title: (this.userInfo.nickName || '') + this.extype + this.exTime + '分钟，连续第' + this.continuousNum + '天',
+          title: (this.userInfo.nickName || '') + (this.extype || '') + this.exTime + '分钟，连续第' + this.continuousNum + '天',
           path,
           imageUrl: this.resPerfix + this.shareUrl + '?' + Date.now(),
           complete: (e) => {
