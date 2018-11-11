@@ -339,8 +339,14 @@
         success: (d) => {
           d.trainInfo = d.trainInfo || {}
           const strLastTime = d.trainInfo.strLastTime
-          if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
+
+          var yesterday = new Date()
+          yesterday.setTime(day1.getTime() - 24 * 60 * 60 * 1000)
+
+          if (strLastTime == moment(yesterday).format('YYYY-MM-DD')) {
             d.trainInfo.continuousNum += 1
+          } else if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
+            d.trainInfo.continuousNum = 1
           }
 
           this.continuousNum = d.trainInfo.continuousNum || 1
@@ -420,7 +426,7 @@
         let path = 'pages/ex-briefing?_f=1&userId=' + this.userId
 
         return {
-          title: this.userInfo.nickName + this.extype + this.exTime + '分钟，连续第' + this.continuousNum + '天',
+          title: (this.userInfo.nickName || '') + this.extype + this.exTime + '分钟，连续第' + this.continuousNum + '天',
           path,
           imageUrl: this.resPerfix + this.shareUrl + '?' + Date.now(),
           complete: (e) => {
