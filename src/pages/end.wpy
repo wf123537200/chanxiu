@@ -214,10 +214,11 @@
       <image class="tips-icon {{isShowTips || (!isShowTips && tips) ? 'hide' : 'editor-active'}}" src="/images/editor-default.png" @tap.stop="onShowEditor"></image>
       <image class="tips-icon {{isShowTips ? 'back-active hide' : 'back-active back'}}" src="/images/back.png" @tap="onBackHome"></image>
       <view class="tips-wrap {{isShowImage ? 'hide' : ''}}">
-        <textarea class="tips-text {{isShowTips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}"
+        <textarea class="tips-text {{isShowTips || tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}"
                   adjust-position="true"
                   cursor-spacing="80"
-                  @blur="onEndText" @tap.stop="onStop" value="{{tips}}" placeholder="记录练习状态和疑问，以便得到别人的指导，及回顾总结"></textarea>
+                  maxlength="1000"
+                  bindinput="onEndText" @tap.stop="onStop" value="{{tips}}" placeholder="记录练习状态和疑问，以便得到别人的指导，及回顾总结"></textarea>
         <view class="tips-text {{!isShowTips && tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}" style="z-index: 510"></view>
         <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 5%;" @tap="onSetOk">提交</view>
         <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 35%;" @tap="onCancel">取消</view>
@@ -303,6 +304,9 @@
       })
       const submitData = this.$parent.globalData.submitData
       submitData.musicId = submitData.musicId || 0
+      const trainMethodIds = submitData.trainMethodIds || ''
+      submitData.trainMethodIds = trainMethodIds.split(' ').join(',') || ''
+
       ajax({
         ins: this,
         url: '/train/submit',
@@ -378,7 +382,16 @@
         this.tips = e.detail.value
       },
       onSetOk() {
-        if(!this.tips) return;
+        if(!this.tips) return
+        if (this.tips.replace(/[^\x00-\xff]/g, "00").length > 500) {
+          wx.showToast({
+            title: '最多500字',
+            icon: 'error',
+            duration: 2000,
+            mask:true
+          })
+          return
+        }
 
         setTimeout(() => {
           ajax({
