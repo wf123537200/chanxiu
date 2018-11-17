@@ -214,7 +214,7 @@
       <image class="tips-icon {{isShowTips || (!isShowTips && tips) ? 'hide' : 'editor-active'}}" src="/images/editor-default.png" @tap.stop="onShowEditor"></image>
       <image class="tips-icon {{isShowTips ? 'back-active hide' : 'back-active back'}}" src="/images/back.png" @tap="onBackHome"></image>
       <view class="tips-wrap {{isShowImage ? 'hide' : ''}}">
-        <textarea class="tips-text {{isShowTips || tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}"
+        <textarea class="tips-text {{isShowTips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}"
                   adjust-position="true"
                   cursor-spacing="80"
                   @blur="onEndText" @tap.stop="onStop" value="{{tips}}" placeholder="记录练习状态和疑问，以便得到别人的指导，及回顾总结"></textarea>
