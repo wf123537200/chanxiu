@@ -281,6 +281,7 @@
       isShowTips: false,
       isShowShare: false,
       tips: '',
+      tipsCache: '',
       backgroundImage: '',
       extype: '',
       exTime: 0,
@@ -291,6 +292,8 @@
     }
     mixins = [ formIds ]
     onLoad() {
+      getUserId.call(this)
+
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
       this.extype = this.$parent.globalData['setExType'] || ''
@@ -358,11 +361,10 @@
           this.$apply()
         }
       })
-
-      getUserId.call(this)
     }
     methods = {
       onTapStop() {
+        console.log('onTapStop')
         this.isPause = true
         clearInterval(this.timer)
         this.timer = ''
@@ -370,6 +372,7 @@
         this.isShowShare = false
       },
       onShowEditor(e) {
+        this.tips = this.tips || this.tipsCache || ''
         this.isShowTips = true
       },
       onHideEditor(e) {
@@ -382,33 +385,38 @@
         this.tips = e.detail.value
       },
       onSetOk() {
-        if(!this.tips) return
-        if (this.tips.replace(/[^\x00-\xff]/g, "00").length > 500) {
+        const self = this
+        console.log(33)
+        if(!self.tips) return
+        if (self.tips.replace(/[^\x00-\xff]/g, "00").length > 500) {
           wx.showToast({
             title: '最多500字',
             icon: 'error',
             duration: 2000,
-            mask:true
+            mask: true
           })
           return
         }
 
         setTimeout(() => {
           ajax({
-            ins: this,
+            ins: self,
             url: '/train/experience',
             params: {
-              trainId: this.$parent.globalData.curDataId,
-              content: this.tips,
+              trainId: self.$parent.globalData.curDataId,
+              content: self.tips,
             },
             method: 'POST',
             success: (d) => {
               console.log('于' + d + '提交')
+              self.tipsCache = ''
             }
           })
         }, 500)
       },
       onCancel() {
+        this.tipsCache = this.tips
+        this.tips = ''
       },
       onChangeEditor() {
         this.isCover = false
