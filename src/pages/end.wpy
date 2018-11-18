@@ -54,7 +54,7 @@
     bottom:35px;
     width:20px;
     height:20px;
-    z-index: 500;
+    z-index: 501;
   }
   .editor-active {
     right: 35%;
@@ -105,6 +105,7 @@
     background:#B0976E;
     padding: 5px 15px;
     border-radius:3px;
+    z-index: 501;
   }
 
   .share-wrap {
@@ -220,7 +221,7 @@
                   maxlength="1000"
                   bindinput="onEndText" @tap.stop="onStop" value="{{tips}}" placeholder="记录练习状态和疑问，以便得到别人的指导，及回顾总结"></textarea>
         <view class="tips-text {{!isShowTips && tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}" style="z-index: 510"></view>
-        <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 5%;" @tap="onSetOk">提交</view>
+        <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 5%;" @tap.stop="onSetOk">提交</view>
         <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 35%;" @tap="onCancel">取消</view>
       </view>
     </view>
@@ -266,6 +267,15 @@
         this.userId = d.id
       }
     })
+  }
+
+  const onTapStop = function() {
+    this.isPause = true
+    clearInterval(this.timer)
+    this.timer = ''
+    this.isShowTips = false
+    this.isShowShare = false
+    this.$apply()
   }
 
   export default class End extends wepy.page {
@@ -364,12 +374,13 @@
     }
     methods = {
       onTapStop() {
-        console.log('onTapStop')
-        this.isPause = true
-        clearInterval(this.timer)
-        this.timer = ''
-        this.isShowTips = false
-        this.isShowShare = false
+        onTapStop.call(this)
+
+        const tips = this.tips
+        if (tips) {
+          this.tipsCache = tips
+        }
+        this.tips = ''
       },
       onShowEditor(e) {
         this.tips = this.tips || this.tipsCache || ''
@@ -386,9 +397,8 @@
       },
       onSetOk() {
         const self = this
-        console.log(33)
         if(!self.tips) return
-        if (self.tips.replace(/[^\x00-\xff]/g, "00").length > 500) {
+        if (self.tips.length > 500) {
           wx.showToast({
             title: '最多500字',
             icon: 'error',
@@ -409,14 +419,12 @@
             method: 'POST',
             success: (d) => {
               console.log('于' + d + '提交')
-              self.tipsCache = ''
+              onTapStop.call(self)
             }
           })
         }, 500)
       },
       onCancel() {
-        this.tipsCache = this.tips
-        this.tips = ''
       },
       onChangeEditor() {
         this.isCover = false
