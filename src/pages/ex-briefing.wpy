@@ -269,6 +269,7 @@
     display: flex;
     width: 100%;
     margin-top: 10px;
+    justify-content: flex-end;
   }
   .m-l-35 {
     margin-left: 35px;
@@ -680,8 +681,8 @@
           </view>
           <text class="flex-r m-l-35 line-2 {{!item.readAll && item.type == 2 ? 'line-4-content' : ''}} {{!!item.content ? '' : 'hide'}}" selectable="true">{{item.content}}</text>
           <view class="ex-process-pannel">
-            <view class="read-all" @tap="readAllContent({{item}}, {{index}})">
-              {{item.type == 2 && !item.readAll ? '查看全文' : ''}}
+            <view class="read-all {{item.type == 2 && !item.readAll ? '' : 'hide'}}" @tap="readAllContent({{item}}, {{index}})">
+              查看全文
             </view>
             <view class="process-btns">
               <image class="process-btn" src="/images/edit.png" wx:if="{{upstateState && item.iconType == 5}}" @tap="edit({{item}})"></image>

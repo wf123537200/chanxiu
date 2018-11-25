@@ -274,7 +274,6 @@
     clearInterval(this.timer)
     this.timer = ''
     this.isShowTips = false
-    this.isShowShare = false
     this.$apply()
   }
 
@@ -374,6 +373,9 @@
     }
     methods = {
       onTapStop() {
+        this.isShowShare = false
+
+        if (!this.isShowTips) return
         onTapStop.call(this)
 
         const tips = this.tips
