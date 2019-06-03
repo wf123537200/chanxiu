@@ -132,7 +132,6 @@
         this.content = e.detail.value
       },
       confirm: function() {
-        console.log('confirm')
         const validResult = confirmValid.call(this)
         if (validResult) {
           wx.showToast({

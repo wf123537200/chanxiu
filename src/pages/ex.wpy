@@ -230,7 +230,7 @@
                     this.screenBrightness = o.value;
 
                     wx.setScreenBrightness({
-                        value: o.value < 0.05 ? o.value : 0.05,
+                        value: o.value < 0.2 ? o.value : 0.2,
                         success: () => {
                             wx.setKeepScreenOn({
                                 keepScreenOn: true

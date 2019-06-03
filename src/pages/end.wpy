@@ -54,7 +54,7 @@
     bottom:35px;
     width:20px;
     height:20px;
-    z-index: 500;
+    z-index: 501;
   }
   .editor-active {
     right: 35%;
@@ -105,6 +105,7 @@
     background:#B0976E;
     padding: 5px 15px;
     border-radius:3px;
+    z-index: 501;
   }
 
   .share-wrap {
@@ -217,9 +218,10 @@
         <textarea class="tips-text {{isShowTips || tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}"
                   adjust-position="true"
                   cursor-spacing="80"
-                  @blur="onEndText" @tap.stop="onStop" value="{{tips}}" placeholder="记录练习状态和疑问，以便得到别人的指导，及回顾总结"></textarea>
+                  maxlength="1000"
+                  bindinput="onEndText" @tap.stop="onStop" value="{{tips}}" placeholder="记录练习状态和疑问，以便得到别人的指导，及回顾总结"></textarea>
         <view class="tips-text {{!isShowTips && tips ? '' : 'hide'}} {{tips && !isShowTips ? 'bg-hide' : ''}}" style="z-index: 510"></view>
-        <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 5%;" @tap="onSetOk">提交</view>
+        <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 5%;" @tap.stop="onSetOk">提交</view>
         <view class="text-btn {{isShowTips ? '' : 'hide'}}" style="right: 35%;" @tap="onCancel">取消</view>
       </view>
     </view>
@@ -267,6 +269,14 @@
     })
   }
 
+  const onTapStop = function() {
+    this.isPause = true
+    clearInterval(this.timer)
+    this.timer = ''
+    this.isShowTips = false
+    this.$apply()
+  }
+
   export default class End extends wepy.page {
     config = {
       disableScroll: true,
@@ -280,6 +290,7 @@
       isShowTips: false,
       isShowShare: false,
       tips: '',
+      tipsCache: '',
       backgroundImage: '',
       extype: '',
       exTime: 0,
@@ -290,6 +301,8 @@
     }
     mixins = [ formIds ]
     onLoad() {
+      getUserId.call(this)
+
       this.backgroundImage = this.$parent.globalData.endImage;
       this.resPerfix = this.$parent.globalData.resPerfix;
       this.extype = this.$parent.globalData['setExType'] || ''
@@ -302,6 +315,10 @@
         this.$apply()
       })
       const submitData = this.$parent.globalData.submitData
+      submitData.musicId = submitData.musicId || 0
+      const trainMethodIds = submitData.trainMethodIds || ''
+      submitData.trainMethodIds = trainMethodIds.split(' ').join(',') || ''
+
       ajax({
         ins: this,
         url: '/train/submit',
@@ -338,8 +355,14 @@
         success: (d) => {
           d.trainInfo = d.trainInfo || {}
           const strLastTime = d.trainInfo.strLastTime
-          if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
+
+          var yesterday = new Date()
+          yesterday.setTime(yesterday.getTime() - 24 * 60 * 60 * 1000)
+
+          if (strLastTime == moment(yesterday).format('YYYY-MM-DD')) {
             d.trainInfo.continuousNum += 1
+          } else if (strLastTime != moment(new Date).format('YYYY-MM-DD')) {
+            d.trainInfo.continuousNum = 1
           }
 
           this.continuousNum = d.trainInfo.continuousNum || 1
@@ -347,18 +370,22 @@
           this.$apply()
         }
       })
-
-      getUserId.call(this)
     }
     methods = {
       onTapStop() {
-        this.isPause = true
-        clearInterval(this.timer)
-        this.timer = ''
-        this.isShowTips = false
         this.isShowShare = false
+
+        if (!this.isShowTips) return
+        onTapStop.call(this)
+
+        const tips = this.tips
+        if (tips) {
+          this.tipsCache = tips
+        }
+        this.tips = ''
       },
       onShowEditor(e) {
+        this.tips = this.tips || this.tipsCache || ''
         this.isShowTips = true
       },
       onHideEditor(e) {
@@ -371,19 +398,30 @@
         this.tips = e.detail.value
       },
       onSetOk() {
-        if(!this.tips) return;
+        const self = this
+        if(!self.tips) return
+        if (self.tips.length > 500) {
+          wx.showToast({
+            title: '最多500字',
+            icon: 'error',
+            duration: 2000,
+            mask: true
+          })
+          return
+        }
 
         setTimeout(() => {
           ajax({
-            ins: this,
+            ins: self,
             url: '/train/experience',
             params: {
-              trainId: this.$parent.globalData.curDataId,
-              content: this.tips,
+              trainId: self.$parent.globalData.curDataId,
+              content: self.tips,
             },
             method: 'POST',
             success: (d) => {
               console.log('于' + d + '提交')
+              onTapStop.call(self)
             }
           })
         }, 500)
@@ -419,7 +457,7 @@
         let path = 'pages/ex-briefing?_f=1&userId=' + this.userId
 
         return {
-          title: this.userInfo.nickName + this.extype + this.exTime + '分钟，连续第' + this.continuousNum + '天',
+          title: (this.userInfo.nickName || '') + (this.extype || '') + this.exTime + '分钟，连续第' + this.continuousNum + '天',
           path,
           imageUrl: this.resPerfix + this.shareUrl + '?' + Date.now(),
           complete: (e) => {

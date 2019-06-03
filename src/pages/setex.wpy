@@ -509,27 +509,27 @@
           <view @tap="onChangeTimesets({{index}})" style="line-height: 100rpx; padding: 0 10rpx;" class="{{item.isChecked ? 'set-time-active' : ''}}">{{item.label}}</view>
         </repeat>
       </view>
-      <view class="time-set-wrap dag-wrap" style="margin-top:-100rpx;min-height: 360rpx;">
-        <picker-view indicator-style="height: 100rpx;"
-                     style="margin-left:15%;height: 160rpx"
+      <view class="time-set-wrap dag-wrap" style="margin-top:-100rpx;min-height: 180px;">
+        <picker-view indicator-style="height: 50px;"
+                     style="margin-left:15%;height: 80px"
                      class="picker-view"
                      value="{{hourIndex}}"
                      bindchange="onHourSelected">
           <picker-view-column>
             <repeat for="{{hours}}" key="index" index="index" item="item">
-              <view style="line-height: 100rpx">{{item}}</view>
+              <view style="line-height: 50px">{{item}}</view>
             </repeat>
           </picker-view-column>
         </picker-view>
         <view  class="time-text">时</view>
-        <picker-view indicator-style="height: 100rpx;"
-                     style="margin-left:3%;height: 160rpx"
+        <picker-view indicator-style="height: 50px;"
+                     style="margin-left:3%;height: 80px"
                      class="picker-view"
                      value="{{minuteIndex}}"
                      bindchange="onMinuteSelected">
           <picker-view-column>
             <repeat for="{{minutes}}" key="index" index="index" item="item">
-              <view style="line-height: 100rpx">{{item}}</view>
+              <view style="line-height: 50px">{{item}}</view>
             </repeat>
           </picker-view-column>
         </picker-view>
@@ -801,40 +801,37 @@
     }
 
     let exList = [type1Name]
-    const typeList2 = this.typeList2 || []
-    if(!typeList2.length) {
-      this.exList = exList
-      return
-    }
-
     let type2Name = ''
-    let typeObj = typeList2[0]
-    if (this.type30 >= 0 && typeObj.childList && typeObj.childList.length > this.type30) {
-      type2Name = typeObj.childList[this.type30].name
-      exList.push(type2Name)
-    } else if (this.type4 >= 0 && typeObj.customList && typeObj.customList.length){
-      type2Name = typeObj.customList[this.type4].name || ''
-      exList.push(type2Name)
-    }
+    const typeList2 = this.typeList2 || []
 
-    typeObj = typeList2[1]
-    if (this.type31 >= 0 && typeObj.childList && typeObj.childList.length > this.type31) {
-      type2Name = typeObj.childList[this.type31].name
-      exList.push(type2Name)
-    }
+    if(typeList2 && typeList2.length) {
+      let typeObj = typeList2[0]
+      if (this.type30 >= 0 && typeObj.childList && typeObj.childList.length > this.type30) {
+        type2Name = typeObj.childList[this.type30].name
+        exList.push(type2Name)
+      } else if (this.type4 >= 0 && typeObj.customList && typeObj.customList.length){
+        type2Name = typeObj.customList[this.type4].name || ''
+        exList.push(type2Name)
+      }
 
-    if (isValid && !type2Name) {
-      wx.showToast({
-        title: '请选择练习方法',
-        icon: 'error',
-        duration: 2000,
-        mask:true
-      })
-      return
+      typeObj = typeList2[1]
+      if (this.type31 >= 0 && typeObj.childList && typeObj.childList.length > this.type31) {
+        type2Name = typeObj.childList[this.type31].name
+        exList.push(type2Name)
+      }
+
+      if (isValid && !type2Name) {
+        wx.showToast({
+          title: '请选择练习方法',
+          icon: 'error',
+          duration: 2000,
+          mask:true
+        })
+        return
+      }
     }
 
     this.exList = exList
-
     wx.setStorage({
       key: 'exType',
       data: {
